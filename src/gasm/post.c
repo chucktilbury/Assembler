@@ -359,6 +359,8 @@ static void addr_scan(Module* mod)
                 case OT_DATA_DEFINITION: {
                         DataDef* ptr = (DataDef*)obj;
                         ptr->idx = addValBuf(ptr->val);
+                        if(ptr->val->type == STRING)
+                            ptr->val->data.str = addStr(ptr->str);
                         addValTab(ptr->name, ptr->val, ptr->idx);
                     }
                     break;
@@ -405,6 +407,7 @@ void doPostProcess(Module* mod)
     // post processing data structures
     initInstStream();
     initValBuf();
+    initStrTab();
 
     addr_scan(mod);
     label_scan(mod);
@@ -415,6 +418,7 @@ void doPostProcess(Module* mod)
         printModule(mod);
         dumpValBuf();
         dumpPostTables();
+        dumpStrTab();
     }
 
 }

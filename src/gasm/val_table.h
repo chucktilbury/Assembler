@@ -22,7 +22,7 @@ typedef struct {
         int64_t num;
         double fnum;
         bool bval;
-        const char* str;
+        StrIdx str;
     } data;
 } Value;
 

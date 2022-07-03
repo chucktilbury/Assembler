@@ -74,7 +74,7 @@ void printVal(Value* val)
                 printf("%s", val->data.bval? "true": "false");
                 break;
             case STRING:
-                printf("\"%s\"", val->data.str);
+                printf("idx: %d\t\"%s\"", val->data.str, getStr(val->data.str));
                 break;
             default:
                 printf("unknown type value: %d\n", val->type);

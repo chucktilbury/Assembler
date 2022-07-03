@@ -241,41 +241,42 @@ data_definition
     : data_declaration '=' expression { assignDataDecl($1, $3); }
     | data_declaration '=' bool_value { assignDataDecl($1, $3); }
     | data_declaration '=' TOK_QSTR {
-            Value* val = createValue(STRING);
-            val->data.str = _copy_str($3);
-            assignDataDecl($1, val);
-        }
+        Value* val = createValue(STRING);
+        $1->str = _copy_str($3);
+        //val->data.str = $1->str;
+        assignDataDecl($1, val);
+    }
     ;
 
 bool_value
     : TOK_TRUE {
-            $$ = createValue(BOOL);
-            $$->isAssigned = true;
-            $$->data.bval = true;
-        }
+        $$ = createValue(BOOL);
+        $$->isAssigned = true;
+        $$->data.bval = true;
+    }
     | TOK_FALSE {
-            $$ = createValue(BOOL);
-            $$->isAssigned = true;
-            $$->data.bval = false;
-        }
+        $$ = createValue(BOOL);
+        $$->isAssigned = true;
+        $$->data.bval = false;
+    }
     ;
 
 expression_factor
     : TOK_UNUM {
-            $$ = createValue(UINT);
-            $$->isAssigned = true;
-            $$->data.unum = $1;
-        }
+        $$ = createValue(UINT);
+        $$->isAssigned = true;
+        $$->data.unum = $1;
+    }
     | TOK_INUM {
-            $$ = createValue(INT);
-            $$->isAssigned = true;
-            $$->data.num = $1;
-        }
+        $$ = createValue(INT);
+        $$->isAssigned = true;
+        $$->data.num = $1;
+    }
     | TOK_FNUM {
-            $$ = createValue(FLOAT);
-            $$->isAssigned = true;
-            $$->data.fnum = $1;
-        }
+        $$ = createValue(FLOAT);
+        $$->isAssigned = true;
+        $$->data.fnum = $1;
+    }
     ;
 
 expression

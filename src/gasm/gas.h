@@ -3,6 +3,7 @@
 
 #include "common.h"
 
+#include "str_table.h"
 #include "val_table.h"
 #include "asm_errors.h"
 #include "scanner.h"
@@ -13,7 +14,6 @@
 #include "inst_buf.h"
 #include "post.h"
 #include "parser.h"
-#include "str_table.h"
 
 //#include "symtab.h"
 
