@@ -5,7 +5,7 @@
 
 string passed = "test passed"
 string failed = "test failed"
-address test_addr = 59
+uint test_addr = 59
 
 // this line is passed througfh the preprocessor
 //#line 25 "/home/chuck/Src/goldfish/testing/asm/blart.plart"

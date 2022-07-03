@@ -3,6 +3,8 @@
 
 #define TREE_ERROR (((uint32_t)0x00)-1)
 
+extern Module* module;
+
 static int size_table[] = {
     [OT_LABEL] = 0,
     [OT_PP_MARKER] = 0,
@@ -204,17 +206,8 @@ static void instrs(Module* mod)
 
         switch(obj->type) {
                 case OT_PP_MARKER:
-                    // do nothing
-                    break;
-                case OT_DATA_DEFINITION: {
-                        //printf(">>>> adding %s\n", ptr->name);
-                    }
-                    break;
-                case OT_LABEL: {
-//                         Label* ptr = (Label*)obj;
-//                         ptr->addr = getAddr();
-//                         addLabTab(ptr->name, ptr->addr);
-                    }
+                case OT_DATA_DEFINITION:
+                case OT_LABEL:
                     break;
                 case OT_CLASS0_INSTR: {
                         Class0* ptr = (Class0*)obj;
@@ -245,8 +238,7 @@ static void instrs(Module* mod)
                 case OT_CLASS4_INSTR: {
                         Class4* ptr = (Class4*)obj;
                         writeInst8(ptr->op);
-// get the address and write it to the stream
-                        writeInst32(0); // fake address
+                        writeInst32(ptr->addr);
                     }
                     break;
                 case OT_CLASS5_INSTR: {
@@ -265,10 +257,7 @@ static void instrs(Module* mod)
                         Class7a* ptr = (Class7a*)obj;
                         writeInst8(ptr->op);
                         writeInst8(ptr->reg & 0x0F);
-                        // value has not been associated with instr yet
-// get the value ID and write it
-//                         Value* val = createValue(ERROR);
-//                         writeInstObj(val, sizeof(Value));
+                        writeInstObj(&ptr->idx, sizeof(ValIdx));
                     }
                     break;
                 case OT_CLASS7B_INSTR: {
@@ -282,10 +271,7 @@ static void instrs(Module* mod)
                 case OT_CLASS7C_INSTR: {
                         Class7c* ptr = (Class7c*)obj;
                         writeInst8(ptr->op);
-                        // value has not been associated with instr yet
-// get the value ID and write it
-//                         Value* val = createValue(ERROR);
-//                         writeInstObj(val, sizeof(Value));
+                        writeInstObj(&ptr->idx, sizeof(ValIdx));
                         writeInst8(ptr->reg & 0x0F);
                     }
                     break;
@@ -334,6 +320,8 @@ static void label_scan(Module* mod)
                             ptr->val = tab->val;
                             ptr->idx = tab->idx;
                         }
+                        else
+                            syntaxError("value for %s is not defined", ptr->sym);
                     }
                     break;
                 case OT_CLASS7C_INSTR: {
@@ -343,6 +331,8 @@ static void label_scan(Module* mod)
                             ptr->val = tab->val;
                             ptr->idx = tab->idx;
                         }
+                        else
+                            syntaxError("value for %s is not defined", ptr->sym);
                     }
                     break;
             default:
@@ -365,6 +355,7 @@ static void addr_scan(Module* mod)
 
         switch(obj->type) {
                 case OT_PP_MARKER:
+                    break;
                 case OT_DATA_DEFINITION: {
                         DataDef* ptr = (DataDef*)obj;
                         ptr->idx = addValBuf(ptr->val);
@@ -374,6 +365,7 @@ static void addr_scan(Module* mod)
                 case OT_LABEL: {
                         Label* ptr = (Label*)obj;
                         ptr->addr = addr;
+                        addLabTab(ptr->name, ptr->addr);
                     }
                     break;
                 case OT_CLASS0_INSTR: addr += size_table[OT_CLASS0_INSTR]; break;
@@ -402,16 +394,27 @@ static void reference_scan(Module* mod)
 {
 }
 
+#include "cmdline.h"
+extern cmd_line cl;
+
 void doPostProcess(Module* mod)
 {
     if(mod->first == NULL)
         fatalError("module is corrupt or empty");
 
+    // post processing data structures
     initInstStream();
     initValBuf();
 
     addr_scan(mod);
     label_scan(mod);
-    //instrs(mod);
+    instrs(mod);
     reference_scan(mod);
+
+    if(get_num_param(cl, "verbose")) {
+        printModule(mod);
+        dumpValBuf();
+        dumpPostTables();
+    }
+
 }

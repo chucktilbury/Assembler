@@ -13,7 +13,7 @@ void yyerror(const char* s);
 
 static int bidx = 0;
 static char buffer[1024*64];
-static int line_no;
+static int line_no = 1;
 static char* file_name;
 
 // these values are set by the preprocessor rule in the parser
@@ -25,7 +25,7 @@ void set_line_no(int no)
 
 int get_line_no()
 {
-    return line_no;
+    return yylineno; // line_no;
 }
 
 void set_file_name(const char* fname)
@@ -120,7 +120,6 @@ static void __append_str(const char* str)
 "R15"           { yylval.reg = REG_15; return TOK_R15; }
 
 "CONST"         { return TOK_CONST; }
-"#line"         { return TOK_LINE; }
 
         /* arithmetic operators */
 "+"             { return '+'; }
@@ -134,6 +133,8 @@ static void __append_str(const char* str)
 "}"             { return '}'; }
 ","             { return ','; }
 ":"             { return ':'; }
+
+#.* {} /* eat up until the newline */
 
     /* constructed tokens */
 
@@ -218,6 +219,7 @@ static void __append_str(const char* str)
 int open_file(const char *fname) {
 
     yyin = fopen(fname, "r");
+    file_name = _copy_str(fname);
     if(yyin == NULL)
         fatalError("cannot open input file: %s: %s", fname, strerror(errno));
 

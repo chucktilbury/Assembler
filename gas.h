@@ -13,6 +13,7 @@
 #include "inst_buf.h"
 #include "post.h"
 #include "parser.h"
+#include "str_table.h"
 
 //#include "symtab.h"
 

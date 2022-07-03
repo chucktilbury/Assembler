@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}
     #table.c
     post.c
     val_table.c
+    str_table.c
     inst_buf.c
     ast.c
     arith.c

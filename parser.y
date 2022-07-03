@@ -20,9 +20,6 @@ void yyerror(const char* s)
     syntaxError("%s", s);
 }
 
-// defined in main.c
-//extern Symbol* sym_table;
-extern int error_count;
 void syntaxError(const char*, ...);
 
 Module* module;
@@ -100,10 +97,6 @@ module
     : module_item_list {
         // Emit the object.
         doPostProcess(module);
-        printModule(module);
-        dumpValBuf();
-        dumpPostTables();
-
     }
     ;
 
@@ -116,15 +109,10 @@ module_item
     : instruction
     | data_definition
     | label
-    | preprocessor_marker
     ;
 
 label
     : TOK_SYMBOL ':' { addLabel(module, $1); }
-    ;
-
-preprocessor_marker
-    : TOK_LINE TOK_INUM TOK_QSTR { addPPMarker(module, $2, $3); }
     ;
 
 instruction

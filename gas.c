@@ -95,10 +95,12 @@ const char* preformat_str(const char* str)
 }
 #endif
 
+cmd_line cl;
+
 int main(int argc, char** argv)
 {
     _init_memory();
-    cmd_line cl = create_cmd_line("This is the assembler");
+    cl = create_cmd_line("This is the assembler");
     add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
