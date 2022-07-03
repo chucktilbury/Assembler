@@ -1,3 +1,10 @@
+build/
+parser.c
+parser.h
+parser.output
+scanner.c
+gas
+
 # Prerequisites
 *.d
 
