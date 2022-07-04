@@ -15,9 +15,9 @@ static int size_table[] = {
     [OT_CLASS4_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
     [OT_CLASS5_INSTR] = sizeof(uint8_t)+sizeof(Value),
     [OT_CLASS6_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
-    [OT_CLASS7A_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),+sizeof(ValIdx),
-    [OT_CLASS7B_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),+sizeof(Value),
-    [OT_CLASS7C_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),+sizeof(ValIdx),
+    [OT_CLASS7A_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
+    [OT_CLASS7B_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(Value),
+    [OT_CLASS7C_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
     [OT_DATA_DEFINITION] = 0
 };
 
@@ -211,11 +211,13 @@ static void instrs(Module* mod)
                     break;
                 case OT_CLASS0_INSTR: {
                         Class0* ptr = (Class0*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                     }
                     break;
                 case OT_CLASS1_INSTR: {
                         Class1* ptr = (Class1*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInst16((ptr->right & 0xF) |
                                     ((ptr->left & 0xF) << 4) |
@@ -224,6 +226,7 @@ static void instrs(Module* mod)
                     break;
                 case OT_CLASS2_INSTR: {
                         Class2* ptr = (Class2*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInst8((ptr->right & 0xF) |
                                     ((ptr->left) & 0xF << 4));
@@ -231,30 +234,35 @@ static void instrs(Module* mod)
                     break;
                 case OT_CLASS3_INSTR: {
                         Class3* ptr = (Class3*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInst8(ptr->reg & 0xF);
                     }
                     break;
                 case OT_CLASS4_INSTR: {
                         Class4* ptr = (Class4*)obj;
+                        ptr->iaddr = getAddr();
                         writeInst8(ptr->op);
                         writeInst32(ptr->addr);
                     }
                     break;
                 case OT_CLASS5_INSTR: {
                         Class5* ptr = (Class5*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInstObj(ptr->val, sizeof(Value));
                     }
                     break;
                 case OT_CLASS6_INSTR: {
                         Class6* ptr = (Class6*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInst16(ptr->tnum);
                     }
                     break;
                 case OT_CLASS7A_INSTR: {
                         Class7a* ptr = (Class7a*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInst8(ptr->reg & 0x0F);
                         writeInstObj(&ptr->idx, sizeof(ValIdx));
@@ -262,14 +270,16 @@ static void instrs(Module* mod)
                     break;
                 case OT_CLASS7B_INSTR: {
                         Class7b* ptr = (Class7b*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
-                        // immediate value
+                        writeInst8(ptr->reg & 0x0F);
                         Value* val = createValue(ERROR);
                         writeInstObj(val, sizeof(Value));
                     }
                     break;
                 case OT_CLASS7C_INSTR: {
                         Class7c* ptr = (Class7c*)obj;
+                        ptr->addr = getAddr();
                         writeInst8(ptr->op);
                         writeInstObj(&ptr->idx, sizeof(ValIdx));
                         writeInst8(ptr->reg & 0x0F);
@@ -367,6 +377,7 @@ static void addr_scan(Module* mod)
                 case OT_LABEL: {
                         Label* ptr = (Label*)obj;
                         ptr->addr = addr;
+                        printf("address: %d\n", addr);
                         addLabTab(ptr->name, ptr->addr);
                     }
                     break;
@@ -389,13 +400,6 @@ static void addr_scan(Module* mod)
     }
 }
 
-/*
- * Verify that all of the data definitions have references.
- */
-static void reference_scan(Module* mod)
-{
-}
-
 #include "cmdline.h"
 extern cmd_line cl;
 
@@ -412,7 +416,6 @@ void doPostProcess(Module* mod)
     addr_scan(mod);
     label_scan(mod);
     instrs(mod);
-    reference_scan(mod);
 
     if(get_num_param(cl, "verbose")) {
         printModule(mod);
@@ -420,5 +423,4 @@ void doPostProcess(Module* mod)
         dumpPostTables();
         dumpStrTab();
     }
-
 }

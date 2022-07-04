@@ -2,8 +2,6 @@
 #include "gas.h"
 #include "cmdline.h"
 
-extern void dumpSymtab();
-
 #if 0
 /*
  * Find all of the format markers in the string with the format {name} and
@@ -95,6 +93,17 @@ const char* preformat_str(const char* str)
 }
 #endif
 
+static void save_binary(const char* fname)
+{
+    FILE* fp = fopen(fname, "w");
+    if(fp == NULL)
+        fatalError("cannot open output file: %s: %s", fname, strerror(errno));
+
+    saveInstStream(fp);
+    saveValBuf(fp);
+    saveStrTab(fp);
+}
+
 cmd_line cl;
 
 int main(int argc, char** argv)
@@ -119,22 +128,8 @@ int main(int argc, char** argv)
 
     yyparse();
 
-#if 0
+    if(!getErrors())
+        save_binary(get_str_param(cl, "ofile"));
 
-    if(!getErrors()) {
-        if(get_num_param(cl, "verbose") >= 1)
-            showListing(stdout);
-
-        if(get_num_param(cl, "verbose") >= 5) {
-            //dumpRegs(vm, stdout);
-            dumpSymtab(stdout);
-            dumpVars(stdout);
-            dumpStrs(stdout);
-        }
-
-        saveVM(get_str_param(cl, "ofile"));
-    }
-    _uninit_memory();
-#endif
     return 0;
 }

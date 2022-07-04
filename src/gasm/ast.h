@@ -17,28 +17,6 @@ typedef enum {
     OT_DATA_DEFINITION,
 } ObjectType;
 
-typedef enum {
-    REG_0,
-    REG_1,
-    REG_2,
-    REG_3,
-    REG_4,
-    REG_5,
-    REG_6,
-    REG_7,
-    REG_8,
-    REG_9,
-    REG_10,
-    REG_11,
-    REG_12,
-    REG_13,
-    REG_14,
-    REG_15,
-} Register;
-
-
-typedef uint8_t Reg;
-
 typedef struct _object {
     ObjectType type;
     struct _object* next;
@@ -69,6 +47,7 @@ typedef struct {
 typedef struct {
     Object obj;
     OpCode op;
+    uint32_t addr;
 } Class0;
 
 typedef struct {
@@ -77,6 +56,7 @@ typedef struct {
     Reg dest;
     Reg left;
     Reg right;
+    uint32_t addr;
 } Class1;
 
 typedef struct {
@@ -84,12 +64,14 @@ typedef struct {
     OpCode op;
     Reg left;
     Reg right;
+    uint32_t addr;
 } Class2;
 
 typedef struct {
     Object obj;
     OpCode op;
     Reg reg;
+    uint32_t addr;
 } Class3;
 
 typedef struct {
@@ -97,6 +79,7 @@ typedef struct {
     OpCode op;
     const char* sym;
     uint32_t addr;
+    uint32_t iaddr;
 } Class4;
 
 typedef struct {
@@ -104,12 +87,14 @@ typedef struct {
     OpCode op;
     Value* val;
     ValIdx idx;
+    uint32_t addr;
 } Class5;
 
 typedef struct {
     Object obj;
     OpCode op;
     int tnum;
+    uint32_t addr;
 } Class6;
 
 typedef struct {
@@ -119,6 +104,7 @@ typedef struct {
     const char* sym;
     Value* val;
     ValIdx idx;
+    uint32_t addr;
 } Class7a;
 
 typedef struct {
@@ -126,6 +112,7 @@ typedef struct {
     OpCode op;
     Reg reg;
     Value* val;
+    uint32_t addr;
 } Class7b;
 
 typedef struct {
@@ -135,6 +122,7 @@ typedef struct {
     Value* val;
     Reg reg;
     ValIdx idx;
+    uint32_t addr;
 } Class7c;
 
 typedef struct {

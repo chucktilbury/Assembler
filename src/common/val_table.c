@@ -1,5 +1,5 @@
 
-#include "gas.h"
+#include "common.h"
 
 typedef struct {
     Value** buf;
@@ -14,6 +14,22 @@ void initValBuf()
     vbuf.cap = 0x01 << 3;
     vbuf.len = 0;
     vbuf.buf = _alloc_ds_array(Value*, vbuf.cap);
+}
+
+void loadValBuf(FILE* fp)
+{
+    vbuf.cap = 1;
+    vbuf.len = 0;
+    fread(&vbuf.len, sizeof(vbuf.len), 1, fp);
+
+    while(vbuf.len+1 > vbuf.cap)
+        vbuf.cap <<= 1;
+    vbuf.buf = _alloc_ds_array(Value*, vbuf.cap);
+
+    for(Index idx = 0; idx < vbuf.len; idx++) {
+        vbuf.buf[idx] = _alloc(sizeof(Value));
+        fread(vbuf.buf[idx], sizeof(Value), 1, fp);
+    }
 }
 
 void saveValBuf(FILE* fp)

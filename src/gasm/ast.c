@@ -31,26 +31,6 @@ const char* objTypeToStr(ObjectType type)
         (type == OT_DATA_DEFINITION)? "DATA_DEFINITION": "UNKNOWN";
 }
 
-const char* regToStr(uint8_t reg)
-{
-    return (reg == REG_1)? "R1":
-            (reg == REG_0)? "R0":
-            (reg == REG_2)? "R2":
-            (reg == REG_3)? "R3":
-            (reg == REG_4)? "R4":
-            (reg == REG_5)? "R5":
-            (reg == REG_6)? "R6":
-            (reg == REG_7)? "R7":
-            (reg == REG_8)? "R8":
-            (reg == REG_9)? "R9":
-            (reg == REG_10)? "R10":
-            (reg == REG_11)? "R11":
-            (reg == REG_12)? "R12":
-            (reg == REG_13)? "R13":
-            (reg == REG_14)? "R14":
-            (reg == REG_15)? "R15": "UNKNOWN";
-}
-
 void printModule(Module* mod)
 {
     printf("\n------- Dump AST -------\n");
@@ -76,63 +56,63 @@ void printModule(Module* mod)
                     break;
                 case OT_CLASS0_INSTR: {
                         Class0* ptr = (Class0*)obj;
-                        printf("op: %s", opToStr(ptr->op));
+                        printf("addr: %d op: %s", ptr->addr, opToStr(ptr->op));
                     }
                     break;
                 case OT_CLASS1_INSTR: {
                         Class1* ptr = (Class1*)obj;
-                        printf("op: %s dest:%s, left:%s, right:%s",
+                        printf("addr: %d op: %s dest:%s, left:%s, right:%s", ptr->addr,
                                opToStr(ptr->op), regToStr(ptr->dest),
                                regToStr(ptr->left), regToStr(ptr->right));
                     }
                     break;
                 case OT_CLASS2_INSTR: {
                         Class2* ptr = (Class2*)obj;
-                        printf("op: %s left:%s, right:%s",
+                        printf("addr: %d op: %s left:%s, right:%s", ptr->addr,
                                opToStr(ptr->op),
                                regToStr(ptr->left), regToStr(ptr->right));
                     }
                     break;
                 case OT_CLASS3_INSTR: {
                         Class3* ptr = (Class3*)obj;
-                        printf("op: %s reg:%s",
+                        printf("addr: %d op: %s reg:%s", ptr->addr,
                                opToStr(ptr->op), regToStr(ptr->reg));
                     }
                     break;
                 case OT_CLASS4_INSTR: {
                         Class4* ptr = (Class4*)obj;
-                        printf("op: %s symbol:%s addr: %d",
+                        printf("addr: %d op: %s symbol:%s addr: %d", ptr->iaddr,
                                opToStr(ptr->op), ptr->sym, ptr->addr);
                     }
                     break;
                 case OT_CLASS5_INSTR: {
                         Class5* ptr = (Class5*)obj;
-                        printf("op: %s ", opToStr(ptr->op));
+                        printf("addr: %d op: %s ", ptr->addr, opToStr(ptr->op));
                         printVal(ptr->val);
                     }
                     break;
                 case OT_CLASS6_INSTR: {
                         Class6* ptr = (Class6*)obj;
-                        printf("op: %s num:%d", opToStr(ptr->op), ptr->tnum);
+                        printf("addr: %d op: %s num:%d", ptr->addr, opToStr(ptr->op), ptr->tnum);
                     }
                     break;
                 case OT_CLASS7A_INSTR: {
                         Class7a* ptr = (Class7a*)obj;
-                        printf("op: %s reg:%s, sym:%s idx: %d ", opToStr(ptr->op),
+                        printf("addr: %d op: %s reg:%s, sym:%s idx: %d ", ptr->addr, opToStr(ptr->op),
                                regToStr(ptr->reg), ptr->sym, ptr->idx);
                         printVal(ptr->val);
                     }
                     break;
                 case OT_CLASS7B_INSTR: {
                         Class7b* ptr = (Class7b*)obj;
-                        printf("op: %s reg:%s, ", opToStr(ptr->op),
+                        printf("addr: %d op: %s reg:%s, ", ptr->addr, opToStr(ptr->op),
                                 regToStr(ptr->reg));
                         printVal(ptr->val);
                     }
                     break;
                 case OT_CLASS7C_INSTR: {
                         Class7c* ptr = (Class7c*)obj;
-                        printf("op: %s sym:%s idx: %d ", opToStr(ptr->op),
+                        printf("addr: %d op: %s sym:%s idx: %d ", ptr->addr, opToStr(ptr->op),
                                ptr->sym, ptr->idx);
                         printVal(ptr->val);
                         printf(", reg:%s", regToStr(ptr->reg));

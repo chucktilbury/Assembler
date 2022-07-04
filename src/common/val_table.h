@@ -10,7 +10,7 @@ typedef enum {
     STRING,
 } ValType;
 
-typedef uint32_t ValIdx;
+typedef Index ValIdx;
 
 typedef struct {
     ValType type;
@@ -28,6 +28,7 @@ typedef struct {
 
 void initValBuf();
 void saveValBuf(FILE* fp);
+void loadValBuf(FILE* fp);
 ValIdx addValBuf(Value* val);
 Value* getValBuf(ValIdx idx);
 void dumpValBuf();

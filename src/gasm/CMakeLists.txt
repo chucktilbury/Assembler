@@ -28,17 +28,10 @@ add_custom_command(OUTPUT ${YACC_C_SOURCE} ${YACC_H}
 add_executable(${PROJECT_NAME}
     parser.c
     scanner.c
-    #symtab.c
-    #table.c
     post.c
-    val_table.c
-    str_table.c
-    inst_buf.c
     ast.c
     arith.c
     asm_errors.c
-    cmdline.c
-    opcodes.c
     gas.c
 )
 
@@ -50,7 +43,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    #vm
+    common
     m
     gc
     cord

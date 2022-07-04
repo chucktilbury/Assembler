@@ -1,10 +1,10 @@
 
 #add_subdirectory(gc)
 #add_subdirectory(runtime)
-#add_subdirectory(common)
+add_subdirectory(common)
 #add_subdirectory(ucpp)
-#add_subdirectory(asm)
+add_subdirectory(vmachine)
 add_subdirectory(gasm)
-#add_subdirectory(disasm)
+add_subdirectory(disasm)
 #add_subdirectory(gvm)
 #add_subdirectory(compiler)

@@ -1,5 +1,5 @@
 
-#include "gas.h"
+#include "common.h"
 
 typedef struct {
     char** list;
@@ -14,6 +14,24 @@ void initStrTab()
     stab.cap = 0x01 << 3;
     stab.len = 0;
     stab.list = _alloc_ds_array(char*, stab.cap);
+}
+
+void loadStrTab(FILE* fp)
+{
+    stab.cap = 1;
+    stab.len = 0;
+    fread(&stab.len, sizeof(stab.len), 1, fp);
+
+    while(stab.len+1 > stab.cap)
+        stab.cap <<= 1;
+    stab.list = _alloc_ds_array(char*, stab.cap);
+
+    for(uint32_t idx = 0; idx < stab.len; idx++) {
+        uint32_t len;
+        fread(&len, sizeof(len), 1, fp);
+        stab.list[idx] = _alloc(len);
+        fread(stab.list[idx], sizeof(char), len, fp);
+    }
 }
 
 void saveStrTab(FILE* fp)

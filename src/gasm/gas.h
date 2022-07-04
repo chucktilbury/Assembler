@@ -3,15 +3,10 @@
 
 #include "common.h"
 
-#include "str_table.h"
-#include "val_table.h"
 #include "asm_errors.h"
 #include "scanner.h"
-#include "memory.h"
-#include "opcodes.h"
 #include "ast.h"
 #include "arith.h"
-#include "inst_buf.h"
 #include "post.h"
 #include "parser.h"
 

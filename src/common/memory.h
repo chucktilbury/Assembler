@@ -1,7 +1,7 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#if 1
+#if 0
 
 //#ifdef MEMORY_DEBUG
 #define _init_memory()
