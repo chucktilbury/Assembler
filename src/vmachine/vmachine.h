@@ -3,9 +3,8 @@
 
 #include "common.h"
 
-#include "arith.h"
-#include "compare.h"
 #include "runloop.h"
+#include "vm_errors.h"
 #include "val_stack.h"
 
 bool getZflag();

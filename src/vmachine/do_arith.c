@@ -9,20 +9,17 @@ extern int errors;
         switch((r)->type) { \
             case INT: \
                 if((r)->data.num == 0) { \
-                    fprintf(stderr, "fatal error: divide by zero"); \
-                    exit(1); \
+                    fatalError("divide by zero"); \
                 } \
                 break; \
             case UINT: \
                 if((r)->data.unum == 0) { \
-                    fprintf(stderr, "fatal error: divide by zero"); \
-                    exit(1); \
+                    fatalError("divide by zero"); \
                 } \
                 break; \
             case FLOAT: \
                 if((r)->data.fnum == 0.0) { \
-                    fprintf(stderr, "fatal error: divide by zero"); \
-                    exit(1); \
+                    fatalError("divide by zero"); \
                 } \
                 break; \
             case BOOL: \
@@ -30,8 +27,7 @@ extern int errors;
             case ERROR: \
                 break; \
             default: \
-                fprintf(stderr, "fatal error: unknown register type: %d\n", (r)->type); \
-                exit(1); \
+                fatalError("fatal error: unknown register type: %d", (r)->type); \
         } \
     } while(false)
 
@@ -55,13 +51,10 @@ extern int errors;
                     case BOOL: \
                     case STRING: \
                     case ERROR: \
-                        fprintf(stderr, "runtime error: cannot perform a '%s' on a %s", \
-                                #op, valTypeToStr((l)->type)); \
-                        errors++; \
+                        runtimeError("runtime error: cannot perform a '%s' on a %s", #op, valTypeToStr((l)->type)); \
                         break; \
                     default: \
-                        fprintf(stderr, "fatal error: unknown register type: %d\n", (r)->type); \
-                        exit(1); \
+                        fatalError("fatal error: unknown register type: %d", (r)->type); \
                 } \
                 break; \
             case UINT: \
@@ -81,13 +74,10 @@ extern int errors;
                     case BOOL: \
                     case STRING: \
                     case ERROR: \
-                        fprintf(stderr, "runtime error: cannot perform a '%s' on a %s", \
-                                #op, valTypeToStr((l)->type)); \
-                        errors++; \
+                        runtimeError("runtime error: cannot perform a '%s' on a %s", #op, valTypeToStr((l)->type)); \
                         break; \
                     default: \
-                        fprintf(stderr, "fatal error: unknown register type: %d\n", (r)->type); \
-                        exit(1); \
+                        fatalError("fatal error: unknown register type: %d", (r)->type); \
                 } \
                 break; \
             case FLOAT: \
@@ -107,30 +97,31 @@ extern int errors;
                     case BOOL: \
                     case STRING: \
                     case ERROR: \
-                        fprintf(stderr, "runtime error: cannot perform a '%s' on a %s", \
-                                #op, valTypeToStr((l)->type)); \
-                        errors++; \
+                        runtimeError("runtime error: cannot perform a '%s' on a %s", #op, valTypeToStr((l)->type)); \
                         break; \
                     default: \
-                        fprintf(stderr, "fatal error: unknown register type: %d\n", (r)->type); \
-                        exit(1); \
+                        fatalError("fatal error: unknown register type: %d", (r)->type); \
                 } \
                 break; \
             case BOOL: \
             case STRING: \
             case ERROR: \
-                fprintf(stderr, "runtime error: cannot perform a '%s' on a %s", \
-                        #op, valTypeToStr((l)->type)); \
+                    runtimeError("runtime error: cannot perform a '%s' on a %s", #op, valTypeToStr((l)->type)); \
                 errors++; \
                 break; \
             default: \
-                fprintf(stderr, "fatal error: unknown register type: %d\n", (l)->type); \
-                exit(1); \
+                fatalError("fatal error: unknown register type: %d", (l)->type); \
         } \
     } while(false)
 
-void doNEG(uint8_t dest, uint8_t reg)
+bool doNEG()
 {
+    uint8_t regs;
+    readInstObj(&regs, sizeof(uint8_t));
+
+    uint8_t dest = (regs & 0x00F0) >> 4;
+    uint8_t reg = regs & 0x000F;
+
     Value* res = &registers[dest];
     Value* val = &registers[reg];
 
@@ -142,39 +133,82 @@ void doNEG(uint8_t dest, uint8_t reg)
         case BOOL: res->data.bval = val->data.bval? false: true; break;
         case STRING:
             res->type = ERROR;
-            fprintf(stderr, "runtime error: cannot negate a string\n");
-            errors++;
+            runtimeError("runtime error: cannot negate a string");
             break;
         case ERROR: /* do nothing */ break;
         default:
-            fprintf(stderr, "fatal error: unknown register type: %d\n", val->type);
-            exit(1);
+            fatalError("fatal error: unknown register type: %d", val->type);
     }
+
+    return false;
 }
 
-void doADD(uint8_t dest, uint8_t left, uint8_t right)
+bool doADD()
 {
+    uint16_t regs;
+    readInstObj(&regs, sizeof(uint16_t));
+
+    uint8_t dest = (regs & 0x0F00) >> 8;
+    uint8_t left = (regs & 0x00F0) >> 4;
+    uint8_t right = regs & 0x000F;
+
     _operation(&registers[dest], &registers[left], &registers[right], +);
+
+    return false;
 }
 
-void doSUB(uint8_t dest, uint8_t left, uint8_t right)
+bool doSUB()
 {
+    uint16_t regs;
+    readInstObj(&regs, sizeof(uint16_t));
+
+    uint8_t dest = (regs & 0x0F00) >> 8;
+    uint8_t left = (regs & 0x00F0) >> 4;
+    uint8_t right = regs & 0x000F;
+
     _operation(&registers[dest], &registers[left], &registers[right], -);
+
+    return false;
 }
 
-void doMUL(uint8_t dest, uint8_t left, uint8_t right)
+bool doMUL()
 {
+    uint16_t regs;
+    readInstObj(&regs, sizeof(uint16_t));
+
+    uint8_t dest = (regs & 0x0F00) >> 8;
+    uint8_t left = (regs & 0x00F0) >> 4;
+    uint8_t right = regs & 0x000F;
+
     _operation(&registers[dest], &registers[left], &registers[right], *);
+
+    return false;
 }
 
-void doDIV(uint8_t dest, uint8_t left, uint8_t right)
+bool doDIV()
 {
+    uint16_t regs;
+    readInstObj(&regs, sizeof(uint16_t));
+
+    uint8_t dest = (regs & 0x0F00) >> 8;
+    uint8_t left = (regs & 0x00F0) >> 4;
+    uint8_t right = regs & 0x000F;
+
     _div_by_zero(&registers[right]);
     _operation(&registers[dest], &registers[left], &registers[right], /);
+
+    return false;
 }
 
-void doMOD(uint8_t dest, uint8_t left, uint8_t right)
+bool doMOD()
 {
+    uint16_t regs;
+    readInstObj(&regs, sizeof(uint16_t));
+
+    uint8_t dest = (regs & 0x0F00) >> 8;
+    uint8_t left = (regs & 0x00F0) >> 4;
+    uint8_t right = regs & 0x000F;
+
     Value* d = &registers[dest];
     Value* l = &registers[left];
     Value* r = &registers[right];
@@ -199,13 +233,10 @@ void doMOD(uint8_t dest, uint8_t left, uint8_t right)
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    fprintf(stderr, "runtime error: cannot perform a '%%' on a %s",
-                            valTypeToStr(l->type));
-                    errors++;
+                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(r->type));
                     break;
                 default:
-                    fprintf(stderr, "fatal error: unknown register type: %dn", r->type);
-                    exit(1);
+                    fatalError("fatal error: unknown register type: %d", r->type);
             }
             break;
         case UINT:
@@ -225,13 +256,10 @@ void doMOD(uint8_t dest, uint8_t left, uint8_t right)
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    fprintf(stderr, "runtime error: cannot perform a '%%' on a %s",
-                            valTypeToStr(l->type));
-                    errors++;
+                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(r->type));
                     break;
                 default:
-                    fprintf(stderr, "fatal error: unknown register type: %dn", r->type);
-                    exit(1);
+                    fatalError("fatal error: unknown register type: %d", r->type);
             }
             break;
         case FLOAT:
@@ -251,26 +279,21 @@ void doMOD(uint8_t dest, uint8_t left, uint8_t right)
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    fprintf(stderr, "runtime error: cannot perform a '%%' on a %s",
-                            valTypeToStr(l->type));
-                    errors++;
+                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(r->type));
                     break;
                 default:
-                    fprintf(stderr, "fatal error: unknown register type: %dn", r->type);
-                    exit(1);
+                    fatalError("fatal error: unknown register type: %d", r->type);
             }
             break;
         case BOOL:
         case STRING:
         case ERROR:
-            fprintf(stderr, "runtime error: cannot perform a '%%' on a %s",
-                    valTypeToStr(l->type));
-            errors++;
+            runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(l->type));
             break;
         default:
-            fprintf(stderr, "fatal error: unknown register type: %dn", l->type);
-            exit(1);
+            fatalError("fatal error: unknown register type: %d", l->type);
     }
 
+    return false;
 }
 

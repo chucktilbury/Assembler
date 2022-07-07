@@ -17,16 +17,14 @@ void show_listing(FILE* fp)
                 break;
 
             // class 1 instructions
-            case OP_ADD:
-            case OP_SUB:
-            case OP_MUL:
-            case OP_DIV:
-            case OP_MOD: {
-                    // 3 registers
-                    uint16_t regs;
+            case OP_ABORT:
+            case OP_PUSH:
+            case OP_NOT:
+            case OP_POP: {
+                    // 1 register
+                    uint8_t regs;
                     readInstObj(&regs, sizeof(regs));
-                    fprintf(fp, "%s,%s,%s", regToStr((regs>>8)&0xF),
-                            regToStr((regs>>4)&0xF), regToStr(regs&0xF));
+                    fprintf(fp, "%s", regToStr(regs&0xF));
                 }
                 break;
 
@@ -48,45 +46,20 @@ void show_listing(FILE* fp)
                 break;
 
             // class 3 instructions
-            case OP_NOT:
-            case OP_POP:
-            case OP_ABORTR:
-            case OP_CALLR:
-            case OP_JMPR:
-            case OP_BRR:
-            case OP_PUSHR: {
-                    // 1 register
-                    uint8_t regs;
+            case OP_ADD:
+            case OP_SUB:
+            case OP_MUL:
+            case OP_DIV:
+            case OP_MOD: {
+                    // 3 registers
+                    uint16_t regs;
                     readInstObj(&regs, sizeof(regs));
-                    fprintf(fp, "%s", regToStr(regs&0xF));
+                    fprintf(fp, "%s,%s,%s", regToStr((regs>>8)&0xF),
+                            regToStr((regs>>4)&0xF), regToStr(regs&0xF));
                 }
                 break;
 
             // class 4 instructions
-            case OP_ABORT:
-            case OP_CALL:
-            case OP_JMP:
-            case OP_BR:
-            case OP_PUSH: {
-                    // one variable given by an immediate address
-                    uint32_t idx;
-                    readInstObj(&idx, sizeof(idx));
-                    fprintf(fp, "%d", idx);
-                }
-                break;
-
-            // class 5 instructions
-            case OP_ABORTI:
-            case OP_CALLI:
-            case OP_JMPI:
-            case OP_BRI:
-            case OP_PUSHI: {
-                    // one variable given by a immediate value
-                    Value val;
-                    readInstObj(&val, sizeof(val));
-                    printVal(&val);
-                }
-                break;
 
             // class 6 instruction
             case OP_TRAP: {
@@ -121,7 +94,7 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 7c instruction
+            // class 7 instruction
             case OP_STORE: {
                     // value table index and a register
                     Index idx;
@@ -133,6 +106,18 @@ void show_listing(FILE* fp)
                     fprintf(fp, ",%s", regToStr(reg&0x0F));
                 }
                 break;
+
+            // class 8 instructions accept a label
+            case OP_CALL:
+            case OP_JMP:
+            case OP_BR: {
+                    // one variable given by an immediate address
+                    uint32_t idx;
+                    readInstObj(&idx, sizeof(idx));
+                    fprintf(fp, "%d", idx);
+                }
+                break;
+
         }
         fprintf(fp, "\n");
     }

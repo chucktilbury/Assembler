@@ -4,24 +4,14 @@
 const char* opToStr(OpCode op)
 {
     return (op == OP_ABORT)? "ABORT":
-            (op == OP_ABORTI)? "ABORTI":
-            (op == OP_ABORTR)? "ABORTR":
             (op == OP_EXIT)? "EXIT":
             (op == OP_NOP)? "NOP":
             (op == OP_CALL)? "CALL":
-            (op == OP_CALLI)? "CALLI":
-            (op == OP_CALLR)? "CALLR":
             (op == OP_TRAP)? "TRAP":
             (op == OP_RETURN)? "RETURN":
             (op == OP_JMP)? "JMP":
-            (op == OP_JMPI)? "JMPI":
-            (op == OP_JMPR)? "JMPR":
             (op == OP_BR)? "BR":
-            (op == OP_BRI)? "BRI":
-            (op == OP_BRR)? "BRR":
             (op == OP_PUSH)? "PUSH":
-            (op == OP_PUSHI)? "PUSHI":
-            (op == OP_PUSHR)? "PUSHR":
             (op == OP_POP)? "POP":
             (op == OP_LOAD)? "LOAD":
             (op == OP_LOADI)? "LOADI":

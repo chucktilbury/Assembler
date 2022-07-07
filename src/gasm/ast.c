@@ -25,9 +25,8 @@ const char* objTypeToStr(ObjectType type)
         (type == OT_CLASS4_INSTR)? "CLASS4_INSTR":
         (type == OT_CLASS5_INSTR)? "CLASS5_INSTR":
         (type == OT_CLASS6_INSTR)? "CLASS6_INSTR":
-        (type == OT_CLASS7A_INSTR)? "CLASS7A_INSTR":
-        (type == OT_CLASS7B_INSTR)? "CLASS7B_INSTR":
-        (type == OT_CLASS7C_INSTR)? "CLASS7C_INSTR":
+        (type == OT_CLASS7_INSTR)? "CLASS7_INSTR":
+        (type == OT_CLASS8_INSTR)? "CLASS8_INSTR":
         (type == OT_DATA_DEFINITION)? "DATA_DEFINITION": "UNKNOWN";
 }
 
@@ -61,9 +60,8 @@ void printModule(Module* mod)
                     break;
                 case OT_CLASS1_INSTR: {
                         Class1* ptr = (Class1*)obj;
-                        printf("addr: %d op: %s dest:%s, left:%s, right:%s", ptr->addr,
-                               opToStr(ptr->op), regToStr(ptr->dest),
-                               regToStr(ptr->left), regToStr(ptr->right));
+                        printf("addr: %d op: %s reg:%s", ptr->addr,
+                               opToStr(ptr->op), regToStr(ptr->reg));
                     }
                     break;
                 case OT_CLASS2_INSTR: {
@@ -75,49 +73,53 @@ void printModule(Module* mod)
                     break;
                 case OT_CLASS3_INSTR: {
                         Class3* ptr = (Class3*)obj;
-                        printf("addr: %d op: %s reg:%s", ptr->addr,
-                               opToStr(ptr->op), regToStr(ptr->reg));
+                        printf("addr: %d op: %s dest:%s, left:%s, right:%s", ptr->addr,
+                               opToStr(ptr->op), regToStr(ptr->dest),
+                               regToStr(ptr->left), regToStr(ptr->right));
                     }
                     break;
                 case OT_CLASS4_INSTR: {
                         Class4* ptr = (Class4*)obj;
-                        printf("addr: %d op: %s symbol:%s addr: %d", ptr->iaddr,
-                               opToStr(ptr->op), ptr->sym, ptr->addr);
-                    }
-                    break;
-                case OT_CLASS5_INSTR: {
-                        Class5* ptr = (Class5*)obj;
-                        printf("addr: %d op: %s ", ptr->addr, opToStr(ptr->op));
-                        printVal(ptr->val);
-                    }
-                    break;
-                case OT_CLASS6_INSTR: {
-                        Class6* ptr = (Class6*)obj;
                         printf("addr: %d op: %s num:%d", ptr->addr, opToStr(ptr->op), ptr->tnum);
                     }
                     break;
-                case OT_CLASS7A_INSTR: {
-                        Class7a* ptr = (Class7a*)obj;
+
+                case OT_CLASS5_INSTR: {
+                        Class5* ptr = (Class5*)obj;
                         printf("addr: %d op: %s reg:%s, sym:%s idx: %d ", ptr->addr, opToStr(ptr->op),
                                regToStr(ptr->reg), ptr->sym, ptr->idx);
                         printVal(ptr->val);
                     }
                     break;
-                case OT_CLASS7B_INSTR: {
-                        Class7b* ptr = (Class7b*)obj;
+                case OT_CLASS6_INSTR: {
+                        Class6* ptr = (Class6*)obj;
                         printf("addr: %d op: %s reg:%s, ", ptr->addr, opToStr(ptr->op),
                                 regToStr(ptr->reg));
                         printVal(ptr->val);
                     }
                     break;
-                case OT_CLASS7C_INSTR: {
-                        Class7c* ptr = (Class7c*)obj;
+                case OT_CLASS7_INSTR: {
+                        Class7* ptr = (Class7*)obj;
                         printf("addr: %d op: %s sym:%s idx: %d ", ptr->addr, opToStr(ptr->op),
                                ptr->sym, ptr->idx);
                         printVal(ptr->val);
                         printf(", reg:%s", regToStr(ptr->reg));
                     }
                     break;
+
+                case OT_CLASS8_INSTR: {
+                        Class8* ptr = (Class8*)obj;
+                        printf("addr: %d op: %s symbol:%s addr: %d", ptr->addr,
+                               opToStr(ptr->op), ptr->sym, ptr->addr);
+                    }
+                    break;
+
+                    //                 case OT_CLASS5_INSTR: {
+//                         Class5* ptr = (Class5*)obj;
+//                         printf("addr: %d op: %s ", ptr->addr, opToStr(ptr->op));
+//                         printVal(ptr->val);
+//                     }
+//                     break;
                 case OT_DATA_DEFINITION: {
                         DataDef* ptr = (DataDef*)obj;
                         printf("symbol:%s value:", ptr->name);
@@ -173,16 +175,14 @@ void addClass0(Module* mod, OpCode op)
     add_node(mod, (Object*)obj);
 }
 
-void addClass1(Module* mod, OpCode op, Reg dest, Reg left, Reg right)
+void addClass1(Module* mod, OpCode op, Reg reg)
 {
     Class1* obj = _alloc_ds(Class1);
     obj->obj.type = OT_CLASS1_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
-    obj->dest = dest;
-    obj->left = left;
-    obj->right = right;
+    obj->reg = reg;
 
     add_node(mod, (Object*)obj);
 }
@@ -200,46 +200,24 @@ void addClass2(Module* mod, OpCode op, Reg left, Reg right)
     add_node(mod, (Object*)obj);
 }
 
-void addClass3(Module* mod, OpCode op, Reg reg)
+void addClass3(Module* mod, OpCode op, Reg dest, Reg left, Reg right)
 {
     Class3* obj = _alloc_ds(Class3);
     obj->obj.type = OT_CLASS3_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
-    obj->reg = reg;
+    obj->dest = dest;
+    obj->left = left;
+    obj->right = right;
 
     add_node(mod, (Object*)obj);
 }
 
-void addClass4(Module* mod, OpCode op, const char* symb)
+void addClass4(Module* mod, OpCode op, int tnum)
 {
     Class4* obj = _alloc_ds(Class4);
     obj->obj.type = OT_CLASS4_INSTR;
-    obj->obj.next = NULL;
-
-    obj->op = op;
-    obj->sym = _copy_str(symb);
-
-    add_node(mod, (Object*)obj);
-}
-
-void addClass5(Module* mod, OpCode op, Value* val)
-{
-    Class5* obj = _alloc_ds(Class5);
-    obj->obj.type = OT_CLASS5_INSTR;
-    obj->obj.next = NULL;
-
-    obj->op = op;
-    obj->val = val;
-
-    add_node(mod, (Object*)obj);
-}
-
-void addClass6(Module* mod, OpCode op, int tnum)
-{
-    Class6* obj = _alloc_ds(Class6);
-    obj->obj.type = OT_CLASS6_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
@@ -248,10 +226,10 @@ void addClass6(Module* mod, OpCode op, int tnum)
     add_node(mod, (Object*)obj);
 }
 
-void addClass7a(Module* mod, OpCode op, Reg reg, const char* symb)
+void addClass5(Module* mod, OpCode op, Reg reg, const char* symb)
 {
-    Class7a* obj = _alloc_ds(Class7a);
-    obj->obj.type = OT_CLASS7A_INSTR;
+    Class5* obj = _alloc_ds(Class5);
+    obj->obj.type = OT_CLASS5_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
@@ -261,10 +239,10 @@ void addClass7a(Module* mod, OpCode op, Reg reg, const char* symb)
     add_node(mod, (Object*)obj);
 }
 
-void addClass7b(Module* mod, OpCode op, Reg reg, Value* val)
+void addClass6(Module* mod, OpCode op, Reg reg, Value* val)
 {
-    Class7b* obj = _alloc_ds(Class7b);
-    obj->obj.type = OT_CLASS7B_INSTR;
+    Class6* obj = _alloc_ds(Class6);
+    obj->obj.type = OT_CLASS6_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
@@ -274,15 +252,27 @@ void addClass7b(Module* mod, OpCode op, Reg reg, Value* val)
     add_node(mod, (Object*)obj);
 }
 
-void addClass7c(Module* mod, OpCode op, const char* symb, Reg reg)
+void addClass7(Module* mod, OpCode op, const char* symb, Reg reg)
 {
-    Class7c* obj = _alloc_ds(Class7c);
-    obj->obj.type = OT_CLASS7C_INSTR;
+    Class7* obj = _alloc_ds(Class7);
+    obj->obj.type = OT_CLASS7_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
     obj->sym = _copy_str(symb);
     obj->reg = reg;
+
+    add_node(mod, (Object*)obj);
+}
+
+void addClass8(Module* mod, OpCode op, const char* symb)
+{
+    Class8* obj = _alloc_ds(Class8);
+    obj->obj.type = OT_CLASS8_INSTR;
+    obj->obj.next = NULL;
+
+    obj->op = op;
+    obj->sym = _copy_str(symb);
 
     add_node(mod, (Object*)obj);
 }

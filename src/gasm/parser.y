@@ -95,6 +95,10 @@ program
 
 module
     : module_item_list {
+        // This guarnetees that the last instruciton in the stream is valid.
+        addClass0(module, OP_NOP);
+        addClass0(module, OP_NOP);
+
         // Emit the object.
         doPostProcess(module);
     }
@@ -124,6 +128,7 @@ instruction
     | class5_instr
     | class6_instr
     | class7_instr
+    | class8_instr
     ;
 
 register
@@ -151,13 +156,12 @@ class0_instr
     | TOK_NOP { addClass0(module, OP_NOP); }
     ;
 
-    /* binary arithmetic into register */
+    /* one register parm */
 class1_instr
-    : TOK_ADD register ',' register ',' register { addClass1(module, OP_ADD, $2, $4, $6); }
-    | TOK_SUB register ',' register ',' register { addClass1(module, OP_SUB, $2, $4, $6); }
-    | TOK_MUL register ',' register ',' register { addClass1(module, OP_MUL, $2, $4, $6); }
-    | TOK_DIV register ',' register ',' register { addClass1(module, OP_DIV, $2, $4, $6); }
-    | TOK_MOD register ',' register ',' register { addClass1(module, OP_MOD, $2, $4, $6); }
+    : TOK_NOT register { addClass1(module, OP_NOT, $2); }
+    | TOK_POP register { addClass1(module, OP_POP, $2); }
+    | TOK_ABORT register { addClass1(module, OP_ABORT, $2); }
+    | TOK_PUSH register { addClass1(module, OP_PUSH, $2); }
     ;
 
     /* binary compare into zero flag */
@@ -172,24 +176,13 @@ class2_instr
     | TOK_LOAD register ',' register { addClass2(module, OP_LOADR, $2, $4); }
     ;
 
-    /* one register parm */
+    /* binary arithmetic into register */
 class3_instr
-    : TOK_NOT register { addClass3(module, OP_NOT, $2); }
-    | TOK_POP register { addClass3(module, OP_POP, $2); }
-    | TOK_ABORT register { addClass3(module, OP_ABORTR, $2); }
-    | TOK_CALL register { addClass3(module, OP_CALLR, $2); }
-    | TOK_JMP register { addClass3(module, OP_JMPR, $2); }
-    | TOK_BR register { addClass3(module, OP_BRR, $2); }
-    | TOK_PUSH register { addClass3(module, OP_PUSHR, $2); }
-    ;
-
-    /* references an operand from the varStore */
-class4_instr
-    : TOK_ABORT TOK_SYMBOL { addClass4(module, OP_ABORT, $2); }
-    | TOK_PUSH TOK_SYMBOL { addClass4(module, OP_PUSH, $2); }
-    | TOK_CALL TOK_SYMBOL { addClass4(module, OP_CALL, $2); }
-    | TOK_JMP TOK_SYMBOL { addClass4(module, OP_JMP, $2); }
-    | TOK_BR TOK_SYMBOL { addClass4(module, OP_BR, $2); }
+    : TOK_ADD register ',' register ',' register { addClass3(module, OP_ADD, $2, $4, $6); }
+    | TOK_SUB register ',' register ',' register { addClass3(module, OP_SUB, $2, $4, $6); }
+    | TOK_MUL register ',' register ',' register { addClass3(module, OP_MUL, $2, $4, $6); }
+    | TOK_DIV register ',' register ',' register { addClass3(module, OP_DIV, $2, $4, $6); }
+    | TOK_MOD register ',' register ',' register { addClass3(module, OP_MOD, $2, $4, $6); }
     ;
 
     /* If there is no type coersion, then just take the largest one. */
@@ -198,26 +191,29 @@ expr_parameter
     | '(' type_name ')' expression { $$ = castVal($2->type, $4); }
     ;
 
-    /* literal value parameter that must have an address or an address offset */
-class5_instr
-    : TOK_ABORT expr_parameter { addClass5(module, OP_ABORTI, $2); }
-    | TOK_CALL expr_parameter { addClass5(module, OP_CALLI, $2); }
-    | TOK_JMP expr_parameter { addClass5(module, OP_JMPI, $2); }
-    | TOK_BR expr_parameter { addClass5(module, OP_BRI, $2); }
-    | TOK_PUSH expr_parameter { addClass5(module, OP_PUSHI, $2); }
-    ;
-
     /* Numeric literal as parameter */
-class6_instr
-    : TOK_TRAP TOK_UNUM { addClass6(module, OP_TRAP, $2); }
-    | TOK_TRAP TOK_INUM { addClass6(module, OP_TRAP, $2); }
+class4_instr
+    : TOK_TRAP TOK_UNUM { addClass4(module, OP_TRAP, $2); }
+    | TOK_TRAP TOK_INUM { addClass4(module, OP_TRAP, $2); }
     ;
 
     /* moving data in and out of registers */
+class5_instr
+    : TOK_LOAD register ',' TOK_SYMBOL { addClass5(module, OP_LOAD, $2, $4); }
+    ;
+
+class6_instr
+    : TOK_LOAD register ',' expr_parameter { addClass6(module, OP_LOADI, $2, $4); }
+    ;
+
 class7_instr
-    : TOK_LOAD register ',' TOK_SYMBOL { addClass7a(module, OP_LOAD, $2, $4); }
-    | TOK_LOAD register ',' expr_parameter { addClass7b(module, OP_LOADI, $2, $4); }
-    | TOK_STORE TOK_SYMBOL ',' register { addClass7c(module, OP_STORE, $2, $4); }
+    : TOK_STORE TOK_SYMBOL ',' register { addClass7(module, OP_STORE, $2, $4); }
+    ;
+
+class8_instr
+    : TOK_CALL TOK_SYMBOL { addClass8(module, OP_CALL, $2); }
+    | TOK_JMP TOK_SYMBOL { addClass8(module, OP_JMP, $2); }
+    | TOK_BR TOK_SYMBOL { addClass8(module, OP_BR, $2); }
     ;
 
 type_name

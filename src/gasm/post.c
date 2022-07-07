@@ -9,15 +9,14 @@ static int size_table[] = {
     [OT_LABEL] = 0,
     [OT_PP_MARKER] = 0,
     [OT_CLASS0_INSTR] = sizeof(uint8_t),
-    [OT_CLASS1_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS1_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),
     [OT_CLASS2_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),
-    [OT_CLASS3_INSTR] = sizeof(uint8_t)+sizeof(uint8_t),
-    [OT_CLASS4_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
-    [OT_CLASS5_INSTR] = sizeof(uint8_t)+sizeof(Value),
-    [OT_CLASS6_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
-    [OT_CLASS7A_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
-    [OT_CLASS7B_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(Value),
-    [OT_CLASS7C_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
+    [OT_CLASS3_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS4_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS5_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
+    [OT_CLASS6_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(Value),
+    [OT_CLASS7_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
+    [OT_CLASS8_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
     [OT_DATA_DEFINITION] = 0
 };
 
@@ -205,93 +204,97 @@ static void instrs(Module* mod)
     while(obj != NULL) {
 
         switch(obj->type) {
-                case OT_PP_MARKER:
-                case OT_DATA_DEFINITION:
-                case OT_LABEL:
-                    break;
-                case OT_CLASS0_INSTR: {
-                        Class0* ptr = (Class0*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                    }
-                    break;
-                case OT_CLASS1_INSTR: {
-                        Class1* ptr = (Class1*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst16((ptr->right & 0xF) |
-                                    ((ptr->left & 0xF) << 4) |
-                                    ((ptr->dest & 0xF) << 8));
-                    }
-                    break;
-                case OT_CLASS2_INSTR: {
-                        Class2* ptr = (Class2*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst8((ptr->right & 0xF) |
-                                    ((ptr->left) & 0xF << 4));
-                    }
-                    break;
-                case OT_CLASS3_INSTR: {
-                        Class3* ptr = (Class3*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst8(ptr->reg & 0xF);
-                    }
-                    break;
-                case OT_CLASS4_INSTR: {
-                        Class4* ptr = (Class4*)obj;
-                        ptr->iaddr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst32(ptr->addr);
-                    }
-                    break;
-                case OT_CLASS5_INSTR: {
-                        Class5* ptr = (Class5*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInstObj(ptr->val, sizeof(Value));
-                    }
-                    break;
-                case OT_CLASS6_INSTR: {
-                        Class6* ptr = (Class6*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst16(ptr->tnum);
-                    }
-                    break;
-                case OT_CLASS7A_INSTR: {
-                        Class7a* ptr = (Class7a*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst8(ptr->reg & 0x0F);
-                        writeInstObj(&ptr->idx, sizeof(ValIdx));
-                    }
-                    break;
-                case OT_CLASS7B_INSTR: {
-                        Class7b* ptr = (Class7b*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInst8(ptr->reg & 0x0F);
-                        Value* val = createValue(ERROR);
-                        writeInstObj(val, sizeof(Value));
-                    }
-                    break;
-                case OT_CLASS7C_INSTR: {
-                        Class7c* ptr = (Class7c*)obj;
-                        ptr->addr = getAddr();
-                        writeInst8(ptr->op);
-                        writeInstObj(&ptr->idx, sizeof(ValIdx));
-                        writeInst8(ptr->reg & 0x0F);
-                    }
-                    break;
+            case OT_PP_MARKER:
+            case OT_DATA_DEFINITION:
+            case OT_LABEL:
+                break;
+            case OT_CLASS0_INSTR: {
+                    Class0* ptr = (Class0*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                }
+                break;
+            case OT_CLASS1_INSTR: {
+                    Class1* ptr = (Class1*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst8(ptr->reg & 0xF);
+                }
+                break;
+            case OT_CLASS2_INSTR: {
+                    Class2* ptr = (Class2*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst8((ptr->right & 0xF) |
+                                ((ptr->left) & 0xF << 4));
+                }
+                break;
+            case OT_CLASS3_INSTR: {
+                    Class3* ptr = (Class3*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst16((ptr->right & 0xF) |
+                                ((ptr->left & 0xF) << 4) |
+                                ((ptr->dest & 0xF) << 8));
+                }
+                break;
+//                 case OT_CLASS5_INSTR: {
+//                         Class5* ptr = (Class5*)obj;
+//                         ptr->addr = getAddr();
+//                         writeInst8(ptr->op);
+//                         writeInstObj(ptr->val, sizeof(Value));
+//                     }
+//                     break;
+            case OT_CLASS4_INSTR: {
+                    Class4* ptr = (Class4*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst16(ptr->tnum);
+                }
+                break;
+            case OT_CLASS5_INSTR: {
+                    Class5* ptr = (Class5*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst8(ptr->reg & 0x0F);
+                    writeInstObj(&ptr->idx, sizeof(ValIdx));
+                }
+                break;
+            case OT_CLASS6_INSTR: {
+                    Class6* ptr = (Class6*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst8(ptr->reg & 0x0F);
+                    Value* val = createValue(ERROR);
+                    writeInstObj(val, sizeof(Value));
+                }
+                break;
+            case OT_CLASS7_INSTR: {
+                    Class7* ptr = (Class7*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInstObj(&ptr->idx, sizeof(ValIdx));
+                    writeInst8(ptr->reg & 0x0F);
+                }
+                break;
+            case OT_CLASS8_INSTR: {
+                    Class8* ptr = (Class8*)obj;
+                    //ptr->iaddr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst32(ptr->addr);
+                }
+                break;
             default:
-                printf("unknown object type!: %d\n", obj->type);
+                printf("unknown instr object type!: %d\n", obj->type);
                 return;
         }
 
         obj = obj->next;
     }
+
+    // append 2 NOP to the end
+    writeInst8(OP_NOP);
+    writeInst8(OP_NOP);
 }
 
 /*
@@ -310,12 +313,35 @@ static void label_scan(Module* mod)
                 case OT_CLASS1_INSTR:
                 case OT_CLASS2_INSTR:
                 case OT_CLASS3_INSTR:
-                case OT_CLASS5_INSTR:
-                case OT_CLASS6_INSTR:
-                case OT_CLASS7B_INSTR:
+                case OT_CLASS4_INSTR:
+//                 case OT_CLASS5_INSTR:
+//                 case OT_CLASS6_INSTR:
+//                 case OT_CLASS7_INSTR:
                     break;
-                case OT_CLASS4_INSTR: {
-                        Class4* ptr = (Class4*)obj;
+                case OT_CLASS5_INSTR: {
+                        Class5* ptr = (Class5*)obj;
+                        ValTab* tab = findValTab(ptr->sym);
+                        if(tab != NULL) {
+                            ptr->val = tab->val;
+                            ptr->idx = tab->idx;
+                        }
+                        else
+                            syntaxError("value for %s is not defined", ptr->sym);
+                    }
+                    break;
+                case OT_CLASS7_INSTR: {
+                        Class7* ptr = (Class7*)obj;
+                        ValTab* tab = findValTab(ptr->sym);
+                        if(tab != NULL) {
+                            ptr->val = tab->val;
+                            ptr->idx = tab->idx;
+                        }
+                        else
+                            syntaxError("value for %s is not defined", ptr->sym);
+                    }
+                    break;
+                case OT_CLASS8_INSTR: {
+                        Class8* ptr = (Class8*)obj;
                         uint32_t addr = findLabTab(ptr->sym);
                         if(addr != TREE_ERROR)
                             ptr->addr = addr;
@@ -323,30 +349,8 @@ static void label_scan(Module* mod)
                             syntaxError("label %s definition not found", ptr->sym);
                     }
                     break;
-                case OT_CLASS7A_INSTR: {
-                        Class7a* ptr = (Class7a*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->val = tab->val;
-                            ptr->idx = tab->idx;
-                        }
-                        else
-                            syntaxError("value for %s is not defined", ptr->sym);
-                    }
-                    break;
-                case OT_CLASS7C_INSTR: {
-                        Class7c* ptr = (Class7c*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->val = tab->val;
-                            ptr->idx = tab->idx;
-                        }
-                        else
-                            syntaxError("value for %s is not defined", ptr->sym);
-                    }
-                    break;
             default:
-                printf("unknown object type!: %d\n", obj->type);
+                printf("unknown label object type!: %d\n", obj->type);
                 return;
         }
 
@@ -388,11 +392,10 @@ static void addr_scan(Module* mod)
                 case OT_CLASS4_INSTR: addr += size_table[OT_CLASS4_INSTR]; break;
                 case OT_CLASS5_INSTR: addr += size_table[OT_CLASS5_INSTR]; break;
                 case OT_CLASS6_INSTR: addr += size_table[OT_CLASS6_INSTR]; break;
-                case OT_CLASS7A_INSTR: addr += size_table[OT_CLASS7A_INSTR]; break;
-                case OT_CLASS7B_INSTR: addr += size_table[OT_CLASS7B_INSTR]; break;
-                case OT_CLASS7C_INSTR: addr += size_table[OT_CLASS7C_INSTR]; break;
+                case OT_CLASS7_INSTR: addr += size_table[OT_CLASS7_INSTR]; break;
+                case OT_CLASS8_INSTR: addr += size_table[OT_CLASS8_INSTR]; break;
             default:
-                printf("unknown object type!: %d\n", obj->type);
+                printf("unknown addr object type!: %d\n", obj->type);
                 return;
         }
 

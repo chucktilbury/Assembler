@@ -18,6 +18,8 @@ export _PROJECT_LOC=$HOME/Src/$_PROJECT_NAME
 #alias ar=$_CROSS_TARGET-ar
 #alias as=$_CROSS_TARGET-as
 #alias ld=$_CROSS_TARGET-ld
+#alias db="nemiver --last "
+alias dbg="seer -s  "
 
 #export PATH=$_CROSS_PATH:$_CROSS_LOC/$_CROSS_TARGET/bin:$PATH
 

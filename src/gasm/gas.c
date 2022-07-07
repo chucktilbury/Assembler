@@ -2,6 +2,49 @@
 #include "gas.h"
 #include "cmdline.h"
 
+
+static void save_binary(const char* fname)
+{
+    FILE* fp = fopen(fname, "w");
+    if(fp == NULL)
+        fatalError("cannot open output file: %s: %s", fname, strerror(errno));
+
+    saveInstStream(fp);
+    saveValBuf(fp);
+    saveStrTab(fp);
+}
+
+cmd_line cl;
+
+int main(int argc, char** argv)
+{
+    _init_memory();
+    cl = create_cmd_line("This is the assembler");
+    add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
+    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
+    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
+    parse_cmd_line(cl, argc, argv);
+
+    //initVM();
+
+    if(isatty(fileno(stdin))) {
+        const char* name = get_str_param(cl, "ifile");
+        if(strlen(name) > 0)
+            open_file(name);
+        else
+            cmd_use(cl);
+    }
+    // else flex will open the pipe
+
+    yyparse();
+
+    if(!getErrors())
+        save_binary(get_str_param(cl, "ofile"));
+
+    return 0;
+}
+
+
 #if 0
 /*
  * Find all of the format markers in the string with the format {name} and
@@ -92,44 +135,3 @@ const char* preformat_str(const char* str)
     return sptr->list;
 }
 #endif
-
-static void save_binary(const char* fname)
-{
-    FILE* fp = fopen(fname, "w");
-    if(fp == NULL)
-        fatalError("cannot open output file: %s: %s", fname, strerror(errno));
-
-    saveInstStream(fp);
-    saveValBuf(fp);
-    saveStrTab(fp);
-}
-
-cmd_line cl;
-
-int main(int argc, char** argv)
-{
-    _init_memory();
-    cl = create_cmd_line("This is the assembler");
-    add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
-    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
-    parse_cmd_line(cl, argc, argv);
-
-    //initVM();
-
-    if(isatty(fileno(stdin))) {
-        const char* name = get_str_param(cl, "ifile");
-        if(strlen(name) > 0)
-            open_file(name);
-        else
-            cmd_use(cl);
-    }
-    // else flex will open the pipe
-
-    yyparse();
-
-    if(!getErrors())
-        save_binary(get_str_param(cl, "ofile"));
-
-    return 0;
-}

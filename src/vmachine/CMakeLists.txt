@@ -3,9 +3,15 @@ project(vmachine)
 
 add_executable(${PROJECT_NAME}
     vmachine.c
-    arith.c
-    compare.c
+    do_arith.c
+    do_compare.c
+    do_branch.c
+    do_stack.c
+    do_load.c
+    do_abort.c
+    do_trap.c
     runloop.c
+    vm_errors.c
     val_stack.c
 )
 
