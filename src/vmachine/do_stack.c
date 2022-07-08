@@ -7,14 +7,21 @@ bool doPOP()
 {
     uint8_t reg;
     readInstObj(&reg, sizeof(uint8_t));
+    TRACE("%s", regToStr(reg));
+
+    Value* val = popVal();
+    memcpy(&registers[reg], val, sizeof(Value));
 
     return false;
 }
 
 bool doPUSH()
 {
-    uint32_t idx;
-    readInstObj(&idx, sizeof(uint32_t));
+    uint8_t reg;
+    readInstObj(&reg, sizeof(uint8_t));
+    TRACE("%s", regToStr(reg));
+
+    pushVal(&registers[reg]);
 
     return false;
 }

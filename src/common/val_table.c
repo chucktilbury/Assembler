@@ -46,7 +46,7 @@ ValIdx addValBuf(Value* val)
         vbuf.buf = _realloc_ds_array(vbuf.buf, Value*, vbuf.cap);
     }
 
-    // optomizers work pretty well...
+    // optimizers work pretty well...
     vbuf.buf[vbuf.len] = val;
     uint32_t idx = vbuf.len;
     vbuf.len++;
@@ -75,7 +75,7 @@ void dumpValBuf()
 void printVal(Value* val)
 {
     if(val != NULL) {
-        printf("(%s)", valTypeToStr(val->type));
+        //printf("(%s)", valTypeToStr(val->type));
         switch(val->type) {
             case INT:
                 printf("%ld", val->data.num);
@@ -84,7 +84,7 @@ void printVal(Value* val)
                 printf("0x%lX", val->data.unum);
                 break;
             case FLOAT:
-                printf("%0.3f", val->data.fnum);
+                printf("%0.5f", val->data.fnum);
                 break;
             case BOOL:
                 printf("%s", val->data.bval? "true": "false");
@@ -126,3 +126,37 @@ const char* valTypeToStr(ValType type)
             (type == STRING)? "STRING": "UNKNOWN";
 }
 
+void assignVal(ValIdx idx, Value* val)
+{
+    if(idx < vbuf.len)
+        memcpy(&vbuf.buf[idx], val, sizeof(Value));
+}
+
+const char* valToStr(Value* val)
+{
+    char buf[60];
+    sprintf(buf, "(%s)", valTypeToStr(val->type));
+    int len = strlen(buf);
+    switch(val->type) {
+        case INT:
+            snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
+            break;
+        case UINT:
+            snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
+            break;
+        case FLOAT:
+            snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
+            break;
+        case BOOL:
+            snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
+            break;
+        case STRING:
+            snprintf(&buf[len], sizeof(buf)-len, "%s", getStr(val->data.str));
+            break;
+        default:
+            snprintf(&buf[len], sizeof(buf)-len, "unknown");
+            break;
+    }
+
+    return _copy_str(buf);
+}

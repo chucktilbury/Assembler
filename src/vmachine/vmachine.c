@@ -5,6 +5,7 @@
 static bool z_flag;
 Value registers[16];
 int errors = 0;
+int verbosity = 0;
 
 void setZflag(bool val)
 {
@@ -40,6 +41,7 @@ int main(int argc, char** argv)
     add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
     parse_cmd_line(cl, argc, argv);
+    verbosity = get_num_param(cl, "verbose");
 
     read_binary(get_str_param(cl, "ifile"));
 

@@ -226,7 +226,7 @@ static void instrs(Module* mod)
                     ptr->addr = getAddr();
                     writeInst8(ptr->op);
                     writeInst8((ptr->right & 0xF) |
-                                ((ptr->left) & 0xF << 4));
+                                ((ptr->left & 0xF) << 4));
                 }
                 break;
             case OT_CLASS3_INSTR: {

@@ -47,11 +47,19 @@ void runloop()
 
         uint8_t op;
 
+        TRACE("%04d ", getIndex());
         readInstObj(&op, sizeof(op));
+        TRACE("%s\t", opToStr(op));
+
         finished = runloop_table[op]();
 
         if(instrIsEnd())
-            finished = true;;
+            finished = true;
+
+        if(getErrors())
+            finished = true;
+
+        TRACE("\n");
     }
 }
 

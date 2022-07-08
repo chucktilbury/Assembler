@@ -12,6 +12,7 @@ void writeInst16(uint16_t val);
 void writeInst32(uint32_t val);
 uint32_t getAddr();
 uint32_t getIndex();
+bool setIndex(uint32_t idx);
 bool instrIsEnd();
 
 #endif

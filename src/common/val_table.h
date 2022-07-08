@@ -36,5 +36,7 @@ void printVal(Value* val);
 Value* createValue(ValType type);
 Value* castVal(ValType type, Value* val);
 const char* valTypeToStr(ValType type);
+void assignVal(ValIdx idx, Value* val);
+const char* valToStr(Value* val);
 
 #endif

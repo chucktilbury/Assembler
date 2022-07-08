@@ -10,4 +10,7 @@
 bool getZflag();
 void setZflag(bool val);
 
+extern int verbosity;
+#define TRACE(fmt, ...)  do { if(verbosity >= 5) fprintf(stdout, fmt, ## __VA_ARGS__ ); } while(false)
+
 #endif

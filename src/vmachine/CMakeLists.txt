@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
     runloop.c
     vm_errors.c
     val_stack.c
+    runtime.c
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -29,4 +30,4 @@ target_include_directories(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/../../external/include
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-g" "-DTRACE")
+target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-g" )

@@ -97,6 +97,19 @@ uint32_t getIndex()
     return ibuf.idx;
 }
 
+bool setIndex(uint32_t idx)
+{
+    if(idx < ibuf.len) {
+        ibuf.idx = idx;
+        return false;
+    }
+    else {
+        fprintf(stderr, "runtime error: invalid goto address: %d(%d)", idx, ibuf.len);
+        return true;
+    }
+    //return true;
+}
+
 bool instrIsEnd()
 {
     return (ibuf.idx >= ibuf.len);

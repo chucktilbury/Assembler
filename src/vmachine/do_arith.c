@@ -121,6 +121,7 @@ bool doNEG()
 
     uint8_t dest = (regs & 0x00F0) >> 4;
     uint8_t reg = regs & 0x000F;
+    TRACE("%s,%s", regToStr(dest), regToStr(reg));
 
     Value* res = &registers[dest];
     Value* val = &registers[reg];
@@ -151,6 +152,7 @@ bool doADD()
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(&registers[dest], &registers[left], &registers[right], +);
 
@@ -165,6 +167,7 @@ bool doSUB()
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(&registers[dest], &registers[left], &registers[right], -);
 
@@ -179,6 +182,7 @@ bool doMUL()
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(&registers[dest], &registers[left], &registers[right], *);
 
@@ -193,6 +197,7 @@ bool doDIV()
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _div_by_zero(&registers[right]);
     _operation(&registers[dest], &registers[left], &registers[right], /);
@@ -208,6 +213,7 @@ bool doMOD()
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     Value* d = &registers[dest];
     Value* l = &registers[left];

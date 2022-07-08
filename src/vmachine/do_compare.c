@@ -125,6 +125,7 @@ bool doNOT()
 {
     uint8_t reg;
     readInstObj(&reg, sizeof(uint8_t));
+    TRACE("%s", regToStr(reg));
 
     Value* val = &registers[reg & 0x0F];
     switch(val->type) {
@@ -162,6 +163,7 @@ bool doEQ()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], ==);
 
@@ -175,6 +177,7 @@ bool doNEQ()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], !=);
 
@@ -188,6 +191,7 @@ bool doLEQ()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], <=);
 
@@ -201,6 +205,7 @@ bool doGEQ()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], >=);
 
@@ -214,6 +219,7 @@ bool doLESS()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], <);
 
@@ -227,6 +233,7 @@ bool doGTR()
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
+    TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _operation(&registers[left], &registers[right], >);
 
