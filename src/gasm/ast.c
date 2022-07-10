@@ -299,12 +299,14 @@ DataDef* addDataDef(Module* mod, Value* val, const char* name)
     obj->val = val;
     obj->references = 0;
 
+    obj->idx = addValBuf(val);
+    addValTab(name, val, obj->idx);
+
     add_node(mod, (Object*)obj);
     return obj;
 }
 
 void assignDataDecl(DataDef* data, Value* val)
 {
-    data->val = _alloc_ds(Value);
     memcpy(data->val, val, sizeof(Value));
 }

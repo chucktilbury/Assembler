@@ -8,6 +8,7 @@ add_library(${PROJECT_NAME} STATIC
     inst_buf.c
     str_table.c
     val_table.c
+    str_utils.c
 )
 
 target_include_directories(${PROJECT_NAME}

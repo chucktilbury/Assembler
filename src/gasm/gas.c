@@ -3,53 +3,10 @@
 #include "cmdline.h"
 
 
-static void save_binary(const char* fname)
-{
-    FILE* fp = fopen(fname, "w");
-    if(fp == NULL)
-        fatalError("cannot open output file: %s: %s", fname, strerror(errno));
-
-    saveInstStream(fp);
-    saveValBuf(fp);
-    saveStrTab(fp);
-}
-
-cmd_line cl;
-
-int main(int argc, char** argv)
-{
-    _init_memory();
-    cl = create_cmd_line("This is the assembler");
-    add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
-    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
-    parse_cmd_line(cl, argc, argv);
-
-    //initVM();
-
-    if(isatty(fileno(stdin))) {
-        const char* name = get_str_param(cl, "ifile");
-        if(strlen(name) > 0)
-            open_file(name);
-        else
-            cmd_use(cl);
-    }
-    // else flex will open the pipe
-
-    yyparse();
-
-    if(!getErrors())
-        save_binary(get_str_param(cl, "ofile"));
-
-    return 0;
-}
-
-
-#if 0
 /*
  * Find all of the format markers in the string with the format {name} and
  * replace them with the index number of the variable. If the name does not
- * name a varaible, then leave the sequence in the string unchanged.
+ * name a variable, then leave the sequence in the string unchanged.
  */
 const char* preformat_str(const char* str)
 {
@@ -101,11 +58,11 @@ const char* preformat_str(const char* str)
                 break;
 
             case 2: { // try to resolve a found marker symbol
-                    Index idx = symToIdx(tmp->list);
+                    Index idx = findValTabIdx(tmp->buf);
                     if(idx != 0)
                         addStrFmt(sptr, "{%d}", idx);
                     else
-                        addStrFmt(sptr, "{%s}", tmp->list);
+                        addStrFmt(sptr, "{%s}", tmp->buf);
                     sidx--;
                     state = 0;
                 }
@@ -113,13 +70,13 @@ const char* preformat_str(const char* str)
 
             case 3: // abort marker and end
                 addStrChar(sptr, '{');
-                addStrStr(sptr, tmp->list);
+                addStrStr(sptr, tmp->buf);
                 state = 255;
                 break;
 
             case 4: // abort marker and continue
                 addStrChar(sptr, '{');
-                addStrStr(sptr, tmp->list);
+                addStrStr(sptr, tmp->buf);
                 state = 0;
                 break;
 
@@ -132,6 +89,54 @@ const char* preformat_str(const char* str)
         sidx++;
     }
 
-    return sptr->list;
+    return sptr->buf;
 }
-#endif
+
+static void save_binary(const char* fname)
+{
+    FILE* fp = fopen(fname, "w");
+    if(fp == NULL)
+        fatalError("cannot open output file: %s: %s", fname, strerror(errno));
+
+    saveInstStream(fp);
+    saveValBuf(fp);
+    saveStrTab(fp);
+}
+
+cmd_line cl;
+
+int main(int argc, char** argv)
+{
+    _init_memory();
+    cl = create_cmd_line("This is the assembler");
+    add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
+    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
+    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
+    parse_cmd_line(cl, argc, argv);
+
+    //initVM();
+
+    if(isatty(fileno(stdin))) {
+        const char* name = get_str_param(cl, "ifile");
+        if(strlen(name) > 0)
+            open_file(name);
+        else
+            cmd_use(cl);
+    }
+    // else flex will open the pipe
+
+    // post processing data structures
+    initInstStream();
+    initValBuf();
+    initStrTab();
+
+    yyparse();
+
+    if(!getErrors())
+        save_binary(get_str_param(cl, "ofile"));
+
+    return 0;
+}
+
+
+

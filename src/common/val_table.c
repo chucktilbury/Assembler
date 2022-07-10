@@ -55,8 +55,11 @@ ValIdx addValBuf(Value* val)
 
 Value* getValBuf(ValIdx idx)
 {
-    if(idx < vbuf.len)
+    if(idx < vbuf.len) {
+        // for(unsigned i = 0; i < vbuf.len; i++)
+        //     fprintf(stderr, "%d. %p\n", i, vbuf.buf[i]);
         return vbuf.buf[idx];
+    }
     else
         return NULL;
 }
@@ -65,9 +68,7 @@ void dumpValBuf()
 {
     printf("\n------- Dump Value Table -------\n");
     for(uint32_t idx = 0; idx < vbuf.len; idx++) {
-        printf("    idx: %d ", idx);
-        printVal(vbuf.buf[idx]);
-        printf("\n");
+        printf("    idx: %d %s\n", idx, valToStr(vbuf.buf[idx]));
     }
     printf("------- End of dump -------\n");
 }
@@ -106,6 +107,7 @@ Value* createValue(ValType type)
 {
     Value* val = _alloc_ds(Value);
     val->type = type;
+    val->isAssigned = false;
 
     return val;
 }
@@ -129,32 +131,38 @@ const char* valTypeToStr(ValType type)
 void assignVal(ValIdx idx, Value* val)
 {
     if(idx < vbuf.len)
-        memcpy(&vbuf.buf[idx], val, sizeof(Value));
+        memcpy(vbuf.buf[idx], val, sizeof(Value));
 }
 
 const char* valToStr(Value* val)
 {
     char buf[60];
-    sprintf(buf, "(%s)", valTypeToStr(val->type));
-    int len = strlen(buf);
+    //sprintf(buf, "(%s)", valTypeToStr(val->type));
+    //int len = strlen(buf);
     switch(val->type) {
         case INT:
-            snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
+            //snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
+            snprintf(buf, sizeof(buf), "%ld", val->data.num);
             break;
         case UINT:
-            snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
+            //snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
+            snprintf(buf, sizeof(buf), "0x%lX", val->data.unum);
             break;
         case FLOAT:
-            snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
+            //snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
+            snprintf(buf, sizeof(buf), "%0.4f", val->data.fnum);
             break;
         case BOOL:
-            snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
+            //snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
+            snprintf(buf, sizeof(buf), "%s", val->data.bval? "true": "false");
             break;
         case STRING:
-            snprintf(&buf[len], sizeof(buf)-len, "%s", getStr(val->data.str));
+            //snprintf(&buf[len], sizeof(buf)-len, "(%d)%s", val->data.str, getStr(val->data.str));
+            snprintf(buf, sizeof(buf), "(%d)%s", val->data.str, getStr(val->data.str));
             break;
         default:
-            snprintf(&buf[len], sizeof(buf)-len, "unknown");
+            //snprintf(&buf[len], sizeof(buf)-len, "unknown");
+            snprintf(buf, sizeof(buf), "unknown");
             break;
     }
 

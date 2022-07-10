@@ -7,7 +7,7 @@ static int errors = 0;
 void runtimeError(const char* fmt, ...)
 {
     va_list args;
-    fprintf(stderr, "runtime error: %d: ", getIndex());
+    fprintf(stderr, "\nruntime error: %d: ", getIndex());
 
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
@@ -20,7 +20,7 @@ void fatalError(const char* fmt, ...)
 {
     va_list args;
 
-    fprintf(stderr, "internal error: %d: ", getIndex());
+    fprintf(stderr, "\ninternal error: %d: ", getIndex());
 
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);

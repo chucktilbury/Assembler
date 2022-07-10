@@ -11,3 +11,4 @@
  #define SHOW_TIME  3
  #define GET_CLOCK  4
  #define DIF_CLOCK  5
+ #define FMT_STR    6

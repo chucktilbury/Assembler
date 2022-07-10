@@ -1,11 +1,22 @@
 {
     "cSpell.words": [
         "fnum",
+        "ifile",
         "instrs",
+        "lnode",
         "LOADI",
         "LOADR",
+        "ltable",
+        "nstr",
+        "ofile",
         "runloop",
+        "sidx",
+        "sptr",
+        "strg",
+        "symb",
+        "tnum",
         "VMACHINE",
+        "yyparse",
         "Zflag"
     ]
 }

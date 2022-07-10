@@ -18,5 +18,6 @@ typedef uint32_t Index;
 #include "val_table.h"
 #include "opcodes.h"
 #include "registers.h"
+#include "str_utils.h"
 
 #endif

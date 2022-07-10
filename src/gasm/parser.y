@@ -57,14 +57,14 @@ Module* module;
     %type <symbol> data_declaration data_definition
     */
 
-%token <usr> TOK_USRTYPE
+    // %token <usr> TOK_USRTYPE
 %token <qstr> TOK_QSTR
 
 %token <type> TOK_INT TOK_FLOAT TOK_UINT TOK_STRING
-%token <type> TOK_ADDR TOK_BOOL TOK_LINE
+%token <type>  TOK_BOOL
 
-%token <opcode> TOK_ABORT TOK_EXIT TOK_NOP TOK_CALL TOK_RCALL TOK_TRAP
-%token <opcode> TOK_RETURN TOK_JMP TOK_RJMP TOK_BR TOK_RBR
+%token <opcode> TOK_ABORT TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP
+%token <opcode> TOK_RETURN TOK_JMP TOK_BR
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
 %token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LEQ
 %token <opcode> TOK_GEQ TOK_LESS TOK_GTR TOK_NEG TOK_ADD TOK_SUB TOK_MUL
@@ -74,7 +74,7 @@ Module* module;
 
 %type <reg> register
 %type <lab> label
-%type <val> expr_parameter expression type_name
+%type <val> expr_parameter expression type_name str_value
 %type <val> expression_factor type_specifier bool_value
 %type <ddef> data_declaration data_definition
 
@@ -96,8 +96,6 @@ program
 module
     : module_item_list {
         // This guarnetees that the last instruciton in the stream is valid.
-        addClass0(module, OP_NOP);
-        addClass0(module, OP_NOP);
 
         // Emit the object.
         doPostProcess(module);
@@ -112,6 +110,7 @@ module_item_list
 module_item
     : instruction
     | data_definition
+    | data_declaration
     | label
     ;
 
@@ -236,11 +235,14 @@ data_declaration
 data_definition
     : data_declaration '=' expression { assignDataDecl($1, $3); }
     | data_declaration '=' bool_value { assignDataDecl($1, $3); }
-    | data_declaration '=' TOK_QSTR {
-        Value* val = createValue(STRING);
-        $1->str = _copy_str($3);
-        //val->data.str = $1->str;
-        assignDataDecl($1, val);
+    | data_declaration '=' str_value { assignDataDecl($1, $3); }
+    ;
+
+str_value
+    : TOK_QSTR {
+        $$ = createValue(STRING);
+        $$->isAssigned = true;
+        $$->data.str = addStr(preformat_str($1));
     }
     ;
 

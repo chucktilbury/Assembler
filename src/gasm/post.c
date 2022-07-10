@@ -141,7 +141,7 @@ static ValTab* find_vnode(ValTab* tree, const char* key)
         return tree;
 }
 
-static void addValTab(const char* key, Value* val, ValIdx idx)
+void addValTab(const char* key, Value* val, ValIdx idx)
 {
     ValTab* node = _alloc_ds(ValTab);
     node->key = _copy_str(key);
@@ -154,12 +154,22 @@ static void addValTab(const char* key, Value* val, ValIdx idx)
         vtable = node;
 }
 
-static ValTab* findValTab(const char* key)
+ValTab* findValTab(const char* key)
 {
     if(vtable != NULL)
         return find_vnode(vtable, key);
     else
         return NULL;
+}
+
+ValIdx findValTabIdx(const char* key)
+{
+    if(vtable != NULL) {
+        ValTab* v = find_vnode(vtable, key);
+        return v->idx;
+    }
+    else
+        return ((ValIdx)0) - 1;
 }
 
 static void dump_vtable(ValTab* node)
@@ -169,9 +179,9 @@ static void dump_vtable(ValTab* node)
     if(node->right != NULL)
         dump_vtable(node->right);
 
-    printf("    index: %d\t", node->idx);
+    printf("    index: %d\t\"", node->idx);
     printVal(node->val);
-    printf(" key: %s\n", node->key);
+    printf("\"\tkey: %s\n", node->key);
 }
 
 static void dump_ltable(LabTab* node)
@@ -371,17 +381,17 @@ static void addr_scan(Module* mod)
                 case OT_PP_MARKER:
                     break;
                 case OT_DATA_DEFINITION: {
-                        DataDef* ptr = (DataDef*)obj;
-                        ptr->idx = addValBuf(ptr->val);
-                        if(ptr->val->type == STRING)
-                            ptr->val->data.str = addStr(ptr->str);
-                        addValTab(ptr->name, ptr->val, ptr->idx);
+                        //DataDef* ptr = (DataDef*)obj;
+                        //ptr->idx = addValBuf(ptr->val);
+                        // if(ptr->val->type == STRING)
+                        //     ptr->val->data.str = addStr(preformat_str(ptr->str));
+                        //addValTab(ptr->name, ptr->val, ptr->idx);
                     }
                     break;
                 case OT_LABEL: {
                         Label* ptr = (Label*)obj;
                         ptr->addr = addr;
-                        printf("address: %d\n", addr);
+                        //printf("address: %d\n", addr);
                         addLabTab(ptr->name, ptr->addr);
                     }
                     break;
@@ -410,11 +420,6 @@ void doPostProcess(Module* mod)
 {
     if(mod->first == NULL)
         fatalError("module is corrupt or empty");
-
-    // post processing data structures
-    initInstStream();
-    initValBuf();
-    initStrTab();
 
     addr_scan(mod);
     label_scan(mod);

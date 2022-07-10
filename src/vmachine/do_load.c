@@ -10,9 +10,14 @@ bool doLOAD()
     uint32_t idx;
     readInstObj(&reg, sizeof(uint8_t));
     readInstObj(&idx, sizeof(uint32_t));
-    TRACE("%s,%d", regToStr(reg), idx);
+
+    //LOG(6, "load index: %d", idx);
+    TRACE("%s,value: %d", regToStr(reg), idx);
 
     Value* val = getValBuf(idx);
+    if(val == NULL)
+        fatalError("value index %d yields no value", idx);
+
     memcpy(&registers[reg & 0x0F], val, sizeof(Value));
 
     return false;
@@ -54,9 +59,12 @@ bool doSTORE()
     uint8_t reg;
     readInstObj(&idx, sizeof(uint32_t));
     readInstObj(&reg, sizeof(uint8_t));
+
+    //LOG(6, "store index: %d", idx);
     TRACE("%d,%s", idx, regToStr(reg));
 
-    assignVal(idx, getValBuf(idx));
+    Value* val = getValBuf(idx);
+    memcpy(val, &registers[reg], sizeof(Value));
 
     return false;
 }

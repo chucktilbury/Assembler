@@ -11,6 +11,7 @@ extern Value registers[16];
 static void print_trap()
 {
     Value* val = &registers[0];
+    printf("\n");
     printVal(val);
     printf("\n");
 }
@@ -66,11 +67,28 @@ static void dif_clock_trap()
     int64_t end;
 
     start = registers[1].data.num;
-    //printf("start: %ld\n", start);
     end = registers[2].data.num;
-    //printf("end: %ld\n", end);
+    // fprintf(stderr, "\nend: %ld - start: %ld\n", end, start);
+
     registers[0].type = FLOAT;
-    registers[0].data.fnum = (double)(end - start) / (double)CLOCKS_PER_SEC;
+    registers[0].data.fnum = ((double)end - (double)start) / (double)CLOCKS_PER_SEC;
+    // fprintf(stderr, "%0.4f = (%0.4f - %0.4f) / %0.4f\n",
+    //         (double)(end - start) / (double)CLOCKS_PER_SEC,
+    //         (double)end, (double)start, (double)CLOCKS_PER_SEC);
+}
+
+// The string to format is in R1 and the destination is placed in R0.
+static void format_str_trap()
+{
+    if(registers[1].type != STRING) {
+        registers[0].type = STRING;
+        registers[0].data.str = addStr(valToStr(&registers[1]));
+    }
+    else {
+        registers[0].type = STRING;
+        const char* str = getStr(registers[1].data.str);
+        registers[0].data.str = addStr(formatStr(str));
+    }
 }
 
 // trap dispatcher
@@ -83,6 +101,7 @@ bool handleTrap(uint16_t tno)
         case SHOW_TIME:     show_time_trap();   break;
         case GET_CLOCK:     get_clock_trap();   break;
         case DIF_CLOCK:     dif_clock_trap();   break;
+        case FMT_STR:       format_str_trap();  break;
         default:
             runtimeError("unhandled trap number: %04X", tno);
             return true;
