@@ -4,6 +4,7 @@ parser.h
 parser.output
 scanner.c
 gas
+bin/
 
 # Prerequisites
 *.d
