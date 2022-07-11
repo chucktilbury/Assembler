@@ -64,7 +64,7 @@ Module* module;
 %token <type>  TOK_BOOL
 
 %token <opcode> TOK_ABORT TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP
-%token <opcode> TOK_RETURN TOK_JMP TOK_BR
+%token <opcode> TOK_RETURN TOK_JMP TOK_BR TOK_PEEK TOK_SIDX
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
 %token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LEQ
 %token <opcode> TOK_GEQ TOK_LESS TOK_GTR TOK_NEG TOK_ADD TOK_SUB TOK_MUL
@@ -128,6 +128,7 @@ instruction
     | class6_instr
     | class7_instr
     | class8_instr
+    | class9_instr
     ;
 
 register
@@ -161,6 +162,7 @@ class1_instr
     | TOK_POP register { addClass1(module, OP_POP, $2); }
     | TOK_ABORT register { addClass1(module, OP_ABORT, $2); }
     | TOK_PUSH register { addClass1(module, OP_PUSH, $2); }
+    | TOK_SIDX register { addClass1(module, OP_SIDX, $2); }
     ;
 
     /* binary compare into zero flag */
@@ -203,6 +205,12 @@ class5_instr
 
 class6_instr
     : TOK_LOAD register ',' expr_parameter { addClass6(module, OP_LOADI, $2, $4); }
+    | TOK_LOAD register ',' TOK_QSTR {
+        Value* val = createValue(STRING);
+        val->data.str = addStr($4);
+        val->isAssigned = true;
+        addClass6(module, OP_LOADI, $2, val);
+    }
     ;
 
 class7_instr
@@ -213,6 +221,11 @@ class8_instr
     : TOK_CALL TOK_SYMBOL { addClass8(module, OP_CALL, $2); }
     | TOK_JMP TOK_SYMBOL { addClass8(module, OP_JMP, $2); }
     | TOK_BR TOK_SYMBOL { addClass8(module, OP_BR, $2); }
+    ;
+
+class9_instr
+    : TOK_PEEK register ',' register ',' TOK_INUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
+    | TOK_PEEK register ',' register ',' TOK_UNUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
     ;
 
 type_name

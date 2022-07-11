@@ -8,6 +8,7 @@ typedef enum {
     FLOAT,
     BOOL,
     STRING,
+    UDATA, // this is only used by traps
 } ValType;
 
 typedef Index ValIdx;
@@ -23,6 +24,7 @@ typedef struct {
         double fnum;
         bool bval;
         StrIdx str;
+        void* usr;
     } data;
 } Value;
 

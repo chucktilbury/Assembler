@@ -9,14 +9,13 @@ void show_listing(FILE* fp)
         fprintf(fp, "%04d\t%s\t", getIndex(), opToStr(op));
 
         switch(op) {
-            // class 0 instructions
             case OP_EXIT:
             case OP_NOP:
             case OP_RETURN:
                 // no parameters, do nothing
                 break;
 
-            // class 1 instructions
+            case OP_SIDX:
             case OP_ABORT:
             case OP_PUSH:
             case OP_NOT:
@@ -28,7 +27,6 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 2 instructions
             case OP_EQ:
             case OP_NEQ:
             case OP_LEQ:
@@ -45,7 +43,15 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 3 instructions
+            case OP_PEEK: {
+                    uint8_t regs;
+                    uint16_t offset;
+                    readInstObj(&regs, sizeof(regs));
+                    readInstObj(&offset, sizeof(offset));
+                    fprintf(fp, "%s,%s,%d", regToStr((regs>>4)&0xF),
+                            regToStr(regs&0xF), offset);
+                }
+                break;
             case OP_ADD:
             case OP_SUB:
             case OP_MUL:
@@ -59,9 +65,6 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 4 instructions
-
-            // class 6 instruction
             case OP_TRAP: {
                     // one parameter given by a immediate uint16_t
                     uint16_t tno;
@@ -70,7 +73,6 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 7a instruction
             case OP_LOAD: {
                     // register and a value table index
                     uint8_t reg;
@@ -82,19 +84,17 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 7b instruction
             case OP_LOADI: {
                     // register and a immediate value
                     uint8_t reg;
                     Value val;
-                    readInstObj(&reg, sizeof(reg));
-                    readInstObj(&val, sizeof(val));
+                    readInstObj(&reg, sizeof(uint8_t));
+                    readInstObj(&val, sizeof(Value));
                     fprintf(fp, "%s,", regToStr(reg&0xf));
                     printVal(&val);
                 }
                 break;
 
-            // class 7 instruction
             case OP_STORE: {
                     // value table index and a register
                     Index idx;
@@ -107,7 +107,6 @@ void show_listing(FILE* fp)
                 }
                 break;
 
-            // class 8 instructions accept a label
             case OP_CALL:
             case OP_JMP:
             case OP_BR: {
@@ -117,7 +116,6 @@ void show_listing(FILE* fp)
                     fprintf(fp, "%d", idx);
                 }
                 break;
-
         }
         fprintf(fp, "\n");
     }

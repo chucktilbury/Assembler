@@ -16,6 +16,8 @@ typedef enum {
     // data manipulation instructions
     OP_PUSH,    // push the value on the value stack from a variable
     OP_POP,     // pop the value from the stack and put it in a register
+    OP_PEEK,    // Stack access for function parameters.
+    OP_SIDX,    // Store the stack index into a register
 
     OP_LOAD,    // Load a register from a variable.
     OP_LOADI,   // load a register from an immediate.

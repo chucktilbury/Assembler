@@ -27,6 +27,7 @@ const char* objTypeToStr(ObjectType type)
         (type == OT_CLASS6_INSTR)? "CLASS6_INSTR":
         (type == OT_CLASS7_INSTR)? "CLASS7_INSTR":
         (type == OT_CLASS8_INSTR)? "CLASS8_INSTR":
+        (type == OT_CLASS9_INSTR)? "CLASS9_INSTR":
         (type == OT_DATA_DEFINITION)? "DATA_DEFINITION": "UNKNOWN";
 }
 
@@ -114,6 +115,12 @@ void printModule(Module* mod)
                     }
                     break;
 
+                case OT_CLASS9_INSTR: {
+                        Class9* ptr = (Class9*)obj;
+                        printf("addr: %d op: %s dest:%s base: %s, ofst: %d", ptr->addr,
+                               opToStr(ptr->op), regToStr(ptr->dest), regToStr(ptr->base), ptr->val);
+                    }
+                    break;
                     //                 case OT_CLASS5_INSTR: {
 //                         Class5* ptr = (Class5*)obj;
 //                         printf("addr: %d op: %s ", ptr->addr, opToStr(ptr->op));
@@ -273,6 +280,20 @@ void addClass8(Module* mod, OpCode op, const char* symb)
 
     obj->op = op;
     obj->sym = _copy_str(symb);
+
+    add_node(mod, (Object*)obj);
+}
+
+void addClass9(Module* mod, OpCode op, Reg dest, Reg base, uint16_t val)
+{
+    Class9* obj = _alloc_ds(Class9);
+    obj->obj.type = OT_CLASS9_INSTR;
+    obj->obj.next = NULL;
+
+    obj->op = op;
+    obj->dest = dest;
+    obj->base = base;
+    obj->val = val;
 
     add_node(mod, (Object*)obj);
 }

@@ -248,13 +248,6 @@ static void instrs(Module* mod)
                                 ((ptr->dest & 0xF) << 8));
                 }
                 break;
-//                 case OT_CLASS5_INSTR: {
-//                         Class5* ptr = (Class5*)obj;
-//                         ptr->addr = getAddr();
-//                         writeInst8(ptr->op);
-//                         writeInstObj(ptr->val, sizeof(Value));
-//                     }
-//                     break;
             case OT_CLASS4_INSTR: {
                     Class4* ptr = (Class4*)obj;
                     ptr->addr = getAddr();
@@ -275,8 +268,8 @@ static void instrs(Module* mod)
                     ptr->addr = getAddr();
                     writeInst8(ptr->op);
                     writeInst8(ptr->reg & 0x0F);
-                    Value* val = createValue(ERROR);
-                    writeInstObj(val, sizeof(Value));
+                    //Value* val = createValue(ERROR);
+                    writeInstObj(ptr->val, sizeof(Value));
                 }
                 break;
             case OT_CLASS7_INSTR: {
@@ -292,6 +285,15 @@ static void instrs(Module* mod)
                     //ptr->iaddr = getAddr();
                     writeInst8(ptr->op);
                     writeInst32(ptr->addr);
+                }
+                break;
+            case OT_CLASS9_INSTR: {
+                    Class9* ptr = (Class9*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInst8((ptr->base & 0xF) |
+                                ((ptr->dest & 0xF) << 4));
+                    writeInst16(ptr->val);
                 }
                 break;
             default:
@@ -324,9 +326,8 @@ static void label_scan(Module* mod)
                 case OT_CLASS2_INSTR:
                 case OT_CLASS3_INSTR:
                 case OT_CLASS4_INSTR:
-//                 case OT_CLASS5_INSTR:
-//                 case OT_CLASS6_INSTR:
-//                 case OT_CLASS7_INSTR:
+                case OT_CLASS6_INSTR:
+                case OT_CLASS9_INSTR:
                     break;
                 case OT_CLASS5_INSTR: {
                         Class5* ptr = (Class5*)obj;
@@ -379,14 +380,7 @@ static void addr_scan(Module* mod)
 
         switch(obj->type) {
                 case OT_PP_MARKER:
-                    break;
-                case OT_DATA_DEFINITION: {
-                        //DataDef* ptr = (DataDef*)obj;
-                        //ptr->idx = addValBuf(ptr->val);
-                        // if(ptr->val->type == STRING)
-                        //     ptr->val->data.str = addStr(preformat_str(ptr->str));
-                        //addValTab(ptr->name, ptr->val, ptr->idx);
-                    }
+                case OT_DATA_DEFINITION:
                     break;
                 case OT_LABEL: {
                         Label* ptr = (Label*)obj;

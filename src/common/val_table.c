@@ -125,6 +125,7 @@ const char* valTypeToStr(ValType type)
             (type == UINT)? "UINT":
             (type == FLOAT)? "FLOAT":
             (type == BOOL)? "BOOL":
+            (type == UDATA)? "UDATA":
             (type == STRING)? "STRING": "UNKNOWN";
 }
 

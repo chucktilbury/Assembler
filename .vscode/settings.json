@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
+        "cmdpath",
+        "defstr",
         "fnum",
+        "gasm",
         "ifile",
+        "incastr",
+        "incb",
+        "incbstr",
+        "infn",
         "instrs",
         "lnode",
         "LOADI",
@@ -9,13 +16,18 @@
         "ltable",
         "nstr",
         "ofile",
+        "opat",
+        "outfn",
         "runloop",
         "sidx",
         "sptr",
         "strg",
         "symb",
         "tnum",
+        "vbuf",
+        "verbo",
         "VMACHINE",
+        "vstack",
         "yyparse",
         "Zflag"
     ]

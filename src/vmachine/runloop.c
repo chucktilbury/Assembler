@@ -37,6 +37,8 @@ static runloopHandler runloop_table[] = {
     [OP_MUL] = doMUL,       // arithmetic multiply
     [OP_DIV] = doDIV,       // arithmetic divide
     [OP_MOD] = doMOD,       // arithmetic modulo
+    [OP_PEEK] = doPEEK,     // peek at the stack
+    [OP_SIDX] = doSIDX,     // save the current top of stack
 };
 
 void runloop()

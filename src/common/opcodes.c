@@ -13,6 +13,8 @@ const char* opToStr(OpCode op)
             (op == OP_BR)? "BR":
             (op == OP_PUSH)? "PUSH":
             (op == OP_POP)? "POP":
+            (op == OP_PEEK)? "PEEK":
+            (op == OP_SIDX)? "SIDX":
             (op == OP_LOAD)? "LOAD":
             (op == OP_LOADI)? "LOADI":
             (op == OP_LOADR)? "LOADR":

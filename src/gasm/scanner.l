@@ -86,6 +86,8 @@ static void __append_str(const char* str)
 "BR"            { yylval.opcode = OP_BR; return TOK_BR; }
 "PUSH"          { yylval.opcode = OP_PUSH; return TOK_PUSH; }
 "POP"           { yylval.opcode = OP_POP; return TOK_POP; }
+"PEEK"          { yylval.opcode = OP_PEEK; return TOK_PEEK; }
+"SIDX"          { yylval.opcode = OP_SIDX; return TOK_SIDX; }
 "LOAD"          { yylval.opcode = OP_LOAD; return TOK_LOAD; }
 "STORE"         { yylval.opcode = OP_STORE; return TOK_STORE; }
 "NOT"           { yylval.opcode = OP_NOT; return TOK_NOT; }

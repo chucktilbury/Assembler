@@ -13,6 +13,7 @@ typedef enum {
     OT_CLASS6_INSTR,
     OT_CLASS7_INSTR,
     OT_CLASS8_INSTR,
+    OT_CLASS9_INSTR,
     OT_DATA_DEFINITION,
 } ObjectType;
 
@@ -117,6 +118,15 @@ typedef struct {
 
 typedef struct {
     Object obj;
+    OpCode op;
+    Reg dest;
+    Reg base;
+    uint16_t val;
+    uint32_t addr;
+} Class9;
+
+typedef struct {
+    Object obj;
     int line;
     const char* file;
 } PPMarker;
@@ -134,6 +144,7 @@ void addClass5(Module* mod, OpCode op, Reg reg, const char* symb);
 void addClass6(Module* mod, OpCode op, Reg reg, Value* val);
 void addClass7(Module* mod, OpCode op, const char* symb, Reg reg);
 void addClass8(Module* mod, OpCode op, const char* symb);
+void addClass9(Module* mod, OpCode op, Reg dest, Reg base, uint16_t val);
 void addPPMarker(Module* mod, int line, const char* fname);
 DataDef* addDataDef(Module* mod, Value* val, const char* name);
 void assignDataDecl(DataDef* data, Value* val);

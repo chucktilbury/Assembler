@@ -5,6 +5,9 @@ parser.output
 scanner.c
 gas
 bin/
+.vscode/
+*.i
+*.bin
 
 # Prerequisites
 *.d

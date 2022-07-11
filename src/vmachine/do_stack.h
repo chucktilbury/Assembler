@@ -3,5 +3,7 @@
 
 bool doPOP();
 bool doPUSH();
+bool doPEEK();
+bool doSIDX();
 
 #endif

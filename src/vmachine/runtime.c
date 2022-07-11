@@ -20,7 +20,7 @@ static void print_trap()
 static void dbg_print_trap()
 {
     Value* val = &registers[0];
-    printf("(%s)", valTypeToStr(val->type));
+    printf("\n(%s)", valTypeToStr(val->type));
     printVal(val);
     printf("\n");
 }

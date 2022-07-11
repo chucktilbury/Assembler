@@ -12,7 +12,7 @@ bool doCALL()
     Value* val = createValue(UINT);
     val->data.unum = getIndex();
 
-    pushVal(val);
+    pushVal(*val);
 
     return setIndex(idx);
 }
@@ -37,12 +37,12 @@ bool doBR()
 
 bool doRETURN()
 {
-    Value* val = popVal();
-    if(val->type != UINT && val->type != INT) {
-        runtimeError("invalid type for return instruction: %d", val->type);
+    Value val = popVal();
+    if(val.type != UINT && val.type != INT) {
+        runtimeError("invalid type for return instruction: %d", val.type);
         return true;
     }
     else
-        return setIndex(val->data.unum);
+        return setIndex(val.data.unum);
 }
 
