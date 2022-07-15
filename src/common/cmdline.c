@@ -24,11 +24,11 @@
 
 // Define this to 1 or 0 to turn the excess file functionality off or on
 #ifndef USE_EXCESS
-#define USE_EXCESS 0
+#define USE_EXCESS 1
 #endif
 // Define this to 1 or 0 to require excess file names
 #ifndef EXCESS_REQUIRED
-#define EXCESS_REQUIRED 0
+#define EXCESS_REQUIRED 1
 #endif
 
 typedef struct _cpt_ {
@@ -283,12 +283,19 @@ void parse_cmd_line(cmd_line cptr, int argc, char** argv) {
     command_line_t* cmd = (command_line_t*)cptr;
 
     cmd->prog = _copy_str(argv[0]);
+    char* arg_ptr;
 
     for(int args_idx = 1; args_idx < argc; args_idx++) {
         size_t parm_idx;
         for(parm_idx = 0; parm_idx < cmd->len; parm_idx++) {
-            if(0 == strcmp(cmd->clist[parm_idx]->parm, argv[args_idx]))
+            size_t len = strlen(cmd->clist[parm_idx]->parm);
+            if(0 == strncmp(cmd->clist[parm_idx]->parm, argv[args_idx], len)) {
+                if(strlen(argv[args_idx]) > len)
+                    arg_ptr = &argv[args_idx][len];
+                else
+                    arg_ptr = NULL;
                 break; // found it.
+            }
         }
 
         if(parm_idx >= cmd->len) {
@@ -324,71 +331,80 @@ void parse_cmd_line(cmd_line cptr, int argc, char** argv) {
         }
 
         switch(cmd->clist[parm_idx]->type) {
-            case CT_BOOL: { // has a bool parameter, can be 0, 1, true or false
-                    if(args_idx+1 >= argc) {
+            // Has a required bool parameter, can be 0, 1, true or false. If there is no
+            // space between the param and the arg, then they must be separated by a ':'
+            // or a '='. Any case is accepted for "true" or "false".
+            case CT_BOOL: {
+                    if(args_idx+1 > argc) {
                         fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
                         cmd_use(cmd);
                     }
 
-                    int ch = argv[args_idx+1][0];
-                    switch(ch) {
-                        case '0':
-                        case 'f':
-                        case 'F':
-                            if(0 != strcmp("0", argv[args_idx+1]) &&
-                                    0 != strcmp("false", argv[args_idx+1]) &&
-                                    0 != strcmp("False", argv[args_idx+1]) &&
-                                    0 != strcmp("FALSE", argv[args_idx+1])) {
-                                fprintf(stderr, "cmd_err: invalid boolean: \"%s\": must be '0', '1', 'true', or 'false'\n", argv[args_idx+1]);
-                                cmd_use(cmd);
-                            }
-                            else {
-                                cmd->clist[parm_idx]->value.bval = false;
-                                cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                                args_idx++;
-                            }
-                            break;
-                        case '1':
-                        case 't':
-                        case 'T':
-                            if(0 != strcmp("1", argv[args_idx+1]) &&
-                                    0 != strcmp("true", argv[args_idx+1]) &&
-                                    0 != strcmp("True", argv[args_idx+1]) &&
-                                    0 != strcmp("TRUE", argv[args_idx+1])) {
-                                fprintf(stderr, "cmd_err: invalid boolean: \"%s\": must be '0', '1', 'true', or 'false'\n", argv[args_idx+1]);
-                                cmd_use(cmd);
-                            }
-                            else {
-                                cmd->clist[parm_idx]->value.bval = true;
-                                cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                                args_idx++;
-                            }
-                            break;
-                        default:
-                            fprintf(stderr, "cmd_err: invalid boolean: \"%s\": must be '0', '1', 'true', or 'false'\n", argv[args_idx+1]);
-                            cmd_use(cmd);
+                    if(arg_ptr != NULL) {
+                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
+                            arg_ptr++;
+                        else {
+                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
+                            cmd_use(cmd); // does not return
+                        }
                     }
+                    else
+                        arg_ptr = argv[args_idx+1];
+
+                    char buffer[10]; // argv may not be writable
+                    for(int i = 0; arg_ptr[i] != 0; i++)
+                        buffer[i] = tolower(arg_ptr[i]);
+
+                    if(strcmp(buffer, "true") == 0)
+                        cmd->clist[parm_idx]->value.bval = true;
+                    else if(strcmp(buffer, "false") == 0)
+                        cmd->clist[parm_idx]->value.bval = false;
+                    else if(strcmp(buffer, "on") == 0)
+                        cmd->clist[parm_idx]->value.bval = true;
+                    else if(strcmp(buffer, "off") == 0)
+                        cmd->clist[parm_idx]->value.bval = false;
+                    else if(strcmp(buffer, "1") == 0)
+                        cmd->clist[parm_idx]->value.bval = true;
+                    else if(strcmp(buffer, "0") == 0)
+                        cmd->clist[parm_idx]->value.bval = false;
+                    else {
+                        fprintf(stderr, "cmd_err: invalid boolean: \"%s\": must be '0', '1', 'on', 'off', 'true', or 'false'\n", buffer);
+                        cmd_use(cmd);
+                    }
+
+                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
+                    args_idx++;
                 }
                 break;
 
             case CT_NUM:  { // has a signed integer parameter
-                    if(args_idx+1 >= argc) {
+                    if(args_idx+1 > argc) {
                         fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
                         cmd_use(cmd);
                     }
 
+                    if(arg_ptr != NULL) {
+                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
+                            arg_ptr++;
+                        else {
+                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
+                            cmd_use(cmd); // does not return
+                        }
+                    }
+                    else
+                        arg_ptr = argv[args_idx+1];
+
                     int result = 0;
                     bool neg = false;
-                    const char* str = argv[args_idx+1];
-                    if(str[0] == '-')
+                    if(arg_ptr[0] == '-')
                         neg = true;
-                    for(int i = 0; str[i] != '\0'; i++) {
-                        if(isdigit(str[i])) {
+                    for(int i = 0; arg_ptr[i] != '\0'; i++) {
+                        if(isdigit(arg_ptr[i])) {
                             result *= 10;
-                            result += str[i] - '0';
+                            result += arg_ptr[i] - '0';
                         }
                         else {
-                            fprintf(stderr, "cmd_err: invalid number: \"%s\"\n", argv[args_idx+1]);
+                            fprintf(stderr, "cmd_err: invalid number: \"%s\"\n", arg_ptr);
                             cmd_use(cmd);
                         }
                     }
@@ -402,26 +418,52 @@ void parse_cmd_line(cmd_line cptr, int argc, char** argv) {
                 break;
 
             case CT_STR:  { // has a string parameter
-                    if(args_idx+1 >= argc) {
+                    if(args_idx+1 > argc) {
                         fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
                         cmd_use(cmd);
                     }
 
-                    cmd->clist[parm_idx]->value.sval = _copy_str(argv[args_idx+1]);
+                    if(arg_ptr != NULL) {
+                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
+                            arg_ptr++;
+                        else {
+                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
+                            cmd_use(cmd); // does not return
+                        }
+                    }
+                    else
+                        arg_ptr = argv[args_idx+1];
+
+                    cmd->clist[parm_idx]->value.sval = _copy_str(arg_ptr);
                     cmd->clist[parm_idx]->flags |= CF_PRESENT;
                     args_idx++;
                 }
                 break;
 
             case CT_TOGGLE: { // has no parameter, AKA a switch
+                    if(arg_ptr != NULL) {
+                        fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
+                        cmd_use(cmd); // does not return
+                    }
                     cmd->clist[parm_idx]->flags |= CF_PRESENT;
                     cmd->clist[parm_idx]->value.bval = cmd->clist[parm_idx]->value.bval? false: true;
                 }
                 break;
 
             case CT_CALLBACK: { // just call the callback, no value to update.
+                    if(arg_ptr != NULL) {
+                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
+                            arg_ptr++;
+                        else {
+                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
+                            cmd_use(cmd); // does not return
+                        }
+                    }
+                    else
+                        arg_ptr = argv[args_idx+1];
+
                     cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    cmd->clist[parm_idx]->value.ptr(argv[args_idx+1]);
+                    cmd->clist[parm_idx]->value.ptr(arg_ptr);
                     args_idx++;
                 }
                 break;

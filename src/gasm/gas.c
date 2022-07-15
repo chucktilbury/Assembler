@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 {
     _init_memory();
     cl = create_cmd_line("This is the assembler");
-    add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
+    //add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
     parse_cmd_line(cl, argc, argv);
@@ -117,7 +117,8 @@ int main(int argc, char** argv)
     //initVM();
 
     if(isatty(fileno(stdin))) {
-        const char* name = get_str_param(cl, "ifile");
+        reset_cmd_excess(cl);
+        const char* name = iterate_cmd_excess(cl); //get_str_param(cl, "ifile");
         if(strlen(name) > 0)
             open_file(name);
         else

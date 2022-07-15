@@ -197,69 +197,100 @@ int main(int argc, char** argv)
 
     get_runtime();
 
-    cmd_line cl = create_cmd_line("This is the assembler");
-    add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
+    cmd_line cl = create_cmd_line("This is the assembler driver program.\n"\
+                                "It coordinates the operation of the preprocessor,\n"\
+                                "the assembler, and the virtual machine.");
+
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    // add_str_param(cl, "opat", "-op", "output file path", "./", CF_NONE);
-    add_toggle_param(cl, "keep", "-k", "keep intermediate file", false, CF_NONE);
-    add_toggle_param(cl, "dry", "-n", "parse command line but do nothing", false, CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
+    add_str_param(cl, "opat", "-p", "output file path", NULL, CF_NONE);
+    add_str_param(cl, "ipat", "-i", "input file path", NULL, CF_NONE);
+    add_toggle_param(cl, "run", "-r", "run the result in the VM", false, CF_NONE);
+    add_toggle_param(cl, "dbg", "-d", "debug the result in the debugger", false, CF_NONE);
+    add_toggle_param(cl, "keep", "-k", "keep intermediate file(s)", false, CF_NONE);
+    //add_toggle_param(cl, "dry", "-n", "parse command line but do nothing", false, CF_NONE);
+    add_num_param(cl, "verbose", "-v", "verbosity level", 0, CF_NONE);
     add_callback_param(cl, "def", "-D", "preprocessor definition", add_pp_def, CF_NONE);
-    add_callback_param(cl, "inc", "-I", "preprocessor include path", add_pp_incb, CF_NONE);
-    add_callback_param(cl, "inc", "-J", "preprocessor include path", add_pp_inca, CF_NONE);
+    add_callback_param(cl, "incb", "-I", "preprocessor include path", add_pp_incb, CF_NONE);
+    add_callback_param(cl, "inca", "-J", "preprocessor include path", add_pp_inca, CF_NONE);
 
     parse_cmd_line(cl, argc, argv);
     int verbo = get_num_param(cl, "verbose");
 
-    if(verbo > 9)
+    if(verbo > 15)
         dump_cmd_line(cl);
 
-    const char* cmd = actual_dir(get_cmd(cl));
-    const char* cmdpath = extract_path(cmd);
-    const char* infn = actual_dir(get_str_param(cl, "ifile"));
-    const char* path = extract_path(infn);
-    const char* name = extract_name(infn);
-    const char* ifn = append_str(path, "/%s.i", name);
-    const char* outfn = append_str(path, "/%s", get_str_param(cl, "ofile"));
+    // const char* cmd = actual_dir(get_cmd(cl));
+    // const char* cmdpath = extract_path(cmd);
+    // reset_cmd_excess(cl);
+    // const char* infn = actual_dir(iterate_cmd_excess(cl)); //get_str_param(cl, "ifile"));
+    // const char* path = extract_path(infn);
+    // const char* name = extract_name(infn);
+    // const char* ifn = append_str(path, "/%s.i", name);
+    // const char* outfn = append_str(path, "/%s", get_str_param(cl, "ofile"));
 
-    if(verbo > 9) {
-        printf("command: %s\n", cmd);
-        printf("cmd path: %s\n", cmdpath);
-        printf("cmd name: %s\n", extract_name(cmd));
+    // if(verbo > 9000) {
+    //     printf("command: %s\n", cmd);
+    //     printf("cmd path: %s\n", cmdpath);
+    //     printf("cmd name: %s\n", extract_name(cmd));
 
-        printf("infile: %s\n", infn);
-        printf("infile path: %s\n", path);
-        printf("infile name: %s\n", name);
+    //     printf("infile: %s\n", infn);
+    //     printf("infile path: %s\n", path);
+    //     printf("infile name: %s\n", name);
 
-        printf("temp name: %s\n", ifn);
+    //     printf("temp name: %s\n", ifn);
 
-        // if the full path is provided, then don't append
-        printf("outfile name: %s\n\n", outfn);
-    }
+    //     // if the full path is provided, then don't append
+    //     printf("outfile name: %s\n\n", outfn);
+    // }
 
+    //for() {}
     const char* cmd1 = NULL;
     const char* cmd2 = NULL;
-    cmd1 = append_str(NULL, "%s/cpp %s %s %s -o %s %s", cmdpath, defstr, incbstr, incastr, ifn, infn);
-    cmd2 = append_str(NULL, "%s/gasm -v %d -i %s -o %s", cmdpath, verbo, ifn, outfn);
-    if(verbo > 9) {
-        printf("%s\n", cmd1);
-        printf("%s\n\n", cmd2);
+    //cmd1 = append_str(NULL, "%s/cpp %s %s %s -o %s %s", cmdpath, defstr, incbstr, incastr, ifn, infn);
+    //cmd2 = append_str(NULL, "%s/gasm -v %d -i %s -o %s", cmdpath, verbo, ifn, outfn);
+    //cmd2 = append_str(NULL, "%s/gasm -v %d -o %s %s", cmdpath, verbo, outfn, ifn);
+    // if(verbo > 9) {
+    //     printf("%s\n", cmd1);
+    //     printf("%s\n\n", cmd2);
+    // }
+
+    const char* cmdpath = extract_path(actual_dir(get_cmd(cl)));
+
+    reset_cmd_excess(cl);
+    for(const char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
+
+        const char* path = extract_path(str);
+        const char* tmp_fn = append_str(path, "/%s.i", extract_name(str));
+        cmd1 = append_str(NULL, "%s/cpp %s %s %s -o %s %s",
+                            cmdpath, defstr, incbstr, incastr, tmp_fn, str);
+
+        //if(verbo > 10)
+            printf("\n%s", cmd1);
+
+        // if(system(cmd1)) {
+        //     fprintf(stderr, "error: preprocessing run failed\n");
+        //     return 1;
+        // }
     }
 
-    if(!get_toggle_param(cl, "dry")) {
-        if(system(cmd1)) {
-            fprintf(stderr, "error: preprocessing failed\n");
-            return 1;
-        }
+    reset_cmd_excess(cl);
+    for(const char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
 
-        if(system(cmd2)) {
-            fprintf(stderr, "error: assembler failed\n");
-            return 1;
-        }
+        const char* path = extract_path(str);
+        const char* out_fn = append_str(path, "/%s", get_str_param(cl, "ofile"));
+        cmd2 = append_str(NULL, "%s/gasm -v %d -o %s %s", cmdpath, verbo, out_fn, tmp_fn);
+
+        //if(verbo > 10)
+            printf("\n%s", cmd2);
+
+        // if(system(cmd2)) {
+        //     fprintf(stderr, "error: assembler run failed\n");
+        //     return 1;
+        // }
+
+        // if(!get_toggle_param(cl, "keep"))
+        //     remove(out_fn);
     }
-
-    if(!get_toggle_param(cl, "keep"))
-        remove(ifn);
 
     _uninit_memory();
     return 0;

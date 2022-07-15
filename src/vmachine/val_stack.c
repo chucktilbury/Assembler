@@ -40,7 +40,7 @@ void pushVal(Value val)
 Value popVal()
 {
     // unsigned wraps around
-    if(vstack.top-1 > vstack.cap && vstack.top > 0) {
+    if(vstack.top-1 > vstack.cap) {
         fprintf(stderr, "value stack under run\n");
         exit(1);
     }
