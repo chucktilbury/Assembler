@@ -1,4 +1,5 @@
-build/
+
+build
 parser.c
 parser.h
 parser.output
