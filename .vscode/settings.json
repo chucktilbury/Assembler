@@ -10,6 +10,7 @@
         "incastr",
         "incb",
         "incbstr",
+        "incstr",
         "infn",
         "instrs",
         "ipat",
@@ -35,5 +36,8 @@
         "vstack",
         "yyparse",
         "Zflag"
-    ]
+    ],
+    "files.associations": {
+        "runtime.h": "c"
+    }
 }

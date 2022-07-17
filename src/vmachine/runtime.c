@@ -3,7 +3,8 @@
 #include "runtime.h"
 #include <time.h>
 
-#include "../system.inc"
+// defined in the ../src/runtime directory
+#include "system.inc"
 
 extern Value registers[16];
 

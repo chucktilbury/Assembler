@@ -181,3 +181,48 @@ void stripStr(String* str)
     str->buf[idx] = '\0';
     str->len = strlen(str->buf);
 }
+
+StrList* createStrList()
+{
+    StrList* lst = _alloc_ds(StrList);
+
+    lst->cap = 0x01 << 3;
+    lst->len = 0;
+    lst->list = _alloc_ds_array(String*, lst->cap);
+
+    return lst;
+}
+
+void addStrList(StrList* lst, String* str)
+{
+    if(lst->len+1 < lst->cap) {
+        lst->cap <<= 1;
+        lst->list = _realloc_ds_array(lst->list, String*, lst->cap);
+    }
+
+    lst->list[lst->len] = str;
+    lst->list++;
+}
+
+String* getStrList(StrList* lst, uint32_t idx)
+{
+    if(idx < lst->len)
+        return lst->list[idx];
+    else
+        return NULL;
+}
+
+String* resetStrList(StrList* lst)
+{
+    lst->index = 0;
+    return lst->list[lst->index++];
+}
+
+String* iterateStrList(StrList* lst)
+{
+    if(lst->index < lst->len)
+        return lst->list[lst->index++];
+    else
+        return NULL;
+}
+
