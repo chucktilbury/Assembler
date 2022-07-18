@@ -33,14 +33,17 @@ typedef struct _str_path {
 void dump_cmd_line(cmd_line cptr);
 static Path* input_path = NULL;
 static Path* input_path_end = NULL;
-static Path* output_path = NULL;
-static Path* output_path_end = NULL;
+
+static Path* input_list = NULL;
+static Path* input_list_end = NULL;
+
 static Path* exec_path = NULL;
 static Path* exec_path_end = NULL;
 
 static const char* pproc_line = NULL;
 static const char* exec_path_str = NULL;
-static const char* data_path_str = NULL;
+static const char* input_path_str = NULL;
+static const char* output_path_str = NULL;
 static const char* data_name = NULL;
 
 // Append the string or create it.
@@ -118,14 +121,14 @@ static const char* extract_name(const char* str)
 }
 
 // Return the full path to this program, including the command name.
-static const char* actual_dir(const char* str)
+static const char* actual_exec_dir(const char* str)
 {
     char* real = realpath(str, NULL);
     if(real != NULL)
         return real;
     else {
         for(Path* pth = exec_path; pth != NULL; pth = pth->next) {
-            char buf[1024];
+            char buf[PATH_MAX];
             strncpy(buf, pth->str, sizeof(buf));
             strcat(buf, "/");
             strcat(buf, str); // TODO: buffer discipline
@@ -135,6 +138,27 @@ static const char* actual_dir(const char* str)
     }
 
     return str;
+}
+
+// verify that a file exists and return the full path to it.
+static const char* find_file(const char* str)
+{
+    char* real = realpath(str, NULL);
+    if(real != NULL)
+        return real;
+    else {
+        for(Path* pth = input_path; pth != NULL; pth = pth->next) {
+            char buf[PATH_MAX];
+            strncpy(buf, pth->str, sizeof(buf));
+            strcat(buf, "/");
+            strcat(buf, str); // TODO: buffer discipline
+            if(!access(buf, F_OK))
+                return _copy_str(buf);
+        }
+    }
+
+    // the file could not be located.
+    return NULL;
 }
 
 static void add_pp_def(const char* s)
@@ -209,6 +233,26 @@ static void create_exec_path()
     }
 }
 
+static void create_input_list(cmd_line cl)
+{
+    reset_cmd_excess(cl);
+    for(char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
+        pproc_line = append_str(pproc_line, " %s", find_file(str));
+
+        Path* p = _alloc_ds(Path);
+        p->str = _copy_str(find_file(str));
+        p->next = NULL;
+
+        if(input_path == NULL) {
+            input_list = input_list_end = p;
+        }
+        else {
+            input_list_end->next = p;
+            input_list_end = p;
+        }
+    }
+}
+
 static void print_path(Path* path)
 {
     for(Path* p = path; p != NULL; p = p->next)
@@ -223,7 +267,7 @@ int main(int argc, char** argv)
                                 "the assembler, and the virtual machine.");
 
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    add_str_param(cl, "opat", "-p", "output file path", NULL, CF_NONE);
+    add_str_param(cl, "opat", "-p", "output file path", "./", CF_NONE);
     add_toggle_param(cl, "run", "-r", "run the result in the VM", false, CF_NONE);
     add_toggle_param(cl, "dbg", "-d", "debug the result in the debugger", false, CF_NONE);
     add_toggle_param(cl, "keep", "-k", "keep intermediate file(s)", false, CF_NONE);
@@ -234,21 +278,11 @@ int main(int argc, char** argv)
 
     parse_cmd_line(cl, argc, argv);
 
-    reset_cmd_excess(cl);
-    for(char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
-
-    }
     int verbo = get_num_param(cl, "verbose");
+    create_input_list(cl);
+    exec_path_str = extract_path(actual_exec_dir(argv[0]));
+    output_path_str = find_input_dir(get_str_param(cl, "opat"));
 
-    exec_path_str = extract_path(actual_dir(argv[0]));
-    const char* tmp = get_str_param(cl, "opat");
-    if(tmp != NULL) {
-        tmp =
-    }
-    data_path_str = NULL;
-
-
-    printf("opat = %s\n", get_str_param(cl, "opat"));
 
     printf("-------\n");
     print_path(input_path);
@@ -374,7 +408,7 @@ static const char* extract_name(const char* str)
  *
  * @return const char*
  */
-static const char* actual_dir(const char* str)
+static const char* actual_exec_dir(const char* str)
 {
     char* real = realpath(str, NULL);
     if(real != NULL)
@@ -434,7 +468,7 @@ static void get_runtime()
 {
     char* rt = getenv("_RUNTIME");
     if(rt != NULL) {
-        add_pp_incb(actual_dir(rt));
+        add_pp_incb(actual_exec_dir(rt));
     }
 }
 
@@ -470,10 +504,10 @@ int main(int argc, char** argv)
     if(verbo > 15)
         dump_cmd_line(cl);
 
-    // const char* cmd = actual_dir(get_cmd(cl));
+    // const char* cmd = actual_exec_dir(get_cmd(cl));
     // const char* cmdpath = extract_path(cmd);
     // reset_cmd_excess(cl);
-    // const char* infn = actual_dir(iterate_cmd_excess(cl)); //get_str_param(cl, "ifile"));
+    // const char* infn = actual_exec_dir(iterate_cmd_excess(cl)); //get_str_param(cl, "ifile"));
     // const char* path = extract_path(infn);
     // const char* name = extract_name(infn);
     // const char* ifn = append_str(path, "/%s.i", name);
@@ -505,7 +539,7 @@ int main(int argc, char** argv)
     //     printf("%s\n\n", cmd2);
     // }
 
-    const char* cmdpath = extract_path(actual_dir(get_cmd(cl)));
+    const char* cmdpath = extract_path(actual_exec_dir(get_cmd(cl)));
 
     reset_cmd_excess(cl);
     for(const char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
