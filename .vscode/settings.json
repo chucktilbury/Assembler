@@ -22,6 +22,7 @@
         "ofile",
         "opat",
         "outfn",
+        "retv",
         "runloop",
         "sidx",
         "sptr",
