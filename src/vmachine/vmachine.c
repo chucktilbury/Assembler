@@ -25,6 +25,18 @@ void read_binary(const char* fname)
         exit(1);
     }
 
+    // output the file header.
+    uint64_t magic;
+    fread(&magic, sizeof(magic), 1, fp);
+    if(magic != MAGIC_NUMBER) {
+        fprintf(stderr, "fatal error: input file is not a virtual machine executable: %s\n", fname);
+        exit(1);
+    }
+
+    char fname_buf[FNAME_LEN];
+    memset(fname_buf, 0, sizeof(fname_buf));
+    fread(fname_buf, sizeof(fname_buf), 1, fp);
+
     loadInstStream(fp);
     loadValBuf(fp);
     loadStrTab(fp);

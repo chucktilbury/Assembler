@@ -98,6 +98,15 @@ static void save_binary(const char* fname)
     if(fp == NULL)
         fatalError("cannot open output file: %s: %s", fname, strerror(errno));
 
+    // output the file header.
+    uint64_t magic = MAGIC_NUMBER;
+    fwrite(&magic, sizeof(magic), 1, fp);
+
+    char fbuf[FNAME_LEN];
+    memset(fbuf, 0, sizeof(fbuf));
+    strncpy(fbuf, fname, FNAME_LEN);
+    fwrite(fbuf, sizeof(fbuf), 1, fp);
+
     saveInstStream(fp);
     saveValBuf(fp);
     saveStrTab(fp);

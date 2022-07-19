@@ -121,6 +121,8 @@ void show_listing(FILE* fp)
     }
 }
 
+char fname_buf[FNAME_LEN];
+
 void read_binary(const char* fname)
 {
     FILE* fp = fopen(fname, "r");
@@ -128,6 +130,17 @@ void read_binary(const char* fname)
         fprintf(stderr, "fatal error: cannot open input file: %s: %s\n", fname, strerror(errno));
         exit(1);
     }
+
+    // output the file header.
+    uint64_t magic;
+    fread(&magic, sizeof(magic), 1, fp);
+    if(magic != MAGIC_NUMBER) {
+        fprintf(stderr, "fatal error: input file is not a virtual machine executable: %s\n", fname);
+        exit(1);
+    }
+
+    memset((void*)fname_buf, 0, sizeof(fname_buf));
+    fread((void*)fname_buf, sizeof(fname_buf), 1, fp);
 
     loadInstStream(fp);
     loadValBuf(fp);
@@ -149,6 +162,7 @@ int main(int argc, char** argv)
     show_listing(stdout);
 
     if(get_num_param(cl, "verbose") >= 5) {
+        printf("file name from file: %s\n", fname_buf);
         dumpStrTab();
         dumpValBuf();
     }
