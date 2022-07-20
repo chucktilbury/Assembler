@@ -146,7 +146,7 @@ const char* formatStr(const char* str)
                     // if it's not a var name, then we need the original
                     Index sidx = strtol(tmp->buf, NULL, 10);
                     //printf("index: %d\n", sidx);
-                    Value* val = getValBuf(sidx);
+                    Value* val = getValTab(sidx);
                     if(val->type != ERROR) {
                         //String* str = valToStr(val);
                         const char* str = valToStr(val);

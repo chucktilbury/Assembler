@@ -14,7 +14,7 @@ bool doLOAD()
     //LOG(6, "load index: %d", idx);
     TRACE("%s,value: %d", regToStr(reg), idx);
 
-    Value* val = getValBuf(idx);
+    Value* val = getValTab(idx);
     if(val == NULL)
         fatalError("value index %d yields no value", idx);
 
@@ -63,7 +63,7 @@ bool doSTORE()
     //LOG(6, "store index: %d", idx);
     TRACE("%d,%s", idx, regToStr(reg));
 
-    Value* val = getValBuf(idx);
+    Value* val = getValTab(idx);
     memcpy(val, &registers[reg], sizeof(Value));
 
     return false;

@@ -25,12 +25,13 @@ void set_line_no(int no)
 
 int get_line_no()
 {
-    return yylineno; // line_no;
+    return line_no;
 }
 
 void set_file_name(const char* fname)
 {
-    file_name = _copy_str(fname);
+    //file_name = _copy_str(fname);
+    file_name = fname;
 }
 
 const char* get_file_name()
@@ -135,7 +136,7 @@ static void __append_str(const char* str)
 ","             { return ','; }
 ":"             { return ':'; }
 
-#.* {} /* eat up until the newline */
+"#line"         { return TOK_LINE; }
 
     /* constructed tokens */
 

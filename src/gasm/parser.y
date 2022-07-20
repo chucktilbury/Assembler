@@ -63,7 +63,7 @@ extern Module* module;
 %token <type> TOK_INT TOK_FLOAT TOK_UINT TOK_STRING
 %token <type>  TOK_BOOL
 
-%token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP
+%token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP TOK_LINE
 %token <opcode> TOK_RETURN TOK_JMP TOK_BR TOK_PEEK TOK_SIDX
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
 %token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LEQ
@@ -107,7 +107,15 @@ module_item
     : instruction
     | data_definition
     | data_declaration
+    | pp_marker
     | label
+    ;
+
+pp_marker
+    : TOK_LINE TOK_INUM TOK_QSTR {
+        set_line_no($2);
+        set_file_name($3);
+    }
     ;
 
 label
@@ -200,11 +208,12 @@ class5_instr
 
 class6_instr
     : TOK_LOAD register ',' expr_parameter { addClass6(module, OP_LOADI, $2, $4); }
-    | TOK_LOAD register ',' TOK_QSTR {
-        Value* val = createValue(STRING);
-        val->data.str = addStr($4);
-        val->isAssigned = true;
-        addClass6(module, OP_LOADI, $2, val);
+    | TOK_LOAD register ',' TOK_QSTR { syntaxError("immediate strings are not allowed");
+        // Value* val = createValue(STRING);
+        // //val->data.str = addStr($4);
+        // val->data.str = $4;
+        // val->isAssigned = true;
+        // addClass6(module, OP_LOADI, $2, val);
     }
     ;
 
@@ -250,7 +259,8 @@ str_value
     : TOK_QSTR {
         $$ = createValue(STRING);
         $$->isAssigned = true;
-        $$->data.str = addStr($1);
+        //$$->data.str = addStr($1);
+        $$->data.str = $1;
     }
     ;
 

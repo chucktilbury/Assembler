@@ -7,11 +7,10 @@
 - Use keyword for entry point of the program.
   - Default to emit a jump to the entry point at the beginning of a program.
   - Command line option to turn it off.
-- Store strings as a static list in the executable, but handle them as pointers
-  at run time to facilitate garbage collection.
 - Think about storing debug info, including symbol table.
 - Generate the system.inc file at build time from source code.
 - Add register and immediate variants for PUSH and STORE.
+- Implement arithmetic on strings.
 
 # current task
 - Tests.
@@ -23,3 +22,5 @@
 - Move traps to it's own library in the runtime directory.
   - Traps should accept stack params instead of dedicating a register by
     convention.
+- Store strings as a static list in the executable, but handle them as pointers
+  at run time to facilitate garbage collection.

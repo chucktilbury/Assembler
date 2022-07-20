@@ -6,11 +6,9 @@
 
 //string reason
 string abort_msg = "error: '{reason}': cannot continue"
-string reason
+string reason = "test abort"
 
 _start:
-    load r12,"test abort"
-    store reason,r12
 
     // format string is in R1 and result placed in R0
     load r0,abort_msg

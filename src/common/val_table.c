@@ -5,19 +5,21 @@ typedef struct {
     Value** buf;
     uint32_t cap;
     uint32_t len;
-} ValueBuf;
+} ValueTab;
 
-static ValueBuf vbuf;
+static ValueTab vbuf;
 
-void initValBuf()
+void initValTab()
 {
     vbuf.cap = 0x01 << 3;
     vbuf.len = 0;
     vbuf.buf = _alloc_ds_array(Value*, vbuf.cap);
 }
 
-void loadValBuf(FILE* fp)
+void loadValTab(FILE* fp)
 {
+    loadStrTab(fp);
+
     vbuf.cap = 1;
     vbuf.len = 0;
     fread(&vbuf.len, sizeof(vbuf.len), 1, fp);
@@ -29,17 +31,29 @@ void loadValBuf(FILE* fp)
     for(Index idx = 0; idx < vbuf.len; idx++) {
         vbuf.buf[idx] = _alloc(sizeof(Value));
         fread(vbuf.buf[idx], sizeof(Value), 1, fp);
+        if(vbuf.buf[idx]->type == STRING)
+            vbuf.buf[idx]->data.str = getStr(vbuf.buf[idx]->data.unum);
     }
 }
 
-void saveValBuf(FILE* fp)
+void saveValTab(FILE* fp)
 {
+    initStrTab();
+
+    for(uint32_t idx = 0; idx < vbuf.len; idx++) {
+        if(vbuf.buf[idx]->type == STRING) {
+            if(vbuf.buf[idx]->isAssigned && vbuf.buf[idx]->data.str != NULL)
+                vbuf.buf[idx]->data.unum = addStr(vbuf.buf[idx]->data.str);
+        }
+    }
+    saveStrTab(fp);
+
     fwrite(&vbuf.len, sizeof(vbuf.len), 1, fp);
     for(uint32_t idx = 0; idx < vbuf.len; idx++)
         fwrite(vbuf.buf[idx], sizeof(Value), 1, fp);
 }
 
-ValIdx addValBuf(Value* val)
+ValIdx addValTab(Value* val)
 {
     if(vbuf.len+1 > vbuf.cap) {
         vbuf.cap <<= 1;
@@ -53,7 +67,7 @@ ValIdx addValBuf(Value* val)
     return idx;
 }
 
-Value* getValBuf(ValIdx idx)
+Value* getValTab(ValIdx idx)
 {
     if(idx < vbuf.len) {
         // for(unsigned i = 0; i < vbuf.len; i++)
@@ -64,7 +78,7 @@ Value* getValBuf(ValIdx idx)
         return NULL;
 }
 
-void dumpValBuf()
+void dumpValTab()
 {
     printf("\n------- Dump Value Table -------\n");
     for(uint32_t idx = 0; idx < vbuf.len; idx++) {
@@ -91,8 +105,8 @@ void printVal(Value* val)
                 printf("%s", val->data.bval? "true": "false");
                 break;
             case STRING:
-                //printf("idx: %d\t\"%s\"", val->data.str, getStr(val->data.str));
-                printf("%s", getStr(val->data.str));
+                //printf("%s", getStr(val->data.str));
+                printf("%s", val->data.str);
                 break;
             default:
                 printf("unknown type value: %d\n", val->type);
@@ -131,7 +145,8 @@ Value* castVal(ValType type, Value* val)
                         val->data.num = val->data.bval? 1: 0;
                         break;
                     case STRING:
-                        val->data.num = (int64_t)strtol(getStr(val->data.str), NULL, 10);
+                        //val->data.num = (int64_t)strtol(getStr(val->data.str), NULL, 10);
+                        val->data.num = (int64_t)strtol(val->data.str, NULL, 10);
                         break;
                     default:
                         fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
@@ -152,7 +167,8 @@ Value* castVal(ValType type, Value* val)
                         val->data.unum = val->data.bval? 1: 0;
                         break;
                     case STRING:
-                        val->data.unum = (uint64_t)strtol(getStr(val->data.str), NULL, 10);
+                        //val->data.unum = (uint64_t)strtol(getStr(val->data.str), NULL, 10);
+                        val->data.unum = (uint64_t)strtol(val->data.str, NULL, 10);
                         break;
                     default:
                         fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
@@ -173,7 +189,8 @@ Value* castVal(ValType type, Value* val)
                         val->data.fnum = val->data.bval? 1.0: 0.0;
                         break;
                     case STRING:
-                        val->data.fnum = strtod(getStr(val->data.str), NULL);
+                        //val->data.fnum = strtod(getStr(val->data.str), NULL);
+                        val->data.fnum = strtod(val->data.str, NULL);
                         break;
                     default:
                         fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
@@ -194,7 +211,8 @@ Value* castVal(ValType type, Value* val)
                     case BOOL:
                         break;
                     case STRING:
-                        val->data.bval = getStr(val->data.str) == NULL? false: true;
+                        //val->data.bval = getStr(val->data.str) == NULL? false: true;
+                        val->data.bval = val->data.str == NULL? false: true;
                         break;
                     default:
                         fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
@@ -248,27 +266,22 @@ const char* valToStr(Value* val)
     if(val->isAssigned) {
         switch(val->type) {
             case INT:
-                //snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
                 snprintf(buf, sizeof(buf), "%ld", val->data.num);
                 break;
             case UINT:
-                //snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
                 snprintf(buf, sizeof(buf), "0x%lX", val->data.unum);
                 break;
             case FLOAT:
-                //snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
                 snprintf(buf, sizeof(buf), "%0.4f", val->data.fnum);
                 break;
             case BOOL:
-                //snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
                 snprintf(buf, sizeof(buf), "%s", val->data.bval? "true": "false");
                 break;
             case STRING:
-                //snprintf(&buf[len], sizeof(buf)-len, "(%d)%s", val->data.str, getStr(val->data.str));
-                snprintf(buf, sizeof(buf), "%s", getStr(val->data.str));
+                // snprintf(buf, sizeof(buf), "%s", getStr(val->data.str));
+                snprintf(buf, sizeof(buf), "%s", val->data.str);
                 break;
             default:
-                //snprintf(&buf[len], sizeof(buf)-len, "unknown");
                 snprintf(buf, sizeof(buf), "unknown");
                 break;
         }

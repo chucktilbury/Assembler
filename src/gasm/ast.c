@@ -320,8 +320,8 @@ DataDef* addDataDef(Module* mod, Value* val, const char* name)
     obj->val = val;
     obj->references = 0;
 
-    obj->idx = addValBuf(val);
-    addValTab(name, val, obj->idx);
+    obj->idx = addValTab(val);
+    addSymVal(name, val, obj->idx);
 
     add_node(mod, (Object*)obj);
     return obj;

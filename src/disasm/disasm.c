@@ -80,7 +80,7 @@ void show_listing(FILE* fp)
                     readInstObj(&reg, sizeof(reg));
                     readInstObj(&idx, sizeof(idx));
                     fprintf(fp, "%s,idx:%d ", regToStr(reg&0xF), idx);
-                    printVal(getValBuf(idx));
+                    printVal(getValTab(idx));
                 }
                 break;
 
@@ -102,7 +102,7 @@ void show_listing(FILE* fp)
                     readInstObj(&idx, sizeof(idx));
                     readInstObj(&reg, sizeof(reg));
                     fprintf(fp, "idx:%d ", idx);
-                    printVal(getValBuf(idx));
+                    printVal(getValTab(idx));
                     fprintf(fp, ",%s", regToStr(reg&0x0F));
                 }
                 break;
@@ -143,8 +143,8 @@ void read_binary(const char* fname)
     fread((void*)fname_buf, sizeof(fname_buf), 1, fp);
 
     loadInstStream(fp);
-    loadValBuf(fp);
-    loadStrTab(fp);
+    loadValTab(fp);
+    //loadStrTab(fp);
 }
 
 cmd_line cl;
@@ -152,18 +152,20 @@ int main(int argc, char** argv)
 {
     _init_memory();
     cl = create_cmd_line("This is the dis-assembler");
-    add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
+    //add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
     parse_cmd_line(cl, argc, argv);
 
-    read_binary(get_str_param(cl, "ifile"));
+    //read_binary(get_str_param(cl, "ifile"));
+    reset_cmd_excess(cl);
+    read_binary(iterate_cmd_excess(cl));
 
     show_listing(stdout);
 
     if(get_num_param(cl, "verbose") >= 5) {
         printf("file name from file: %s\n", fname_buf);
         dumpStrTab();
-        dumpValBuf();
+        dumpValTab();
     }
 }

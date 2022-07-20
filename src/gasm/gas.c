@@ -108,8 +108,8 @@ static void save_binary(const char* fname)
     fwrite(fbuf, sizeof(fbuf), 1, fp);
 
     saveInstStream(fp);
-    saveValBuf(fp);
-    saveStrTab(fp);
+    saveValTab(fp);
+    //saveStrTab(fp);
 }
 
 cmd_line cl;
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 
     // post processing data structures
     initInstStream();
-    initValBuf();
+    initValTab();
     initStrTab();
 
     module = createModule();
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
     if(!getErrors())
         save_binary(get_str_param(cl, "ofile"));
 
-    return 0;
+    return getErrors();
 }
 
 

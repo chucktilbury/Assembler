@@ -17,9 +17,10 @@ bool format_str_trap()
 
     outv.type = STRING;
     if(inv.type == STRING)
-        outv.data.str = addStr(formatStr(getStr(inv.data.str)));
+        //outv.data.str = addStr(formatStr(getStr(inv.data.str)));
+        outv.data.str = formatStr(inv.data.str);
     else
-        outv.data.str = addStr(valToStr(&inv));
+        outv.data.str = valToStr(&inv);
 
     pushVal(outv);
 

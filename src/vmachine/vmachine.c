@@ -39,8 +39,8 @@ void read_binary(const char* fname)
     fread(fname_buf, sizeof(fname_buf), 1, fp);
 
     loadInstStream(fp);
-    loadValBuf(fp);
-    loadStrTab(fp);
+    loadValTab(fp);
+    //loadStrTab(fp);
 
     initValStack();
 }

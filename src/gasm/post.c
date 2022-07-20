@@ -142,7 +142,7 @@ static ValTab* find_vnode(ValTab* tree, const char* key)
         return tree;
 }
 
-void addValTab(const char* key, Value* val, ValIdx idx)
+void addSymVal(const char* key, Value* val, ValIdx idx)
 {
     ValTab* node = _alloc_ds(ValTab);
     node->key = _copy_str(key);
@@ -387,9 +387,10 @@ static void format_strs(Module* mod)
                 case OT_DATA_DEFINITION: {
                         DataDef* ptr = (DataDef*)obj;
                         if(ptr->val->type == STRING && ptr->val->isAssigned) {
-                            StrIdx idx = ptr->val->data.str;
-                            const char* str = getStr(idx);
-                            replaceStr(idx, preformat_str(str));
+                            // StrIdx idx = ptr->val->data.str;
+                            // const char* str = getStr(idx);
+                            // replaceStr(idx, preformat_str(str));
+                            ptr->val->data.str = preformat_str(ptr->val->data.str);
                         }
                     }
                     break;
@@ -469,7 +470,7 @@ void doPostProcess(Module* mod)
 
     if(get_num_param(cl, "verbose")) {
         printModule(mod);
-        dumpValBuf();
+        dumpValTab();
         dumpPostTables();
         dumpStrTab();
     }

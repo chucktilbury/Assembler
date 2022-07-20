@@ -23,17 +23,18 @@ typedef struct {
         int64_t num;
         double fnum;
         bool bval;
-        StrIdx str;
+        //StrIdx str;
+        const char* str;
         void* usr;
     } data;
 } Value;
 
-void initValBuf();
-void saveValBuf(FILE* fp);
-void loadValBuf(FILE* fp);
-ValIdx addValBuf(Value* val);
-Value* getValBuf(ValIdx idx);
-void dumpValBuf();
+void initValTab();
+void saveValTab(FILE* fp);
+void loadValTab(FILE* fp);
+ValIdx addValTab(Value* val);
+Value* getValTab(ValIdx idx);
+void dumpValTab();
 void printVal(Value* val);
 Value* createValue(ValType type);
 Value* castVal(ValType type, Value* val);
