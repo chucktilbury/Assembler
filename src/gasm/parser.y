@@ -74,8 +74,8 @@ extern Module* module;
 
 %type <reg> register
 %type <lab> label
-%type <val> expr_parameter expression type_name str_value
-%type <val> expression_factor type_specifier bool_value
+%type <val> expr_parameter expression type_name  type_specifier
+%type <val> expression_factor bool_value str_value
 %type <ddef> data_declaration data_definition
 
 %token TOK_CONST
@@ -236,7 +236,7 @@ type_name
     ;
 
 type_specifier
-    : TOK_CONST type_name { $$->isConst = true; }
+    : TOK_CONST type_name { $$ = $2; $$->isConst = true; }
     | type_name { $$->isConst = false; }
     ;
 

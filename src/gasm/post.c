@@ -17,6 +17,7 @@ static int size_table[] = {
     [OT_CLASS6_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(Value),
     [OT_CLASS7_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
     [OT_CLASS8_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
+    [OT_CLASS9_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(uint16_t),
     [OT_DATA_DEFINITION] = 0
 };
 
@@ -164,7 +165,7 @@ ValTab* findValTab(const char* key)
 
 ValIdx findValTabIdx(const char* key)
 {
-    printf("find: %s\n", key);
+    //printf("find: %s\n", key);
     if(vtable != NULL) {
         ValTab* v = find_vnode(vtable, key);
         return v->idx;
@@ -403,9 +404,10 @@ static void format_strs(Module* mod)
                 case OT_CLASS6_INSTR:
                 case OT_CLASS7_INSTR:
                 case OT_CLASS8_INSTR:
+                case OT_CLASS9_INSTR:
                     break;
             default:
-                printf("unknown addr object type!: %d\n", obj->type);
+                printf("unknown format object type!: %d\n", obj->type);
                 return;
         }
 
@@ -442,6 +444,7 @@ static void addr_scan(Module* mod)
                 case OT_CLASS6_INSTR: addr += size_table[OT_CLASS6_INSTR]; break;
                 case OT_CLASS7_INSTR: addr += size_table[OT_CLASS7_INSTR]; break;
                 case OT_CLASS8_INSTR: addr += size_table[OT_CLASS8_INSTR]; break;
+                case OT_CLASS9_INSTR: addr += size_table[OT_CLASS9_INSTR]; break;
             default:
                 printf("unknown addr object type!: %d\n", obj->type);
                 return;

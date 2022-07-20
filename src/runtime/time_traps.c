@@ -7,10 +7,9 @@
 bool get_time_trap()
 {
     Value val;
-    val.type = UINT;
-    val.data.unum = time(NULL);
+    val.type = FLOAT;
+    val.data.fnum = (double)time(NULL);
 
-    //memcpy(&registers[0], &val, sizeof(val));
     pushVal(val);
 
     return false;
@@ -20,7 +19,7 @@ bool get_time_trap()
 bool show_time_trap()
 {
     Value val = popVal();
-    //memcpy(&val, &registers[0], sizeof(val));
+
     if(val.type != INT) {
         runtimeError("print_time_trap: invalid time");
         return true;
@@ -36,10 +35,9 @@ bool show_time_trap()
 bool get_clock_trap()
 {
     Value val;
-    val.type = INT;
-    val.data.num = clock();
+    val.type = FLOAT;
+    val.data.fnum = (double)clock();
 
-    //memcpy(&registers[0], &val, sizeof(val));
     pushVal(val);
 
     return false;
@@ -49,25 +47,16 @@ bool get_clock_trap()
 // placed in R0 as a float. (TODO: error checking)
 bool dif_clock_trap()
 {
-    // int64_t start;
-    // int64_t end;
     Value end = popVal();
     Value start = popVal();
+    // TODO: check the types of the stack items
 
-    // start = registers[1].data.num;
-    // end = registers[2].data.num;
-
-    // fprintf(stderr, "\nend: %ld - start: %ld\n", end, start);
-
-    // registers[0].type = FLOAT;
+    // printf("end = %0.4f, start = %0.4f\n", end.data.fnum, start.data.fnum);
     Value out;
     out.type = FLOAT;
-    out.data.fnum = ((double)end.data.num - (double)start.data.num) / (double)CLOCKS_PER_SEC;
+    out.data.fnum = (end.data.fnum - start.data.fnum) / (double)CLOCKS_PER_SEC;
+
     pushVal(out);
-    // registers[0].data.fnum = ((double)end - (double)start) / (double)CLOCKS_PER_SEC;
-    // fprintf(stderr, "%0.4f = (%0.4f - %0.4f) / %0.4f\n",
-    //         (double)(end - start) / (double)CLOCKS_PER_SEC,
-    //         (double)end, (double)start, (double)CLOCKS_PER_SEC);
 
     return false;
 }

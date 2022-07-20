@@ -1,6 +1,6 @@
 
 #include "gas.h"
-
+#include <assert.h>
 
 static void add_node(Module* mod, Object* obj)
 {

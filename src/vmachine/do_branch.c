@@ -32,7 +32,10 @@ bool doBR()
     readInstObj(&idx, sizeof(uint32_t));
     TRACE("%04d", idx);
 
-    return false;
+    if(getZflag())
+        return setIndex(idx);
+    else
+        return false;
 }
 
 bool doRETURN()

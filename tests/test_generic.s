@@ -57,8 +57,8 @@ destination3:
     trap PRINT
 
     // store the current ticker on the stack
+    push R8         // start ticker is now TOS
     trap GET_CLOCK  // end ticker is on TOS
-    push R8         // start timer is now TOS
     trap DIF_CLOCK  // TOS is the diffed timer as a float
     pop  R7
     store timer, r7 // store the diffed timer to use with s formatted string
