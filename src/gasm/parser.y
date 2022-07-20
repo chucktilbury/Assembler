@@ -87,15 +87,7 @@ extern Module* module;
 
 %%
 program
-    :  {
-        // Do things before any text is parsed.
-    } module
-    ;
-
-module
-    : module_item_list {
-        // Do things after the whole text has been parsed.
-    }
+    :module_item_list
     ;
 
 module_item_list

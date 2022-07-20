@@ -5,8 +5,9 @@ void show_listing(FILE* fp)
 {
     while(!instrIsEnd()) {
         uint8_t op;
+        fprintf(fp, "%04d\t", getIndex());
         readInstObj(&op, sizeof(op));
-        fprintf(fp, "%04d\t%s\t", getIndex(), opToStr(op));
+        fprintf(fp, "%s\t", opToStr(op));
 
         switch(op) {
             case OP_EXIT:

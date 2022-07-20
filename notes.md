@@ -1,12 +1,9 @@
-# general notes
+# TODO list
 
 - Change command line handler to better library. (WIP: bug fixes required)
   - Add command line flags for mutual excl or reqd and groups.
   - Add command line flags to control separator requirements.
   - Add command line option to warn extra files in the file list.
-- Use keyword for entry point of the program.
-  - Default to emit a jump to the entry point at the beginning of a program.
-  - Command line option to turn it off.
 - Think about storing debug info, including symbol table.
 - Generate the system.inc file at build time from source code.
 - Add register and immediate variants for PUSH and STORE.
@@ -24,3 +21,6 @@
     convention.
 - Store strings as a static list in the executable, but handle them as pointers
   at run time to facilitate garbage collection.
+- Use keyword for entry point of the program.
+  - Default to emit a jump to the entry point at the beginning of a program.
+  - Command line option to turn it off.

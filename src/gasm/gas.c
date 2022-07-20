@@ -121,6 +121,7 @@ int main(int argc, char** argv)
     cl = create_cmd_line("This is the assembler");
     //add_str_param(cl, "ifile", "-i", "input file name", "", CF_NONE);
     add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
+    add_toggle_param(cl, "entry", "-e", "disable emitting the entry and exit points in the output", true, CF_NONE);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
     parse_cmd_line(cl, argc, argv);
 
@@ -142,7 +143,17 @@ int main(int argc, char** argv)
     initStrTab();
 
     module = createModule();
+    if(get_toggle_param(cl, "entry")) {
+        addClass8(module, OP_JMP, "_start");
+        addClass0(module, OP_NOP);
+        addClass8(module, OP_JMP, "_ending");
+    }
     yyparse();
+    if(get_toggle_param(cl, "entry")) {
+        addLabel(module, "_ending");
+        addClass0(module, OP_NOP);
+        addClass0(module, OP_EXIT);
+    }
     doPostProcess(module);
 
     if(!getErrors())
