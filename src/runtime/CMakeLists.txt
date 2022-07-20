@@ -1,22 +1,16 @@
 
-project(vmachine)
+project(runtime)
 
-add_executable(${PROJECT_NAME}
-    vmachine.c
-    do_arith.c
-    do_compare.c
-    do_branch.c
-    do_stack.c
-    do_load.c
-    do_misc.c
-    runloop.c
-    vm_errors.c
-    val_stack.c
+add_library(${PROJECT_NAME} STATIC
+    abort_traps.c
+    print_traps.c
+    string_traps.c
+    time_traps.c
+    runtime.c
 )
 
 target_link_libraries(${PROJECT_NAME}
     common
-    runtime
     gc
     cord
     m
@@ -26,7 +20,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/../include
         ${PROJECT_SOURCE_DIR}/../common
-        ${PROJECT_SOURCE_DIR}/../runtime
+        ${PROJECT_SOURCE_DIR}/../vmachine
         ${PROJECT_SOURCE_DIR}/../../external/include
 )
 

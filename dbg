@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+nemiver --last $@ 2> /dev/null &

@@ -2,7 +2,6 @@
 #define OPCODES_H
 
 typedef enum {
-    OP_ABORT,   // cause the VM to quit with an error found in a variable
     OP_EXIT,    // cause the VM to quit normally
     OP_NOP,     // no operation
 

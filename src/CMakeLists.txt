@@ -1,6 +1,6 @@
 
 #add_subdirectory(gc)
-#add_subdirectory(runtime)
+add_subdirectory(runtime)
 add_subdirectory(common)
 add_subdirectory(cpp)
 add_subdirectory(vmachine)

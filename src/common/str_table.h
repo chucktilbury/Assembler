@@ -8,6 +8,7 @@ void saveStrTab(FILE* fp);
 void loadStrTab(FILE* fp);
 StrIdx addStr(const char* str);
 const char* getStr(StrIdx idx);
+void replaceStr(StrIdx idx, const char* str);
 void dumpStrTab();
 
 #endif

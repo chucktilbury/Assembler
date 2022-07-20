@@ -6,6 +6,7 @@ static bool z_flag;
 Value registers[16];
 int errors = 0;
 int verbosity = 0;
+bool trace = false;
 
 void setZflag(bool val)
 {
@@ -50,10 +51,11 @@ int main(int argc, char** argv)
 {
     _init_memory();
     cl = create_cmd_line("This is the dis-assembler");
-    //add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
+    add_toggle_param(cl, "trace", "-t", "enable trace output", false, CF_NONE);
     add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
     parse_cmd_line(cl, argc, argv);
     verbosity = get_num_param(cl, "verbose");
+    trace = get_toggle_param(cl, "trace");
 
     //read_binary(get_str_param(cl, "ifile"));
 

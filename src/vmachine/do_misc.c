@@ -1,16 +1,15 @@
 
 #include "vmachine.h"
+#include "runtime.h"
 
 extern Value registers[16];
 
-// end the vm and print a value. probably a string.
-bool doABORT()
+bool doTRAP()
 {
-    uint32_t idx;
-    readInstObj(&idx, sizeof(uint32_t));
-    printVal(getValBuf(idx));
-    printf("\n\n");
-    return true;
+    uint16_t tno;
+    readInstObj(&tno, sizeof(uint16_t));
+    TRACE("0x%04X", tno);
+    return handleTrap(tno);
 }
 
 // exit the VM normally.

@@ -22,7 +22,7 @@ void yyerror(const char* s)
 
 void syntaxError(const char*, ...);
 
-Module* module;
+extern Module* module;
 
 %}
 
@@ -63,7 +63,7 @@ Module* module;
 %token <type> TOK_INT TOK_FLOAT TOK_UINT TOK_STRING
 %token <type>  TOK_BOOL
 
-%token <opcode> TOK_ABORT TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP
+%token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP
 %token <opcode> TOK_RETURN TOK_JMP TOK_BR TOK_PEEK TOK_SIDX
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
 %token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LEQ
@@ -89,7 +89,7 @@ Module* module;
 program
     :  {
         // Initialize the AST.
-        module = createModule();
+        //module = createModule();
     } module
     ;
 
@@ -98,7 +98,7 @@ module
         // This guarnetees that the last instruciton in the stream is valid.
 
         // Emit the object.
-        doPostProcess(module);
+       // doPostProcess(module);
     }
     ;
 
@@ -160,7 +160,6 @@ class0_instr
 class1_instr
     : TOK_NOT register { addClass1(module, OP_NOT, $2); }
     | TOK_POP register { addClass1(module, OP_POP, $2); }
-    | TOK_ABORT register { addClass1(module, OP_ABORT, $2); }
     | TOK_PUSH register { addClass1(module, OP_PUSH, $2); }
     | TOK_SIDX register { addClass1(module, OP_SIDX, $2); }
     ;
@@ -255,7 +254,7 @@ str_value
     : TOK_QSTR {
         $$ = createValue(STRING);
         $$->isAssigned = true;
-        $$->data.str = addStr(preformat_str($1));
+        $$->data.str = addStr($1);
     }
     ;
 

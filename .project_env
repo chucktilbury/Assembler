@@ -19,11 +19,10 @@ export _PROJECT_LOC=$HOME/Src/$_PROJECT_NAME
 #alias as=$_CROSS_TARGET-as
 #alias ld=$_CROSS_TARGET-ld
 #alias db="nemiver --last "
-alias dbg="seer -s  "
 
 #export PATH=$_CROSS_PATH:$_CROSS_LOC/$_CROSS_TARGET/bin:$PATH
 
-export PATH=$_PROJECT_LOC/bin:$_PROJECT_LOC/utils:$PATH
+export PATH=$_PROJECT_LOC:$_PROJECT_LOC/bin:$_PROJECT_LOC/utils:$PATH
 export _RUNTIME=$_PROJECT_LOC/src/runtime
 
 PS1='\[\e[0;31m\]$_PROJECT_NAME:\[\e[0m\]'$PS1

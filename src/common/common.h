@@ -19,6 +19,7 @@ typedef uint32_t Index;
 #include "opcodes.h"
 #include "registers.h"
 #include "str_utils.h"
+#include "errors.h"
 
 #define MAGIC_NUMBER    ((uint64_t)(0x474F4C4446495348UL))
 #define FNAME_LEN       64

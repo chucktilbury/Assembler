@@ -16,7 +16,7 @@ void show_listing(FILE* fp)
                 break;
 
             case OP_SIDX:
-            case OP_ABORT:
+            //case OP_ABORT:
             case OP_PUSH:
             case OP_NOT:
             case OP_POP: {

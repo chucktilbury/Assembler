@@ -115,7 +115,114 @@ Value* createValue(ValType type)
 // TODO: Implement this
 Value* castVal(ValType type, Value* val)
 {
-    val->type = type;
+    if(val != NULL) {
+        switch(type) {
+            case INT:
+                switch(val->type) {
+                    case INT:
+                        break;
+                    case UINT:
+                        val->data.num = (int64_t)val->data.unum;
+                        break;
+                    case FLOAT:
+                        val->data.num = (int64_t)val->data.fnum;
+                        break;
+                    case BOOL:
+                        val->data.num = val->data.bval? 1: 0;
+                        break;
+                    case STRING:
+                        val->data.num = (int64_t)strtol(getStr(val->data.str), NULL, 10);
+                        break;
+                    default:
+                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
+                        exit(1);
+                }
+                break;
+            case UINT:
+                switch(val->type) {
+                    case INT:
+                        val->data.unum = (uint64_t)val->data.num;
+                        break;
+                    case UINT:
+                        break;
+                    case FLOAT:
+                        val->data.unum = (uint64_t)((int64_t)val->data.fnum);
+                        break;
+                    case BOOL:
+                        val->data.unum = val->data.bval? 1: 0;
+                        break;
+                    case STRING:
+                        val->data.unum = (uint64_t)strtol(getStr(val->data.str), NULL, 10);
+                        break;
+                    default:
+                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
+                        exit(1);
+                }
+                break;
+            case FLOAT:
+                switch(val->type) {
+                    case INT:
+                        val->data.fnum = (double)val->data.num;
+                        break;
+                    case UINT:
+                        val->data.fnum = (double)((int64_t)val->data.unum);
+                        break;
+                    case FLOAT:
+                        break;
+                    case BOOL:
+                        val->data.fnum = val->data.bval? 1.0: 0.0;
+                        break;
+                    case STRING:
+                        val->data.fnum = strtod(getStr(val->data.str), NULL);
+                        break;
+                    default:
+                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
+                        exit(1);
+                }
+                break;
+            case BOOL:
+                switch(val->type) {
+                    case INT:
+                        val->data.bval = val->data.num? true: false;
+                        break;
+                    case UINT:
+                        val->data.bval = val->data.unum? true: false;
+                        break;
+                    case FLOAT:
+                        val->data.bval = val->data.fnum != 0.0? true: false;
+                        break;
+                    case BOOL:
+                        break;
+                    case STRING:
+                        val->data.bval = getStr(val->data.str) == NULL? false: true;
+                        break;
+                    default:
+                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
+                        exit(1);
+                }
+                break;
+            case STRING:
+                switch(val->type) {
+                    case INT:
+                    case UINT:
+                    case FLOAT:
+                    case BOOL:
+                        fprintf(stderr, "syntax: cannot convert a %s to a STRING. Use format instead.", valTypeToStr(val->type));
+                        exit(1);
+                        break;
+                    case STRING:
+                        break;
+                    default:
+                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
+                        exit(1);
+                }
+                break;
+            default:
+                fprintf(stderr, "fatal error: unknown type value: %d\n", type);
+                exit(1);
+        }
+        val->type = type;
+    }
     return val;
 }
 
@@ -138,34 +245,36 @@ void assignVal(ValIdx idx, Value* val)
 const char* valToStr(Value* val)
 {
     char buf[60];
-    //sprintf(buf, "(%s)", valTypeToStr(val->type));
-    //int len = strlen(buf);
-    switch(val->type) {
-        case INT:
-            //snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
-            snprintf(buf, sizeof(buf), "%ld", val->data.num);
-            break;
-        case UINT:
-            //snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
-            snprintf(buf, sizeof(buf), "0x%lX", val->data.unum);
-            break;
-        case FLOAT:
-            //snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
-            snprintf(buf, sizeof(buf), "%0.4f", val->data.fnum);
-            break;
-        case BOOL:
-            //snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
-            snprintf(buf, sizeof(buf), "%s", val->data.bval? "true": "false");
-            break;
-        case STRING:
-            //snprintf(&buf[len], sizeof(buf)-len, "(%d)%s", val->data.str, getStr(val->data.str));
-            snprintf(buf, sizeof(buf), "(%d)%s", val->data.str, getStr(val->data.str));
-            break;
-        default:
-            //snprintf(&buf[len], sizeof(buf)-len, "unknown");
-            snprintf(buf, sizeof(buf), "unknown");
-            break;
+    if(val->isAssigned) {
+        switch(val->type) {
+            case INT:
+                //snprintf(&buf[len], sizeof(buf)-len, "%ld", val->data.num);
+                snprintf(buf, sizeof(buf), "%ld", val->data.num);
+                break;
+            case UINT:
+                //snprintf(&buf[len], sizeof(buf)-len, "0x%lX", val->data.unum);
+                snprintf(buf, sizeof(buf), "0x%lX", val->data.unum);
+                break;
+            case FLOAT:
+                //snprintf(&buf[len], sizeof(buf)-len, "%0.3f", val->data.fnum);
+                snprintf(buf, sizeof(buf), "%0.4f", val->data.fnum);
+                break;
+            case BOOL:
+                //snprintf(&buf[len], sizeof(buf)-len, "%s", val->data.bval? "true": "false");
+                snprintf(buf, sizeof(buf), "%s", val->data.bval? "true": "false");
+                break;
+            case STRING:
+                //snprintf(&buf[len], sizeof(buf)-len, "(%d)%s", val->data.str, getStr(val->data.str));
+                snprintf(buf, sizeof(buf), "%s", getStr(val->data.str));
+                break;
+            default:
+                //snprintf(&buf[len], sizeof(buf)-len, "unknown");
+                snprintf(buf, sizeof(buf), "unknown");
+                break;
+        }
     }
+    else
+        strcpy(buf, "unassigned");
 
     return _copy_str(buf);
 }

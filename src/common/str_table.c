@@ -66,6 +66,13 @@ const char* getStr(StrIdx idx)
         return NULL;
 }
 
+void replaceStr(StrIdx idx, const char* str)
+{
+    if(idx < stab.len)
+        stab.list[idx] = (char*)str;
+}
+
+
 void dumpStrTab()
 {
     printf("\n------- Dump String Table -------\n");

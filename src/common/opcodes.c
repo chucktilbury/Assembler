@@ -3,8 +3,7 @@
 
 const char* opToStr(OpCode op)
 {
-    return (op == OP_ABORT)? "ABORT":
-            (op == OP_EXIT)? "EXIT":
+    return (op == OP_EXIT)? "EXIT":
             (op == OP_NOP)? "NOP":
             (op == OP_CALL)? "CALL":
             (op == OP_TRAP)? "TRAP":

@@ -11,7 +11,8 @@ bool getZflag();
 void setZflag(bool val);
 
 extern int verbosity;
-#define TRACE(fmt, ...)  do { if(verbosity >= 5) fprintf(stderr, fmt, ## __VA_ARGS__ ); } while(false)
+extern bool trace;
+#define TRACE(fmt, ...)  do { if(trace) fprintf(stderr, fmt, ## __VA_ARGS__ ); } while(false)
 #define LOG(lev, fmt, ...)  do { \
      if(verbosity >= lev) \
         fprintf(stderr, "log: " fmt, ## __VA_ARGS__ );  \

@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "cmdline",
         "cmdpath",
         "defstr",
         "ecap",
@@ -22,6 +23,7 @@
         "ofile",
         "opat",
         "outfn",
+        "outv",
         "retv",
         "runloop",
         "sidx",
@@ -39,6 +41,7 @@
         "Zflag"
     ],
     "files.associations": {
-        "runtime.h": "c"
+        "runtime.h": "c",
+        "*.inc": "c"
     }
 }

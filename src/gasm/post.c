@@ -164,6 +164,7 @@ ValTab* findValTab(const char* key)
 
 ValIdx findValTabIdx(const char* key)
 {
+    printf("find: %s\n", key);
     if(vtable != NULL) {
         ValTab* v = find_vnode(vtable, key);
         return v->idx;
@@ -198,9 +199,15 @@ void dumpPostTables()
 {
     printf("\n------- Dump Post Tables -------\n");
     printf("------- Values\n");
-    dump_vtable(vtable);
+    if(vtable != NULL)
+        dump_vtable(vtable);
+    else
+        printf("    value table is empty\n");
     printf("------- Labels\n");
-    dump_ltable(ltable);
+    if(ltable != NULL)
+        dump_ltable(ltable);
+    else
+        printf("    label table is empty\n");
     printf("------- End Dump -------\n");
 }
 
@@ -369,6 +376,43 @@ static void label_scan(Module* mod)
     }
 }
 
+static void format_strs(Module* mod)
+{
+    Object* obj = mod->first;
+
+    while(obj != NULL) {
+
+        switch(obj->type) {
+                case OT_DATA_DEFINITION: {
+                        DataDef* ptr = (DataDef*)obj;
+                        if(ptr->val->type == STRING && ptr->val->isAssigned) {
+                            StrIdx idx = ptr->val->data.str;
+                            const char* str = getStr(idx);
+                            replaceStr(idx, preformat_str(str));
+                        }
+                    }
+                    break;
+                case OT_PP_MARKER:
+                case OT_LABEL:
+                case OT_CLASS0_INSTR:
+                case OT_CLASS1_INSTR:
+                case OT_CLASS2_INSTR:
+                case OT_CLASS3_INSTR:
+                case OT_CLASS4_INSTR:
+                case OT_CLASS5_INSTR:
+                case OT_CLASS6_INSTR:
+                case OT_CLASS7_INSTR:
+                case OT_CLASS8_INSTR:
+                    break;
+            default:
+                printf("unknown addr object type!: %d\n", obj->type);
+                return;
+        }
+
+        obj = obj->next;
+    }
+}
+
 /*
  * Scan the references to labels and set their addresses.
  */
@@ -418,6 +462,7 @@ void doPostProcess(Module* mod)
     addr_scan(mod);
     label_scan(mod);
     instrs(mod);
+    format_strs(mod);
 
     if(get_num_param(cl, "verbose")) {
         printModule(mod);

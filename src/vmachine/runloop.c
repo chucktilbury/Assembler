@@ -6,11 +6,11 @@
 #include "do_branch.h"
 #include "do_stack.h"
 #include "do_load.h"
-#include "do_abort.h"
+#include "do_misc.h"
 #include "do_trap.h"
 
 static runloopHandler runloop_table[] = {
-    [OP_ABORT] = doABORT,   // cause the VM to quit with an error found in a variable
+    //[OP_ABORT] = doABORT,   // cause the VM to quit with an error found in a variable
     [OP_EXIT] = doEXIT,     // cause the VM to quit normally
     [OP_NOP] = doNOP,       // no operation
     [OP_CALL] = doCALL,     // call an absolute address stored in a variable

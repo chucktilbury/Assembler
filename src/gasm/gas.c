@@ -113,6 +113,7 @@ static void save_binary(const char* fname)
 }
 
 cmd_line cl;
+Module* module;
 
 int main(int argc, char** argv)
 {
@@ -140,7 +141,9 @@ int main(int argc, char** argv)
     initValBuf();
     initStrTab();
 
+    module = createModule();
     yyparse();
+    doPostProcess(module);
 
     if(!getErrors())
         save_binary(get_str_param(cl, "ofile"));

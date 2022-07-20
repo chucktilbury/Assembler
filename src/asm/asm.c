@@ -271,6 +271,13 @@ static void print_path(Path* path)
         printf("    %s\n", p->str);
 }
 
+static void find_runtime()
+{
+    char* env = getenv("_RUNTIME");
+    if(env != NULL)
+        add_pp_incb(env);
+}
+
 int main(int argc, char** argv)
 {
     create_exec_path();
@@ -299,13 +306,21 @@ int main(int argc, char** argv)
     output_path_str = find_input_dir(get_str_param(cl, "opat"));
     const char* ifn = append_str(base_file_name, ".i");
     const char* ofn = append_str(base_file_name, ".bin");
+    find_runtime();
 
     const char* pp_cmd_line = append_str(NULL, "%s/cpp -o %s/%s %s",
                     exec_path_str, output_path_str, ifn, pproc_line);
     const char* asm_cmd_line = append_str(NULL, "%s/gasm -o %s/%s -v %d %s/%s",
                     exec_path_str, output_path_str, ofn, verbo, output_path_str, ifn);
-    const char* vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -v %d",
+
+    const char* vm_cmd_line;
+    if(verbo > 5)
+        vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -t -v %d",
                     exec_path_str, output_path_str, ofn, verbo);
+    else
+        vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -v %d",
+                    exec_path_str, output_path_str, ofn, verbo);
+
 
     if(verbo > 10) {
         if(verbo > 20)

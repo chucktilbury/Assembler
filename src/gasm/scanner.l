@@ -76,7 +76,6 @@ static void __append_str(const char* str)
 "TRUE"          { yylval.boolval = true; return TOK_TRUE; }
 "FALSE"         { yylval.boolval = false; return TOK_FALSE; }
 
-"ABORT"         { yylval.opcode = OP_ABORT; return TOK_ABORT; }
 "EXIT"          { yylval.opcode = OP_EXIT; return TOK_EXIT; }
 "NOP"           { yylval.opcode = OP_NOP; return TOK_NOP; }
 "CALL"          { yylval.opcode = OP_CALL; return TOK_CALL; }
