@@ -13,7 +13,9 @@ typedef enum {
     OP_BR,      // conditional jump to an absolute address in a variable
 
     // data manipulation instructions
-    OP_PUSH,    // push the value on the value stack from a variable
+    OP_PUSH,    // push the register value on the value stack (change to variable)
+    //OP_PUSHI,   // push an immediate value on the value stack
+    //OP_PUSHR,   // push a register value on the value stack
     OP_POP,     // pop the value from the stack and put it in a register
     OP_PEEK,    // Stack access for function parameters.
     OP_SIDX,    // Store the stack index into a register
@@ -22,6 +24,7 @@ typedef enum {
     OP_LOADI,   // load a register from an immediate.
     OP_LOADR,   // load a register from another register (copy)
     OP_STORE,   // Store a register into a variable.
+    //OP_STOREI,  // Store an immediate value into a variable.
 
     // comparison operators
     OP_NOT,     // unary not conditional

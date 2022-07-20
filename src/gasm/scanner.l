@@ -64,7 +64,7 @@ static void __append_str(const char* str)
 
     /* overhead */
 \n              { line_no++; }
-[ \t\r]         {}
+[ \t\r;]        {}
 
     /* keywords */
 "UINT"          { yylval.type = UINT; return TOK_UINT; }

@@ -11,6 +11,7 @@
   at run time to facilitate garbage collection.
 - Think about storing debug info, including symbol table.
 - Generate the system.inc file at build time from source code.
+- Add register and immediate variants for PUSH and STORE.
 
 # current task
 - Tests.

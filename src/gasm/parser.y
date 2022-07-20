@@ -88,17 +88,13 @@ extern Module* module;
 %%
 program
     :  {
-        // Initialize the AST.
-        //module = createModule();
+        // Do things before any text is parsed.
     } module
     ;
 
 module
     : module_item_list {
-        // This guarnetees that the last instruciton in the stream is valid.
-
-        // Emit the object.
-       // doPostProcess(module);
+        // Do things after the whole text has been parsed.
     }
     ;
 
