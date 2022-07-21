@@ -30,12 +30,11 @@ typedef struct _str_path {
 } Path;
 
 // defined cmdline.c
-void dump_cmd_line(cmd_line cptr);
 static Path* input_path = NULL;
 static Path* input_path_end = NULL;
 
-static Path* input_list = NULL;
-static Path* input_list_end = NULL;
+//static Path* input_list = NULL;
+//static Path* input_list_end = NULL;
 
 static Path* exec_path = NULL;
 static Path* exec_path_end = NULL;
@@ -233,36 +232,50 @@ static void create_exec_path()
     }
 }
 
-static const char* create_input_list(cmd_line cl)
+static const char* get_base_name()
 {
     const char* retv = NULL;
-    reset_cmd_excess(cl);
-    for(char* str = iterate_cmd_excess(cl); str != NULL; str = iterate_cmd_excess(cl)) {
-        char* found = (char*)find_file(str);
-        if(found != NULL) {
-            pproc_line = append_str(pproc_line, " %s", found);
-            retv = extract_name(found);
+    resetCLFileList();
+    char* str = (char*)iterateCLFileList(); // just one is guaranteed
 
-            Path* p = _alloc_ds(Path);
-            p->str = found; //_copy_str(find_file(str));
-            p->next = NULL;
-
-            if(input_list == NULL) {
-                input_list = input_list_end = p;
-            }
-            else {
-                fprintf(stderr, "cmd_err: extra input files. use exactly one and include any others.\n");
-                cmd_use(cl);
-                // input_list_end->next = p;
-                // input_list_end = p;
-            }
-        }
-        else {
-            fprintf(stderr, "cmd_err: input file: %s: cannot be found\n", str);
-            cmd_use(cl);
-        }
+    char* found = (char*)find_file(str);
+    if(found != NULL) {
+        pproc_line = append_str(pproc_line, " %s", found);
+        retv = extract_name(found);
     }
+    else {
+        fprintf(stderr, "cmd line error: input file: %s: cannot be found\n", str);
+        showUseCmdLine();
+    }
+
     return retv;
+
+    // for(char* str = iterateCLFileList(); str != NULL; str = iterateCLFileList()) {
+    //     char* found = (char*)find_file(str);
+    //     if(found != NULL) {
+    //         pproc_line = append_str(pproc_line, " %s", found);
+    //         retv = extract_name(found);
+
+    //         Path* p = _alloc_ds(Path);
+    //         p->str = found; //_copy_str(find_file(str));
+    //         p->next = NULL;
+
+    //         if(input_list == NULL) {
+    //             input_list = input_list_end = p;
+    //         }
+    //         else {
+    //             fprintf(stderr, "cmd_err: extra input files. use exactly one and include any others.\n");
+    //             cmd_use();
+    //             // input_list_end->next = p;
+    //             // input_list_end = p;
+    //         }
+    //     }
+    //     else {
+    //         fprintf(stderr, "cmd_err: input file: %s: cannot be found\n", str);
+    //         cmd_use(cl);
+    //     }
+    // }
+    // return retv;
 }
 
 static void print_path(Path* path)
@@ -283,27 +296,29 @@ int main(int argc, char** argv)
     create_exec_path();
     add_pp_incb("./");
 
-    cmd_line cl = create_cmd_line("This is the assembler driver program.\n"\
-                                "It coordinates the operation of the preprocessor,\n"\
-                                "the assembler, and the virtual machine.");
+    initCmdLine(CL_FL_ONE, "This is the assembler driver program.\n"\
+                "It coordinates the operation of the preprocessor,\n"\
+                "the assembler, and the virtual machine.");
 
-    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    add_str_param(cl, "opat", "-p", "output file path", "./", CF_NONE);
-    add_toggle_param(cl, "run", "-r", "run the result in the VM", false, CF_NONE);
-    add_toggle_param(cl, "dbg", "-d", "debug the result in the debugger", false, CF_NONE);
-    add_toggle_param(cl, "keep", "-k", "keep intermediate file(s)", false, CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity level", 0, CF_NONE);
-    add_callback_param(cl, "def", "-D", "preprocessor definition", add_pp_def, CF_NONE);
-    add_callback_param(cl, "incb", "-I", "preprocessor include path", add_pp_incb, CF_NONE);
-    add_callback_param(cl, "inca", "-J", "preprocessor include path", add_pp_inca, CF_NONE);
+    addStrParam("-o", "ofile", "output file name", "output.bin", CL_NONE);
+    addStrParam("-p", "opat", "output file path", "./", CL_NONE);
+    addTogParam("-r", "run", "run the result in the VM", false, CL_NONE);
+    addTogParam("-t", "trace", "trace the execution in the VM", false, CL_NONE);
+    addTogParam("-d", "dbg", "debug the result in the debugger", false, CL_NONE);
+    addTogParam("-k", "keep", "keep intermediate file(s)", false, CL_NONE);
+    addNumParam("-v", "verbose", "verbosity level", 0, CL_NONE);
+    addCBwParam("-D", "preprocessor definition", add_pp_def, CL_NONE);
+    addCBwParam("-I", "prepend preprocessor include path", add_pp_incb, CL_NONE);
+    addCBwParam("-J", "append preprocessor include path", add_pp_inca, CL_NONE);
+    addCBwoParam("-h", "display help information", showUseCmdLine, CL_NONE);
 
-    parse_cmd_line(cl, argc, argv);
+    parseCmdLine(argc, argv);
 
 
-    int verbo = get_num_param(cl, "verbose");
-    const char* base_file_name = create_input_list(cl);
+    int verbo = getNumParam("verbose");
+    const char* base_file_name = get_base_name();
     exec_path_str = extract_path(actual_exec_dir(argv[0]));
-    output_path_str = find_input_dir(get_str_param(cl, "opat"));
+    output_path_str = find_input_dir(getStrParam("opat"));
     const char* ifn = append_str(base_file_name, ".i");
     const char* ofn = append_str(base_file_name, ".bin");
     find_runtime();
@@ -312,19 +327,11 @@ int main(int argc, char** argv)
                     exec_path_str, output_path_str, ifn, pproc_line);
     const char* asm_cmd_line = append_str(NULL, "%s/gasm -o %s/%s -v %d %s/%s",
                     exec_path_str, output_path_str, ofn, verbo, output_path_str, ifn);
-
-    const char* vm_cmd_line;
-    if(verbo > 5)
-        vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -t -v %d",
-                    exec_path_str, output_path_str, ofn, verbo);
-    else
-        vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -v %d",
-                    exec_path_str, output_path_str, ofn, verbo);
-
+    const char* vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s %s -v %d",
+                    exec_path_str, output_path_str, ofn,
+                    getTogParam("trace")? "-t": "", verbo);
 
     if(verbo > 10) {
-        if(verbo > 20)
-            dump_cmd_line(cl);
         printf("\nexecutable path:\n");
         print_path(exec_path);
         printf("\ninput path:\n");
@@ -339,18 +346,26 @@ int main(int argc, char** argv)
 
     int retv = 0;
 #if 1
+    if(verbo > 5)
+        printf("%s\n", pp_cmd_line);
     retv = system(pp_cmd_line);
 
-    if(retv == 0)
+    if(retv == 0) {
+        if(verbo > 5)
+            printf("%s\n", asm_cmd_line);
         retv = system(asm_cmd_line);
+    }
     else {
         fprintf(stderr, "error: preprocessor failed\n");
         exit(retv);
     }
 
     if(retv == 0) {
-        if(get_toggle_param(cl, "run"))
+        if(getTogParam("run")) {
+            if(verbo > 5)
+                printf("%s\n", vm_cmd_line);
             retv = system(vm_cmd_line);
+        }
     }
     else {
         fprintf(stderr, "error: assembler failed\n");
@@ -362,9 +377,9 @@ int main(int argc, char** argv)
         exit(retv);
     }
 
-    if(!get_toggle_param(cl, "keep")) {
+    if(!getTogParam("keep")) {
         remove(ifn);
-        if(get_toggle_param(cl, "run"))
+        if(getTogParam("run"))
             remove(ofn);
     }
 #endif

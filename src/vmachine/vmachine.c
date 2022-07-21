@@ -45,21 +45,30 @@ void read_binary(const char* fname)
     initValStack();
 }
 
-
-cmd_line cl;
 int main(int argc, char** argv)
 {
     _init_memory();
-    cl = create_cmd_line("This is the dis-assembler");
-    add_toggle_param(cl, "trace", "-t", "enable trace output", false, CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
-    parse_cmd_line(cl, argc, argv);
-    verbosity = get_num_param(cl, "verbose");
-    trace = get_toggle_param(cl, "trace");
+    // cl = create_cmd_line("This is the dis-assembler");
+    // add_toggle_param(cl, "trace", "-t", "enable trace output", false, CF_NONE);
+    // add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
+    // parse_cmd_line(cl, argc, argv);
+    // verbosity = get_num_param(cl, "verbose");
+    // trace = get_toggle_param(cl, "trace");
+    initCmdLine(CL_FL_ONE, "This is the virtual machine. It reads a binary\n"
+                            "file that was created with the assembler and\n"
+                            "runs it.\n");
+    addTogParam("-t", "trace", "enable trace output", false, CL_NONE);
+    addNumParam("-v", "verbose", "verbosity number from 0 to 10", 0, CL_NONE);
+    addCBwoParam("-h", "print help information", showUseCmdLine, CL_NONE);
+    parseCmdLine(argc, argv);
 
-    //read_binary(get_str_param(cl, "ifile"));
+    verbosity = getNumParam("verbose");
+    trace = getTogParam("trace");
 
-    reset_cmd_excess(cl);
-    read_binary(iterate_cmd_excess(cl));
+    // reset_cmd_excess(cl);
+    // read_binary(iterate_cmd_excess(cl));
+    resetCLFileList();
+    read_binary(iterateCLFileList());
+
     runloop();
 }

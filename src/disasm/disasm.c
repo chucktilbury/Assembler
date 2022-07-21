@@ -148,23 +148,23 @@ void read_binary(const char* fname)
     //loadStrTab(fp);
 }
 
-cmd_line cl;
+
 int main(int argc, char** argv)
 {
     _init_memory();
-    cl = create_cmd_line("This is the dis-assembler");
-    //add_str_param(cl, "ifile", "-i", "input file name", "", CF_REQD);
-    add_str_param(cl, "ofile", "-o", "output file name", "output.bin", CF_NONE);
-    add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
-    parse_cmd_line(cl, argc, argv);
+    initCmdLine(CL_FL_ONE, "Take a file that was created by the assembler and print\n"
+                            "the raw disassembly, including the tables.");
+    addStrParam("-o", "ofile", "output file name", "output.bin", CL_NONE);
+    addNumParam("-v", "verbose", "verbosity number from 0 to 10", 0, CL_NONE);
+    addCBwoParam("-h", "print the help information", showUseCmdLine, CL_NONE);
+    parseCmdLine(argc, argv);
 
-    //read_binary(get_str_param(cl, "ifile"));
-    reset_cmd_excess(cl);
-    read_binary(iterate_cmd_excess(cl));
+    resetCLFileList();
+    read_binary(iterateCLFileList());
 
     show_listing(stdout);
 
-    if(get_num_param(cl, "verbose") >= 5) {
+    if(getNumParam("verbose") >= 5) {
         printf("file name from file: %s\n", fname_buf);
         dumpStrTab();
         dumpValTab();

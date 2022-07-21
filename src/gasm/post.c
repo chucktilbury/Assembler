@@ -456,7 +456,6 @@ static void addr_scan(Module* mod)
 }
 
 #include "cmdline.h"
-extern cmd_line cl;
 
 void doPostProcess(Module* mod)
 {
@@ -468,7 +467,7 @@ void doPostProcess(Module* mod)
     instrs(mod);
     format_strs(mod);
 
-    if(get_num_param(cl, "verbose")) {
+    if(getNumParam("verbose")) {
         printModule(mod);
         dumpValTab();
         dumpPostTables();

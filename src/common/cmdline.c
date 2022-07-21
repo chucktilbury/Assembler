@@ -1,643 +1,408 @@
-/*
- * Generic command line that sort of works like a simplified Python command
- * line parser.
- *  1.  create_cmd_line()
- *  2.  add_xxx_param() for each parameter to be parsed.
- *  3.  parse_cmd_line() to read the command line and parse it into the
- *      parameters.
- *  4.  get_xxx_param() to read the values that were parsed from the command
- *      line.
- *
- * If an invalid parameter or some other command line error happens then text
- * is produced on stderr to describe the command parameters that have been
- * specified.
- */
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
-#include <ctype.h>
-#include <assert.h>
 
 #include "cmdline.h"
-#include "memory.h"
 
-// Define this to 1 or 0 to turn the excess file functionality off or on
-#ifndef USE_EXCESS
-#define USE_EXCESS 1
-#endif
-// Define this to 1 or 0 to require excess file names
-#ifndef EXCESS_REQUIRED
-#define EXCESS_REQUIRED 1
-#endif
+typedef enum {
+    CL_TOGGLE,
+    CL_NUMBER,
+    CL_STRING,
+    CL_CB_W,
+    CL_CB_WO,
+} CLType;
 
-typedef struct _cpt_ {
+typedef struct _cmd_line_elem {
+    CLType type;
     const char* name;
-    const char* parm;
+    const char* param;
     const char* help;
+    CLFlags flags;
     union {
-        int ival;
+        int num;
+        const char* str;
         bool bval;
-        const char* sval;
-        cmd_callback ptr;
-    } value;
-    cmd_flags_t flags;
-    cmd_type_t type;
-} cmd_parameter_t;
+        callback_w with;
+        callback_wo without;
+    } data;
+    struct _cmd_line_elem* next;
+} _cmd_line_elem;
+
+typedef struct _file_list_elem {
+    const char* str;
+    struct _file_list_elem* next;
+} _file_list_elem;
 
 typedef struct {
-    const char* docs;
-    const char* prog;
-    cmd_parameter_t** clist;
-    size_t cap;
-    size_t len;
-#if USE_EXCESS != 0
-    char** excess;
-    size_t ecap;
-    size_t elen;
-    size_t eidx;
-#endif
-} command_line_t;
+    _cmd_line_elem* cfirst;
+    _cmd_line_elem* clast;
+    _file_list_elem* ffirst;
+    _file_list_elem* flast;
+    _file_list_elem* crnt;
+    const char* intro;
+    const char* fname;
+    CLFlags flags;
+} _cmd_line;
 
-static void add_node(command_line_t* cmd, cmd_parameter_t* parm) {
+static _cmd_line* cmds = NULL;
 
-    assert(cmd != NULL);
-    assert(parm != NULL);
-
-    if(cmd->len + 1 > cmd->cap) {
-        cmd->cap <<= 1;
-        cmd->clist = _realloc_ds_array(cmd->clist, cmd_parameter_t*, cmd->cap); //(cmd_parameter_t**)_realloc(cmd->clist, sizeof(cmd_parameter_t*) * cmd->cap);
+static void* alloc_mem(size_t size)
+{
+    void* ptr = malloc(size);
+    if(ptr == NULL) {
+        fprintf(stderr, "cannot allocate memory\n");
+        exit(1);
     }
 
-    cmd->clist[cmd->len] = parm;
-    cmd->len++;
+    memset(ptr, 0, size);
+    return ptr;
 }
 
-static cmd_parameter_t* find_node(command_line_t* cmd, const char* key) {
-
-    assert(cmd != NULL);
-    assert(key != NULL);
-
-    for(size_t i = 0; i < cmd->len; i++) {
-        if(strcmp(key, cmd->clist[i]->name) == 0)
-            return cmd->clist[i];
-    }
-
-    return NULL;
+static void free_mem(void* ptr)
+{
+    if(ptr != NULL)
+        free(ptr);
 }
 
-/*
- * Create the main data structure for the command line and provide some
- * documentation about what the program is supposed to do in the case of
- * an error or if the "-h" parameter is found in the command line.
- */
-cmd_line create_cmd_line(const char* docs) {
-
-    command_line_t* line = _alloc_ds(command_line_t);
-    if(docs != NULL)
-        line->docs = _copy_str(docs);
-    else
-        docs = NULL;
-    line->cap = 0x01 << 3;
-    line->len = 0;
-    line->clist = _alloc_ds_array(cmd_parameter_t*, line->cap); // (cmd_parameter_t**)_malloc(sizeof(cmd_parameter_t*) * line->cap);
-#if USE_EXCESS != 0
-    line->ecap = 0x01 << 3;
-    line->elen = 0;
-    line->excess = _alloc_ds_array(char*, line->ecap); // (char**)_malloc(sizeof(char*) * line->ecap);
-    line->eidx = 0;
-#endif
-    return line;
-}
-
-/*
- * Add a string command line parameter to the parser. Any normal command line
- * string is accepted. If the string has spaces, then it must be enclosed in
- * double quotes.
- */
-void add_str_param(cmd_line cptr, const char* name, const char* parm, const char* help, const char* val, cmd_flags_t flags) {
-
-    assert(cptr != NULL);
-    assert(parm != NULL);
-    assert(strlen(parm) > 0);
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = _alloc_ds(cmd_parameter_t);
-    p->parm = _copy_str(parm);
-    p->name = _copy_str(name);
-    p->help = _copy_str(help);
-    p->flags = flags;
-    p->type = CT_STR;
-    p->value.sval = _copy_str(val);
-
-    add_node(cmd, p);
-}
-
-/*
- * Add a boolean command line parameter to the parser. Acceptable values are
- * 1, 0, true, and false. The parameters are upcased before they are checked
- * for validity.
- */
-void add_bool_param(cmd_line cptr, const char* name, const char* parm, const char* help, bool val, cmd_flags_t flags) {
-
-    assert(cptr != NULL);
-    assert(parm != NULL);
-    assert(strlen(parm) > 0);
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = _alloc_ds(cmd_parameter_t);
-    p->parm = _copy_str(parm);
-    p->help = _copy_str(help);
-    p->name = _copy_str(name);
-    p->flags = flags;
-    p->type = CT_BOOL;
-    p->value.bval = val;
-
-    add_node(cmd, p);
-}
-
-/*
- * Add a numeric command line parameter to the parser. All numbers must be
- * numbers that are less than MAX_INT and greater than MIN_INT. strtol() is
- * used to convert the string into a number.
- */
-void add_num_param(cmd_line cptr, const char* name, const char* parm, const char* help, int val, cmd_flags_t flags) {
-
-    assert(cptr != NULL);
-    assert(parm != NULL);
-    assert(strlen(parm) > 0);
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = _alloc_ds(cmd_parameter_t);
-    p->parm = _copy_str(parm);
-    p->help = _copy_str(help);
-    p->name = _copy_str(name);
-    p->flags = flags;
-    p->type = CT_NUM;
-    p->value.ival = val;
-
-    add_node(cmd, p);
-}
-
-/*
- * Add a boolean command line parameter to the parser. If this parameter is
- * present, then the value is set to true. Otherwise, it is false.
- */
-void add_toggle_param(cmd_line cptr, const char* name, const char* parm, const char* help, bool val, cmd_flags_t flags) {
-
-    assert(cptr != NULL);
-    assert(parm != NULL);
-    assert(strlen(parm) > 0);
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = _alloc_ds(cmd_parameter_t);
-    p->parm = _copy_str(parm);
-    p->help = _copy_str(help);
-    p->name = _copy_str(name);
-    p->flags = flags;
-    p->type = CT_TOGGLE;
-    p->value.bval = val;
-
-    add_node(cmd, p);
-}
-
-void add_callback_param(cmd_line cptr, const char* name, const char* parm,
-                        const char* help, cmd_callback val, cmd_flags_t flags) {
-
-    assert(cptr != NULL);
-    assert(parm != NULL);
-    assert(strlen(parm) > 0);
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = _alloc_ds(cmd_parameter_t);
-    p->parm = _copy_str(parm);
-    p->help = _copy_str(help);
-    p->name = _copy_str(name);
-    p->flags = flags;
-    p->type = CT_CALLBACK;
-    p->value.ptr = val;
-
-    add_node(cmd, p);
-}
-
-
-/*
- * Get the value associated with a string command line parameter. Could
- * return NULL if the parameter is not required, it's was not provided
- * and there is no default.
- */
-const char* get_str_param(cmd_line cptr, const char* name) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = find_node(cmd, name);
-    assert(p != NULL);
-
-    return p->value.sval;
-}
-
-/*
- * Return a boolean command parameter.
- */
-bool get_bool_param(cmd_line cptr, const char* name) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = find_node(cmd, name);
-    assert(p != NULL);
-
-    return p->value.bval;
-}
-
-/*
- * Return a numerical command parameter as an int, which could be a signed
- * value from the command line.
- */
-int get_num_param(cmd_line cptr, const char* name) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = find_node(cmd, name);
-    assert(p != NULL);
-
-    return p->value.ival;
-}
-
-/*
- * Return a numerical command parameter as an int, which could be a signed
- * value from the command line.
- */
-bool get_toggle_param(cmd_line cptr, const char* name) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t* p = find_node(cmd, name);
-    assert(p != NULL);
-
-    return p->value.bval;
-}
-
-/*
- * Actually read the command line and fill out the data structures. do this
- * after all of the parameters have been added, but before any attempt to
- * read the value of a command parameter.
- */
-void parse_cmd_line(cmd_line cptr, int argc, char** argv) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-
-    cmd->prog = _copy_str(argv[0]);
-    char* arg_ptr;
-
-    for(int args_idx = 1; args_idx < argc; args_idx++) {
-        size_t parm_idx;
-        for(parm_idx = 0; parm_idx < cmd->len; parm_idx++) {
-            size_t len = strlen(cmd->clist[parm_idx]->parm);
-            if(0 == strncmp(cmd->clist[parm_idx]->parm, argv[args_idx], len)) {
-                if(strlen(argv[args_idx]) > len)
-                    arg_ptr = &argv[args_idx][len];
-                else
-                    arg_ptr = NULL;
-                break; // found it.
-            }
-        }
-
-        if(parm_idx >= cmd->len) {
-            if(0 != strcmp(argv[args_idx], "-h") &&
-                    0 != strcmp(argv[args_idx], "-help") &&
-                    0 != strcmp(argv[args_idx], "--h") &&
-                    0 != strcmp(argv[args_idx], "--help") &&
-                    0 != strcmp(argv[args_idx], "-?")) {
-                // unknown parm
-#if USE_EXCESS != 0
-                if(argv[args_idx][0] != '-') {
-                    // add it to the excess list
-                    if(cmd->elen + 1 > cmd->ecap) {
-                        cmd->ecap <<= 1;
-                        cmd->excess = _realloc(cmd->excess, sizeof(char*)*cmd->ecap);
-                    }
-                    cmd->excess[cmd->elen] = (char*)_copy_str(argv[args_idx]);
-                    cmd->elen++;
-                    continue; // outer for() loop
-                }
-                else {
-                    fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                    cmd_use(cmd); // does not return
-                }
-#else
-                fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                cmd_use(cmd); // does not return
-#endif
-            }
-            else
-                cmd_use(cmd); // does not return
-
-        }
-
-        switch(cmd->clist[parm_idx]->type) {
-            // Has a required bool parameter, can be 0, 1, true or false. If there is no
-            // space between the param and the arg, then they must be separated by a ':'
-            // or a '='. Any case is accepted for "true" or "false".
-            case CT_BOOL: {
-                    if(args_idx+1 > argc) {
-                        fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
-                        cmd_use(cmd);
-                    }
-
-                    if(arg_ptr != NULL) {
-                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
-                            arg_ptr++;
-                        else {
-                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                            cmd_use(cmd); // does not return
-                        }
-                    }
-                    else
-                        arg_ptr = argv[args_idx+1];
-
-                    char buffer[10]; // argv may not be writable
-                    for(int i = 0; arg_ptr[i] != 0; i++)
-                        buffer[i] = tolower(arg_ptr[i]);
-
-                    if(strcmp(buffer, "true") == 0)
-                        cmd->clist[parm_idx]->value.bval = true;
-                    else if(strcmp(buffer, "false") == 0)
-                        cmd->clist[parm_idx]->value.bval = false;
-                    else if(strcmp(buffer, "on") == 0)
-                        cmd->clist[parm_idx]->value.bval = true;
-                    else if(strcmp(buffer, "off") == 0)
-                        cmd->clist[parm_idx]->value.bval = false;
-                    else if(strcmp(buffer, "1") == 0)
-                        cmd->clist[parm_idx]->value.bval = true;
-                    else if(strcmp(buffer, "0") == 0)
-                        cmd->clist[parm_idx]->value.bval = false;
-                    else {
-                        fprintf(stderr, "cmd_err: invalid boolean: \"%s\": must be '0', '1', 'on', 'off', 'true', or 'false'\n", buffer);
-                        cmd_use(cmd);
-                    }
-
-                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    args_idx++;
-                }
-                break;
-
-            case CT_NUM:  { // has a signed integer parameter
-                    if(args_idx+1 > argc) {
-                        fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
-                        cmd_use(cmd);
-                    }
-
-                    if(arg_ptr != NULL) {
-                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
-                            arg_ptr++;
-                        else {
-                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                            cmd_use(cmd); // does not return
-                        }
-                    }
-                    else
-                        arg_ptr = argv[args_idx+1];
-
-                    int result = 0;
-                    bool neg = false;
-                    if(arg_ptr[0] == '-')
-                        neg = true;
-                    for(int i = 0; arg_ptr[i] != '\0'; i++) {
-                        if(isdigit(arg_ptr[i])) {
-                            result *= 10;
-                            result += arg_ptr[i] - '0';
-                        }
-                        else {
-                            fprintf(stderr, "cmd_err: invalid number: \"%s\"\n", arg_ptr);
-                            cmd_use(cmd);
-                        }
-                    }
-                    if(neg)
-                        result = -result;
-
-                    cmd->clist[parm_idx]->value.ival = result;
-                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    args_idx++;
-                }
-                break;
-
-            case CT_STR:  { // has a string parameter
-                    if(args_idx+1 > argc) {
-                        fprintf(stderr, "cmd_err: missing arg for \"%s\"\n", argv[args_idx]);
-                        cmd_use(cmd);
-                    }
-
-                    if(arg_ptr != NULL) {
-                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
-                            arg_ptr++;
-                        else {
-                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                            cmd_use(cmd); // does not return
-                        }
-                    }
-                    else
-                        arg_ptr = argv[args_idx+1];
-
-                    cmd->clist[parm_idx]->value.sval = _copy_str(arg_ptr);
-                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    args_idx++;
-                }
-                break;
-
-            case CT_TOGGLE: { // has no parameter, AKA a switch
-                    if(arg_ptr != NULL) {
-                        fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                        cmd_use(cmd); // does not return
-                    }
-                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    cmd->clist[parm_idx]->value.bval = cmd->clist[parm_idx]->value.bval? false: true;
-                }
-                break;
-
-            case CT_CALLBACK: { // just call the callback, no value to update.
-                    if(arg_ptr != NULL) {
-                        if(arg_ptr[0] == ':' || arg_ptr[0] == '=')
-                            arg_ptr++;
-                        else {
-                            fprintf(stderr, "cmd_err: unknown command parameter: \"%s\"\n", argv[args_idx]);
-                            cmd_use(cmd); // does not return
-                        }
-                    }
-                    else
-                        arg_ptr = argv[args_idx+1];
-
-                    cmd->clist[parm_idx]->flags |= CF_PRESENT;
-                    cmd->clist[parm_idx]->value.ptr(arg_ptr);
-                    args_idx++;
-                }
-                break;
-
-            default:        // unknown type should be impossible.
-                fprintf(stderr, "cmd_err: internal error: invalid parameter type\n");
-                exit(1);
-                break;
-        }
-
-    }
-
-    // check for all required params.
-    cmd_parameter_t** lst = cmd->clist;
-    for(size_t idx = 0; idx < cmd->len; idx++) {
-        if(lst[idx]->flags & CF_REQD && !(lst[idx]->flags & CF_PRESENT)) {
-            fprintf(stderr, "cmd_err: required parameter not present: \"%s\"\n", lst[idx]->parm);
-            cmd_use(cmd);
-        }
-    }
-
-#if USE_EXCESS != 0
-#if EXCESS_REQUIRED != 0
-    if(cmd->elen == 0) {
-        fprintf(stderr, "cmd_err: required file name list not present\n");
-        cmd_use(cmd);
-    }
-#endif
-#endif
-}
-
-/*
- * Display text that appears with the "help" parameter. This text is
- * automatically generated from the cmd_line data structure.
- */
-void cmd_use(cmd_line cmd) {
-
-    command_line_t* line = (command_line_t*)cmd;
-    cmd_parameter_t** p = line->clist;
-
-#if USE_EXCESS != 0
-    fprintf(stderr, "\nuse: %s <parameters> <files>\n", line->prog);
-#else
-    fprintf(stderr, "\nuse: %s <parameters>\n", line->prog);
-#endif
-    fprintf(stderr, "%s\n\n", line->docs);
-    for(size_t idx = 0; idx < line->len; idx++) {
-        switch(p[idx]->type) {
-            case CT_BOOL:
-                fprintf(stderr, "  %-4s <bool> %s (%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->value.bval? "true": "false");
-                break;
-            case CT_TOGGLE:
-                fprintf(stderr, "  %-4s -----  %s (%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->value.bval? "true": "false");
-                break;
-            case CT_NUM:
-                fprintf(stderr, "  %-4s <num>  %s (%d)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->value.ival);
-                break;
-            case CT_STR:
-                fprintf(stderr, "  %-4s <str>  %s (%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->value.sval);
-                break;
-            case CT_CALLBACK:
-                fprintf(stderr, "  %-4s <str>  %s\n",
-                            p[idx]->parm, p[idx]->help);
-                break;
-            default: // unknown type should be impossible.
-                fprintf(stderr, "cmd_err: internal error: invalid parameter type\n");
-                exit(1);
-                break;
-        }
-    }
-
-    fprintf(stderr, "  -h   -----  Print this helpful information.\n\n");
-    exit(1);
-}
-
-const char* get_cmd(cmd_line cptr) {
-    return ((command_line_t*)cptr)->prog;
-}
-
-#if USE_EXCESS != 0
-/*
- * Reset the excess parameter list prior to iterating it.
- */
-void reset_cmd_excess(cmd_line cptr) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd->eidx = 0;
-}
-
-/*
- * Each time this is called, the next excess parameter is returned. When there
- * are no more entries, then return NULL. Is starting from the beginning is
- * required, then the reset routine must be called first.
- */
-char* iterate_cmd_excess(cmd_line cptr) {
-
-    command_line_t* cmd = (command_line_t*)cptr;
+static const char* dup_string(const char* str)
+{
     char* ptr;
+    size_t len;
 
-    if(cmd->eidx < cmd->elen) {
-        ptr = cmd->excess[cmd->eidx];
-        cmd->eidx++;
+    if(str != NULL && (len = strlen(str)) > 0) {
+        ptr = alloc_mem(len+1);
+        memcpy(ptr, str, len+1);
     }
-    else
-        ptr = NULL;
+    else {
+        ptr = alloc_mem(1);
+        ptr[0] = '\0';
+    }
 
     return ptr;
 }
-#endif
 
-/*
- * This routine is used for debugging and is not a part of the normal user
- * interface.
- */
-void dump_cmd_line(cmd_line cptr) {
+void initCmdLine(CLFlags flags, const char* intro)
+{
+    cmds = alloc_mem(sizeof(_cmd_line));
 
-    command_line_t* cmd = (command_line_t*)cptr;
-    cmd_parameter_t** p = cmd->clist;
+    cmds->cfirst = NULL;
+    cmds->clast = NULL;
+    cmds->ffirst = NULL;
+    cmds->flast = NULL;
+    cmds->crnt = NULL;
+    cmds->intro = dup_string(intro);
+    cmds->flags = flags;
 
-    fprintf(stderr, "\nDUMP COMMAND LINE PARAMETERS\n");
-    fprintf(stderr, "\n%s\n", cmd->docs);
-    for(size_t idx = 0; idx < cmd->len; idx++) {
-        switch(p[idx]->type) {
-            case CT_BOOL:
-                fprintf(stderr, "  %-4s <bool> %s (required=%s) (value=%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->flags & CF_REQD? "true": "false",
-                            p[idx]->value.bval? "true": "false");
-                break;
-            case CT_TOGGLE:
-                fprintf(stderr, "  %-4s -----  %s (required=%s) (value=%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->flags & CF_REQD? "true": "false",
-                            p[idx]->value.bval? "true": "false");
-                break;
-            case CT_NUM:
-                fprintf(stderr, "  %-4s <num>  %s (required=%s) (value=%d)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->flags & CF_REQD? "true": "false",
-                            p[idx]->value.ival);
-                break;
-            case CT_STR:
-                fprintf(stderr, "  %-4s <str>  %s (required=%s) (value=%s)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->flags & CF_REQD? "true": "false",
-                            p[idx]->value.sval);
-                break;
-            case CT_CALLBACK:
-                fprintf(stderr, "  %-4s <str>  %s (required=%s) (fptr=%p)\n",
-                            p[idx]->parm, p[idx]->help,
-                            p[idx]->flags & CF_REQD? "true": "false",
-                            p[idx]->value.ptr);
-                break;
-            default: // unknown type should be impossible.
-                fprintf(stderr, "cmd_err: internal error: invalid parameter type\n");
-                exit(1);
-                break;
+}
+
+void destroyCmdLine()
+{
+    if(cmds == NULL)
+        return;
+
+    _cmd_line_elem* crntc;
+    _cmd_line_elem* nextc;
+    if(cmds->cfirst != NULL) {
+        for(crntc = cmds->cfirst; crntc != NULL; crntc = nextc) {
+            nextc = crntc->next;
+            if(crntc->type == CL_STRING)
+                free_mem((void*)crntc->data.str);
+            free_mem((void*)crntc->name);
+            free_mem((void*)crntc->param);
+            free_mem((void*)crntc->help);
+            free_mem(crntc);
         }
     }
-#if USE_EXCESS != 0
-    fprintf(stderr, "\nexcess strings:\n");
-    reset_cmd_excess(cptr);
-    char* str;
-    while((str = iterate_cmd_excess(cptr)) != NULL) {
-        fprintf(stderr, "    %s\n", str);
+
+    _file_list_elem* crntf;
+    _file_list_elem* nextf;
+    if(cmds->ffirst != NULL) {
+        for(crntf = cmds->ffirst; crntf != NULL; crntf = nextf) {
+            nextf = crntf->next;
+            free_mem((void*)crntf->str);
+            free_mem(crntf);
+        }
     }
-#endif
-    fprintf(stderr, "\n");
 }
+
+static inline _cmd_line_elem* find_param(const char* param)
+{
+    _cmd_line_elem* crnt;
+    for(crnt = cmds->cfirst; crnt != NULL; crnt = crnt->next) {
+        size_t len = strlen(crnt->param);
+        if(strncmp(param, crnt->param, len) == 0)
+            break;
+    }
+
+    return crnt;
+}
+
+static inline void add_file(const char* fn)
+{
+    _file_list_elem* fe = alloc_mem(sizeof(_file_list_elem));
+    fe->str = dup_string(fn);
+
+    if(cmds->ffirst != NULL)
+        cmds->flast->next = fe;
+    else
+        cmds->ffirst = fe;
+    cmds->flast = fe;
+}
+
+void parseCmdLine(int argc, char** argv)
+{
+    int index = 0;
+    const char* arg;
+
+    // save the program name
+    cmds->fname = dup_string(argv[index++]);
+
+    while(index < argc) {
+        // find the parameter
+        _cmd_line_elem* param = find_param(argv[index]);
+        if(param == NULL) {
+            // if it's not found, add it to the file list
+            add_file(argv[index++]);
+            continue;
+        }
+        else {
+            // check to see if a space separates the parameter from the arg
+            size_t len = strlen(param->param);
+            if(param->type == CL_TOGGLE || param->type == CL_CB_WO) {
+                // there is no arg, just index to the next one.
+                arg = NULL;
+                index++;
+            }
+            else if(strlen(argv[index]) > len) {
+                // there is no space
+                arg = &argv[index][len];
+                index++;
+            }
+            else {
+                // there is a space.
+                index++;    // index the arg
+                arg = argv[index];
+                index++;    // index the next param
+            }
+        }
+
+        // parse the parameter arguments
+        switch(param->type) {
+            case CL_TOGGLE:
+                param->data.bval = param->data.bval? false: true;
+                param->flags |= CL_PRESENT;
+                break;
+            case CL_CB_WO:
+                param->data.without();
+                param->flags |= CL_PRESENT;
+                break;
+            case CL_NUMBER:
+                param->data.num = strtol(arg, NULL, 10);
+                param->flags |= CL_PRESENT;
+                break;
+            case CL_STRING:
+                param->data.str = dup_string(arg);
+                param->flags |= CL_PRESENT;
+                break;
+            case CL_CB_W:
+                param->data.with(arg);
+                param->flags |= CL_PRESENT;
+                break;
+            default:
+                fprintf(stderr, "internal cmd error: unknown type: %d\n", param->type);
+                exit(1);
+        }
+    }
+
+    // verify that required params are present
+    for(_cmd_line_elem* cel = cmds->cfirst; cel != NULL; cel = cel->next) {
+        if((cel->flags & CL_REQD) && !(cel->flags & CL_PRESENT)) {
+            fprintf(stderr, "cmd line error: required parameter '%s' is not found\n", cel->param);
+            showUseCmdLine();
+        }
+    }
+
+    if(cmds->flags & CL_NO_FL) {
+        if(cmds->ffirst != NULL) {
+            fprintf(stderr, "cmd line error: extra parameters on command line\n");
+            showUseCmdLine();
+        }
+    }
+    else {
+        if(cmds->flags & (CL_FL_REQD|CL_FL_ONE)) {
+            if(cmds->ffirst == NULL) {
+                fprintf(stderr, "cmd line error: required file list is not found\n");
+                showUseCmdLine();
+            }
+        }
+
+        if(cmds->flags & (CL_FL_ONE)) {
+            if(cmds->ffirst != cmds->flast) {
+                fprintf(stderr, "cmd line error: exactly one file name required\n");
+                showUseCmdLine();
+            }
+        }
+    }
+}
+
+void showUseCmdLine()
+{
+    fprintf(stderr, "\nuse: %s <parameters> %s\n", cmds->fname, cmds->flags & CL_NO_FL? "": "<file(s)>");
+    fprintf(stderr, "%s\n", cmds->intro);
+
+    for(_cmd_line_elem* cel = cmds->cfirst; cel != NULL; cel = cel->next) {
+        switch(cel->type) {
+            case CL_TOGGLE:
+            case CL_CB_WO:
+                fprintf(stderr, "    %s ----- %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                break;
+            case CL_NUMBER:
+                fprintf(stderr, "    %s <num> %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                break;
+            case CL_STRING:
+            case CL_CB_W:
+                fprintf(stderr, "    %s <str> %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                break;
+            default:
+                fprintf(stderr, "internal cmd error: unknown type: %d\n", cel->type);
+                exit(1);
+        }
+    }
+    fprintf(stderr, "\n\n");
+    exit(1);
+}
+
+static inline _cmd_line_elem* create_cel(CLType type, const char* param, const char* name, const char* help)
+{
+    _cmd_line_elem* cel = alloc_mem(sizeof(_cmd_line_elem));
+
+    cel->param = dup_string(param);
+    cel->name = dup_string(name);
+    cel->help = dup_string(help);
+    cel->type = type;
+
+    return cel;
+}
+
+static inline void add_cel(_cmd_line_elem* cel)
+{
+    if(cmds->cfirst != NULL)
+        cmds->clast->next = cel;
+    else
+        cmds->cfirst = cel;
+    cmds->clast = cel;
+}
+
+void addNumParam(const char* param, const char* name, const char* help, int def, CLFlags flags)
+{
+    _cmd_line_elem* cel = create_cel(CL_NUMBER, param, name, help);
+    cel->data.num = def;
+    cel->flags = flags;
+
+    add_cel(cel);
+}
+
+void addStrParam(const char* param, const char* name, const char* help, const char* def, CLFlags flags)
+{
+    _cmd_line_elem* cel = create_cel(CL_STRING, param, name, help);
+    cel->data.str = dup_string(def);
+    cel->flags = flags;
+
+    add_cel(cel);
+}
+
+void addTogParam(const char* param, const char* name, const char* help, bool def, CLFlags flags)
+{
+    _cmd_line_elem* cel = create_cel(CL_TOGGLE, param, name, help);
+    cel->data.bval = def;
+    cel->flags = flags;
+
+    add_cel(cel);
+}
+
+void addCBwParam(const char* param, const char* help, callback_w def, CLFlags flags)
+{
+    _cmd_line_elem* cel = create_cel(CL_CB_W, param, NULL, help);
+    cel->data.with = def;
+    cel->flags = flags;
+
+    add_cel(cel);
+}
+
+void addCBwoParam(const char* param, const char* help, callback_wo def, CLFlags flags)
+{
+    _cmd_line_elem* cel = create_cel(CL_CB_WO, param, NULL, help);
+    cel->data.without = def;
+    cel->flags = flags;
+
+    add_cel(cel);
+}
+
+static inline _cmd_line_elem* find_name(const char* name)
+{
+    _cmd_line_elem* crnt;
+    for(crnt = cmds->cfirst; crnt != NULL; crnt = crnt->next) {
+        if(!strcmp(name, crnt->name))
+            break;
+    }
+
+    return crnt;
+}
+
+int getNumParam(const char* name)
+{
+    _cmd_line_elem* crnt = find_name(name);
+
+    if(crnt != NULL)
+        return crnt->data.num;
+    else {
+        fprintf(stderr, "internal cmd error: unknown name: %s\n", name);
+        exit(1);
+    }
+    return 0; // happy compiler
+}
+
+const char* getStrParam(const char* name)
+{
+    _cmd_line_elem* crnt = find_name(name);
+
+    if(crnt != NULL)
+        return crnt->data.str;
+    else {
+        fprintf(stderr, "internal cmd error: unknown name: %s\n", name);
+        exit(1);
+    }
+    return NULL; // happy compiler
+}
+
+bool getTogParam(const char* name)
+{
+    _cmd_line_elem* crnt = find_name(name);
+
+    if(crnt != NULL)
+        return crnt->data.bval;
+    else {
+        fprintf(stderr, "internal cmd error: unknown name: %s\n", name);
+        exit(1);
+    }
+    return false; // happy compiler
+}
+
+void resetCLFileList()
+{
+    cmds->crnt = cmds->ffirst;
+}
+
+const char* iterateCLFileList()
+{
+    _file_list_elem* crnt = cmds->crnt;
+    if(crnt != NULL)
+        cmds->crnt = cmds->crnt->next;
+
+    if(crnt != NULL)
+        return crnt->str;
+    else
+        return NULL;
+}
+

@@ -31,7 +31,7 @@ int get_line_no()
 void set_file_name(const char* fname)
 {
     //file_name = _copy_str(fname);
-    file_name = fname;
+    file_name = (char*)fname;
 }
 
 const char* get_file_name()
