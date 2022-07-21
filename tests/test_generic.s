@@ -9,9 +9,6 @@ float timer = 0.0
 string print_timer = "elapsed time is {timer} seconds"
 uint test_addr = 59
 
-// this line is passed through the preprocessor
-//#line 25 "/home/chuck/Src/goldfish/testing/asm/blart.plart"
-
 _start:
     NOP
     // store the current clock count on the stack
@@ -59,7 +56,7 @@ destination3:
     // store the current ticker on the stack
     push R8         // start ticker is now TOS
     trap GET_CLOCK  // end ticker is on TOS
-    trap DIF_CLOCK  // TOS is the diffed timer as a float
+    trap DIF_CLOCK  // TOS is the diffed timer as a float (uses a system constant)
     pop  R7
     store timer, r7 // store the diffed timer to use with s formatted string
 
