@@ -19,6 +19,7 @@ bool doLOAD()
         fatalError("value index %d yields no value", idx);
 
     memcpy(&registers[reg & 0x0F], val, sizeof(Value));
+    registers[reg & 0x0F].isAssigned = true;
 
     return false;
 }
@@ -34,6 +35,7 @@ bool doLOADR()
     TRACE("%s,%s", regToStr(dest), regToStr(src));
 
     memcpy(&registers[dest], &registers[src], sizeof(Value));
+    registers[dest].isAssigned = true;
 
     return false;
 }
@@ -48,6 +50,7 @@ bool doLOADI()
     TRACE("%s,%s", regToStr(reg), valToStr(&val));
 
     memcpy(&registers[reg & 0x0F], &val, sizeof(Value));
+    registers[reg & 0x0F].isAssigned = true;
 
     return false;
 }
@@ -64,7 +67,8 @@ bool doSTORE()
     TRACE("%d,%s", idx, regToStr(reg));
 
     Value* val = getValTab(idx);
-    memcpy(val, &registers[reg], sizeof(Value));
+    registers[reg & 0x0F].isAssigned = true;
+    memcpy(val, &registers[reg & 0x0F], sizeof(Value));
 
     return false;
 }

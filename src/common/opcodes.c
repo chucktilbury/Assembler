@@ -24,10 +24,10 @@ const char* opToStr(OpCode op)
             (op == OP_NOT)? "NOT":
             (op == OP_EQ)? "EQ":
             (op == OP_NEQ)? "NEQ":
-            (op == OP_LEQ)? "LEQ":
-            (op == OP_GEQ)? "GEQ":
-            (op == OP_LESS)? "LESS":
-            (op == OP_GTR)? "GTR":
+            (op == OP_LTE)? "LTE":
+            (op == OP_GTE)? "GTE":
+            (op == OP_LT)? "LT":
+            (op == OP_GT)? "GT":
             (op == OP_NEG)? "NEG":
             (op == OP_ADD)? "ADD":
             (op == OP_SUB)? "SUB":

@@ -6,7 +6,7 @@ bool doEQ();
 bool doNEQ();
 bool doLEQ();
 bool doGEQ();
-bool doLESS();
-bool doGTR();
+bool doLT();
+bool doGT();
 
 #endif

@@ -66,8 +66,8 @@ extern Module* module;
 %token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP TOK_LINE
 %token <opcode> TOK_RETURN TOK_JMP TOK_BR TOK_PEEK TOK_SIDX
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
-%token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LEQ
-%token <opcode> TOK_GEQ TOK_LESS TOK_GTR TOK_NEG TOK_ADD TOK_SUB TOK_MUL
+%token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LTE
+%token <opcode> TOK_GTE TOK_LT TOK_GT TOK_NEG TOK_ADD TOK_SUB TOK_MUL
 
 %token <reg> TOK_R0 TOK_R1 TOK_R2 TOK_R3 TOK_R4 TOK_R5 TOK_R6 TOK_R7
 %token <reg> TOK_R8 TOK_R9 TOK_R10 TOK_R11 TOK_R12 TOK_R13 TOK_R14 TOK_R15
@@ -165,10 +165,10 @@ class2_instr
     : TOK_NEG register ',' register { addClass2(module, OP_NEG, $2, $4); }
     | TOK_EQ register ',' register { addClass2(module, OP_EQ, $2, $4); }
     | TOK_NEQ register ',' register { addClass2(module, OP_NEQ, $2, $4); }
-    | TOK_LEQ register ',' register { addClass2(module, OP_LEQ, $2, $4); }
-    | TOK_GEQ register ',' register { addClass2(module, OP_GEQ, $2, $4); }
-    | TOK_LESS register ',' register { addClass2(module, OP_LESS, $2, $4); }
-    | TOK_GTR register ',' register { addClass2(module, OP_GTR, $2, $4); }
+    | TOK_LTE register ',' register { addClass2(module, OP_LTE, $2, $4); }
+    | TOK_GTE register ',' register { addClass2(module, OP_GTE, $2, $4); }
+    | TOK_LT register ',' register { addClass2(module, OP_LT, $2, $4); }
+    | TOK_GT register ',' register { addClass2(module, OP_GT, $2, $4); }
     | TOK_LOAD register ',' register { addClass2(module, OP_LOADR, $2, $4); }
     ;
 

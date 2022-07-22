@@ -212,7 +212,7 @@ bool doGEQ()
     return false;
 }
 
-bool doLESS()
+bool doLT()
 {
     uint8_t regs;
     readInstObj(&regs, sizeof(uint8_t));
@@ -220,13 +220,14 @@ bool doLESS()
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
+printf("left = %ld, right = %ld\n", registers[left].data.num, registers[right].data.num);
 
     _operation(&registers[left], &registers[right], <);
 
     return false;
 }
 
-bool doGTR()
+bool doGT()
 {
     uint8_t regs;
     readInstObj(&regs, sizeof(uint8_t));

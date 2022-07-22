@@ -30,10 +30,10 @@ void show_listing(FILE* fp)
 
             case OP_EQ:
             case OP_NEQ:
-            case OP_LEQ:
-            case OP_GEQ:
-            case OP_LESS:
-            case OP_GTR:
+            case OP_LTE:
+            case OP_GTE:
+            case OP_LT:
+            case OP_GT:
             case OP_NEG:
             case OP_LOADR: {
                     // 2 registers

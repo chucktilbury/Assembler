@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 
     module = createModule();
     if(getTogParam("entry")) {
-        addClass8(module, OP_JMP, "_start");
+        addClass8(module, OP_CALL, "_start");
         addClass0(module, OP_NOP);
         addClass8(module, OP_JMP, "_ending");
     }

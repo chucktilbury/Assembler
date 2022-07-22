@@ -93,10 +93,10 @@ static void __append_str(const char* str)
 "NOT"           { yylval.opcode = OP_NOT; return TOK_NOT; }
 "EQ"            { yylval.opcode = OP_EQ; return TOK_EQ; }
 "NEQ"           { yylval.opcode = OP_NEQ; return TOK_NEQ; }
-"LEQ"           { yylval.opcode = OP_LEQ; return TOK_LEQ; }
-"GEQ"           { yylval.opcode = OP_GEQ; return TOK_GEQ; }
-"LESS"          { yylval.opcode = OP_LESS; return TOK_LESS; }
-"GTR"           { yylval.opcode = OP_GTR; return TOK_GTR; }
+"LTE"           { yylval.opcode = OP_LTE; return TOK_LTE; }
+"GTE"           { yylval.opcode = OP_GTE; return TOK_GTE; }
+"LT"            { yylval.opcode = OP_LT; return TOK_LT; }
+"GT"            { yylval.opcode = OP_GT; return TOK_GT; }
 "NEG"           { yylval.opcode = OP_NEG; return TOK_NEG; }
 "ADD"           { yylval.opcode = OP_ADD; return TOK_ADD; }
 "SUB"           { yylval.opcode = OP_SUB; return TOK_SUB; }

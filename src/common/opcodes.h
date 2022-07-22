@@ -30,10 +30,10 @@ typedef enum {
     OP_NOT,     // unary not conditional
     OP_EQ,      // equal conditional
     OP_NEQ,     // not equal conditional
-    OP_LEQ,     // less-or-equal conditional
-    OP_GEQ,     // greater-or-equal conditional
-    OP_LESS,    // less than conditional
-    OP_GTR,     // greater than conditional
+    OP_LTE,     // less-or-equal conditional
+    OP_GTE,     // greater-or-equal conditional
+    OP_LT,      // less than conditional
+    OP_GT,      // greater than conditional
 
     // arithmetic operators
     OP_NEG,     // unary arithmetic negation
