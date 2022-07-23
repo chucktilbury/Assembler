@@ -3,7 +3,13 @@
 #include "cmdline.h"
 
 static bool z_flag;
+
+// virtual machine globals
 Value registers[16];
+const uint8_t* instr_buffer;
+unsigned int instr_idx;
+unsigned int instr_len;
+
 int errors = 0;
 int verbosity = 0;
 bool trace = false;
@@ -48,12 +54,6 @@ void read_binary(const char* fname)
 int main(int argc, char** argv)
 {
     _init_memory();
-    // cl = create_cmd_line("This is the dis-assembler");
-    // add_toggle_param(cl, "trace", "-t", "enable trace output", false, CF_NONE);
-    // add_num_param(cl, "verbose", "-v", "verbosity number from 0 to 10", 0, CF_NONE);
-    // parse_cmd_line(cl, argc, argv);
-    // verbosity = get_num_param(cl, "verbose");
-    // trace = get_toggle_param(cl, "trace");
     initCmdLine(CL_FL_ONE, "This is the virtual machine. It reads a binary\n"
                             "file that was created with the assembler and\n"
                             "runs it.\n");
@@ -69,6 +69,10 @@ int main(int argc, char** argv)
     // read_binary(iterate_cmd_excess(cl));
     resetCLFileList();
     read_binary(iterateCLFileList());
+
+    instr_buffer = getInstBuffer();
+    instr_idx = 0;
+    instr_len = getInstBufferLen();
 
     runloop();
 }

@@ -3,10 +3,11 @@
 
 extern Value registers[16];
 
-bool doPOP()
+static inline bool doPOP()
 {
     uint8_t reg;
-    readInstObj(&reg, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
     Value val = popVal();
@@ -15,10 +16,11 @@ bool doPOP()
     return false;
 }
 
-bool doPUSH()
+static inline bool doPUSH()
 {
     uint8_t reg;
-    readInstObj(&reg, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
     pushVal(registers[reg]);
@@ -30,12 +32,14 @@ bool doPUSH()
 // location in the stack where the function stack starts. The index is the
 // offset from the base pointer. The index is subtracted from from the base
 // and provides an intuitive way to access stack variables.
-bool doPEEK()
+static inline bool doPEEK()
 {
     uint8_t regs;
     uint16_t idx;
-    readInstObj(&regs, sizeof(regs));
-    readInstObj(&idx, sizeof(idx));
+    //readInstObj(&regs, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
+    //readInstObj(&idx, sizeof(idx));
+    READ_OBJ(idx, uint16_t);
 
     uint8_t dest = (regs & 0xF0) >> 4;
     uint8_t base = (regs & 0x0F);
@@ -50,10 +54,11 @@ bool doPEEK()
 }
 
 // Store the current stack index into the specified register.
-bool doSIDX()
+static inline bool doSIDX()
 {
     uint8_t reg;
-    readInstObj(&reg, sizeof(reg));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
     uint8_t idx = reg & 0x0F;

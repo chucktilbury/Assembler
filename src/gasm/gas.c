@@ -104,7 +104,7 @@ static void save_binary(const char* fname)
 
     char fbuf[FNAME_LEN];
     memset(fbuf, 0, sizeof(fbuf));
-    strncpy(fbuf, fname, FNAME_LEN);
+    strncpy(fbuf, fname, FNAME_LEN-1);
     fwrite(fbuf, sizeof(fbuf), 1, fp);
 
     saveInstStream(fp);

@@ -4,8 +4,8 @@
 bool doNOT();
 bool doEQ();
 bool doNEQ();
-bool doLEQ();
-bool doGEQ();
+bool doLTE();
+bool doGTE();
 bool doLT();
 bool doGT();
 

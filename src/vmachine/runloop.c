@@ -1,45 +1,13 @@
 
 #include "vmachine.h"
 
-#include "do_arith.h"
-#include "do_compare.h"
-#include "do_branch.h"
-#include "do_stack.h"
-#include "do_load.h"
-#include "do_misc.h"
-#include "do_trap.h"
-
-static runloopHandler runloop_table[] = {
-    //[OP_ABORT] = doABORT,   // cause the VM to quit with an error found in a variable
-    [OP_EXIT] = doEXIT,     // cause the VM to quit normally
-    [OP_NOP] = doNOP,       // no operation
-    [OP_CALL] = doCALL,     // call an absolute address stored in a variable
-    [OP_TRAP] = doTRAP,     // call a pre-determined address for external functionality
-    [OP_RETURN] = doRETURN, // return from a call or a trap
-    [OP_JMP] = doJMP,       // unconditional jump to an absolute address stored in a variable
-    [OP_BR] = doBR,         // conditional jump to an absolute address in a variable
-    [OP_PUSH] = doPUSH,     // push the value on the value stack from a variable
-    [OP_POP] = doPOP,       // pop the value from the stack and put it in a register
-    [OP_LOAD] = doLOAD,     // Load a register from a variable.
-    [OP_LOADI] = doLOADI,   // load a register from an immediate value.
-    [OP_LOADR] = doLOADR,   // load a register from another register (copy)
-    [OP_STORE] = doSTORE,   // Store a register into a variable.
-    [OP_NOT] = doNOT,       // unary not conditional
-    [OP_EQ] = doEQ,         // equal conditional
-    [OP_NEQ] = doNEQ,       // not equal conditional
-    [OP_LTE] = doLEQ,       // less-or-equal conditional
-    [OP_GTE] = doGEQ,       // greater-or-equal conditional
-    [OP_LT] = doLT,         // less than conditional
-    [OP_GT] = doGT,         // greater than conditional
-    [OP_NEG] = doNEG,       // unary arithmetic negation
-    [OP_ADD] = doADD,       // arithmetic add
-    [OP_SUB] = doSUB,       // arithmetic subtract
-    [OP_MUL] = doMUL,       // arithmetic multiply
-    [OP_DIV] = doDIV,       // arithmetic divide
-    [OP_MOD] = doMOD,       // arithmetic modulo
-    [OP_PEEK] = doPEEK,     // peek at the stack
-    [OP_SIDX] = doSIDX,     // save the current top of stack
-};
+#include "do_arith.c"
+#include "do_compare.c"
+#include "do_branch.c"
+#include "do_stack.c"
+#include "do_load.c"
+#include "do_misc.c"
+#include "do_trap.c"
 
 void runloop()
 {
@@ -50,13 +18,45 @@ void runloop()
         uint8_t op;
 
         TRACE("%04d ", getIndex());
-        readInstObj(&op, sizeof(op));
+        READ_OBJ(op, uint8_t);
         TRACE("%s\t", opToStr(op));
 
-        finished = runloop_table[op]();
+        switch(op) {
+            case OP_EXIT:   finished = doEXIT();   break;
+            case OP_NOP:    finished = doNOP();    break;
+            case OP_CALL:   finished = doCALL();   break;
+            case OP_TRAP:   finished = doTRAP();   break;
+            case OP_RETURN: finished = doRETURN(); break;
+            case OP_JMP:    finished = doJMP();    break;
+            case OP_BR:     finished = doBR();     break;
+            case OP_PUSH:   finished = doPUSH();   break;
+            case OP_POP:    finished = doPOP();    break;
+            case OP_PEEK:   finished = doPEEK();   break;
+            case OP_SIDX:   finished = doSIDX();   break;
+            case OP_LOAD:   finished = doLOAD();   break;
+            case OP_LOADI:  finished = doLOADI();  break;
+            case OP_LOADR:  finished = doLOADR();  break;
+            case OP_STORE:  finished = doSTORE();  break;
+            case OP_NOT:    finished = doNOT();    break;
+            case OP_EQ:     finished = doEQ();     break;
+            case OP_NEQ:    finished = doNEQ();    break;
+            case OP_LTE:    finished = doLTE();    break;
+            case OP_GTE:    finished = doGTE();    break;
+            case OP_LT:     finished = doLT();     break;
+            case OP_GT:     finished = doGT();     break;
+            case OP_NEG:    finished = doNEG();    break;
+            case OP_ADD:    finished = doADD();    break;
+            case OP_SUB:    finished = doSUB();    break;
+            case OP_MUL:    finished = doMUL();    break;
+            case OP_DIV:    finished = doDIV();    break;
+            case OP_MOD:    finished = doMOD();    break;
+            default:
+               runtimeError("unknown instruction code: %d", op);
+                exit(1);
+        }
 
-        if(instrIsEnd())
-            finished = true;
+        if(ENDING_IP())
+            finished = true;    // this is a programming error in the input
 
         if(getErrors())
             finished = true;

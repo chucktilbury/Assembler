@@ -4,12 +4,14 @@
 extern Value registers[16];
 
 // load a variable
-bool doLOAD()
+static inline bool doLOAD()
 {
     uint8_t reg;
     uint32_t idx;
-    readInstObj(&reg, sizeof(uint8_t));
-    readInstObj(&idx, sizeof(uint32_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
+    //readInstObj(&idx, sizeof(uint32_t));
+    READ_OBJ(idx, uint32_t);
 
     //LOG(6, "load index: %d", idx);
     TRACE("%s,value: %d", regToStr(reg), idx);
@@ -25,10 +27,11 @@ bool doLOAD()
 }
 
 // copy a register to another
-bool doLOADR()
+static inline bool doLOADR()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t dest = (regs & 0xF0) >> 4;
     uint8_t src = regs & 0x0F;
@@ -41,12 +44,14 @@ bool doLOADR()
 }
 
 // load an immediate value into a register
-bool doLOADI()
+static inline bool doLOADI()
 {
     uint8_t reg;
     Value val;
-    readInstObj(&reg, sizeof(uint8_t));
-    readInstObj(&val, sizeof(Value));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
+    //readInstObj(&val, sizeof(Value));
+    READ_OBJ(val, Value);
     TRACE("%s,%s", regToStr(reg), valToStr(&val));
 
     memcpy(&registers[reg & 0x0F], &val, sizeof(Value));
@@ -56,12 +61,14 @@ bool doLOADI()
 }
 
 // store a register into a variable
-bool doSTORE()
+static inline bool doSTORE()
 {
     uint32_t idx;
     uint8_t reg;
-    readInstObj(&idx, sizeof(uint32_t));
-    readInstObj(&reg, sizeof(uint8_t));
+    //readInstObj(&idx, sizeof(uint32_t));
+    READ_OBJ(idx, uint32_t);
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
 
     //LOG(6, "store index: %d", idx);
     TRACE("%d,%s", idx, regToStr(reg));

@@ -86,7 +86,7 @@ const char* formatStr(const char* str)
 {
     bool finished = false;
     String* s = createStr(NULL);
-    String* tmp;
+    String* tmp = NULL;
     int state = 0;
     int idx = 0;
 

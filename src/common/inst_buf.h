@@ -15,4 +15,7 @@ uint32_t getIndex();
 bool setIndex(uint32_t idx);
 bool instrIsEnd();
 
+const uint8_t* getInstBuffer();
+unsigned int getInstBufferLen();
+
 #endif

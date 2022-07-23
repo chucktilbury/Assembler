@@ -128,7 +128,7 @@ static const char* actual_exec_dir(const char* str)
     else {
         for(Path* pth = exec_path; pth != NULL; pth = pth->next) {
             char buf[PATH_MAX];
-            strncpy(buf, pth->str, sizeof(buf));
+            strncpy(buf, pth->str, sizeof(buf)-1);
             strcat(buf, "/");
             strcat(buf, str); // TODO: buffer discipline
             if(!access(buf, R_OK|X_OK))
@@ -148,7 +148,7 @@ static const char* find_file(const char* str)
     else {
         for(Path* pth = input_path; pth != NULL; pth = pth->next) {
             char buf[PATH_MAX];
-            strncpy(buf, pth->str, sizeof(buf));
+            strncpy(buf, pth->str, sizeof(buf)-1);
             strcat(buf, "/");
             strcat(buf, str); // TODO: buffer discipline
             if(!access(buf, F_OK))

@@ -10,7 +10,7 @@ typedef struct {
 
 static InstBuffer ibuf;
 
-static void write_data(void* ptr, uint32_t size)
+static inline void write_data(void* ptr, uint32_t size)
 {
     if(ibuf.len+size > ibuf.cap) {
         while(ibuf.len+size > ibuf.cap)
@@ -22,7 +22,7 @@ static void write_data(void* ptr, uint32_t size)
     ibuf.len += size;
 }
 
-static void read_data(void* ptr, uint32_t size)
+static inline void read_data(void* ptr, uint32_t size)
 {
     if(ibuf.idx+size <= ibuf.len) {
         memcpy(ptr, &ibuf.buf[ibuf.idx], size);
@@ -113,4 +113,14 @@ bool setIndex(uint32_t idx)
 bool instrIsEnd()
 {
     return (ibuf.idx >= ibuf.len);
+}
+
+const uint8_t* getInstBuffer()
+{
+    return ibuf.buf;
+}
+
+uint32_t getInstBufferLen()
+{
+    return ibuf.len;
 }

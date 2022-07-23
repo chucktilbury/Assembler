@@ -114,10 +114,11 @@ extern int errors;
         } \
     } while(false)
 
-bool doNEG()
+static inline bool doNEG()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&regs, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t dest = (regs & 0x00F0) >> 4;
     uint8_t reg = regs & 0x000F;
@@ -144,10 +145,11 @@ bool doNEG()
     return false;
 }
 
-bool doADD()
+static inline bool doADD()
 {
     uint16_t regs;
-    readInstObj(&regs, sizeof(uint16_t));
+    //readInstObj(&regs, sizeof(uint16_t));
+    READ_OBJ(regs, uint16_t);
 
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
@@ -159,10 +161,11 @@ bool doADD()
     return false;
 }
 
-bool doSUB()
+static inline bool doSUB()
 {
     uint16_t regs;
-    readInstObj(&regs, sizeof(uint16_t));
+    //readInstObj(&regs, sizeof(uint16_t));
+    READ_OBJ(regs, uint16_t);
 
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
@@ -174,10 +177,11 @@ bool doSUB()
     return false;
 }
 
-bool doMUL()
+static inline bool doMUL()
 {
     uint16_t regs;
-    readInstObj(&regs, sizeof(uint16_t));
+    //readInstObj(&regs, sizeof(uint16_t));
+    READ_OBJ(regs, uint16_t);
 
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
@@ -189,10 +193,11 @@ bool doMUL()
     return false;
 }
 
-bool doDIV()
+static inline bool doDIV()
 {
     uint16_t regs;
-    readInstObj(&regs, sizeof(uint16_t));
+    //readInstObj(&regs, sizeof(uint16_t));
+    READ_OBJ(regs, uint16_t);
 
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;
@@ -205,10 +210,11 @@ bool doDIV()
     return false;
 }
 
-bool doMOD()
+static inline bool doMOD()
 {
     uint16_t regs;
-    readInstObj(&regs, sizeof(uint16_t));
+    //readInstObj(&regs, sizeof(uint16_t));
+    READ_OBJ(regs, uint16_t);
 
     uint8_t dest = (regs & 0x0F00) >> 8;
     uint8_t left = (regs & 0x00F0) >> 4;

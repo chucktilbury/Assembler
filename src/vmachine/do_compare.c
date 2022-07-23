@@ -3,7 +3,7 @@
 
 extern Value registers[16];
 
-#define _operation(l, r, op) do { \
+#define _compare(l, r, op) do { \
         switch((l)->type) { \
             case ERROR: \
             case STRING: \
@@ -121,10 +121,11 @@ extern Value registers[16];
         } \
     } while(false)
 
-bool doNOT()
+static inline bool doNOT()
 {
     uint8_t reg;
-    readInstObj(&reg, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
     Value* val = &registers[reg & 0x0F];
@@ -156,87 +157,93 @@ bool doNOT()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbool-compare"
 
-bool doEQ()
+static inline bool doEQ()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&regs, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
-    _operation(&registers[left], &registers[right], ==);
+    _compare(&registers[left], &registers[right], ==);
 
     return false;
 }
 
-bool doNEQ()
+static inline bool doNEQ()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
-    _operation(&registers[left], &registers[right], !=);
+    _compare(&registers[left], &registers[right], !=);
 
     return false;
 }
 
-bool doLEQ()
+static inline bool doLTE()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
-    _operation(&registers[left], &registers[right], <=);
+    _compare(&registers[left], &registers[right], <=);
 
     return false;
 }
 
-bool doGEQ()
+static inline bool doGTE()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
-    _operation(&registers[left], &registers[right], >=);
+    _compare(&registers[left], &registers[right], >=);
 
     return false;
 }
 
-bool doLT()
+static inline bool doLT()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
-printf("left = %ld, right = %ld\n", registers[left].data.num, registers[right].data.num);
+//printf("left = %ld, right = %ld\n", registers[left].data.num, registers[right].data.num);
 
-    _operation(&registers[left], &registers[right], <);
+    _compare(&registers[left], &registers[right], <);
 
     return false;
 }
 
-bool doGT()
+static inline bool doGT()
 {
     uint8_t regs;
-    readInstObj(&regs, sizeof(uint8_t));
+    //readInstObj(&reg, sizeof(uint8_t));
+    READ_OBJ(regs, uint8_t);
 
     uint8_t left = (regs & 0x00F0) >> 4;
     uint8_t right = regs & 0x000F;
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
-    _operation(&registers[left], &registers[right], >);
+    _compare(&registers[left], &registers[right], >);
 
     return false;
 }
