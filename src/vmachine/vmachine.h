@@ -42,4 +42,9 @@ extern bool trace;
         fprintf(stderr, "\n"); \
     } while(false)
 
+#define ONLY_REG(r)     ((r)&0x000F)
+#define DEST_REG(r)     (((r)&0x0F00)>>8)
+#define LEFT_REG(r)     (((r)&0x00F0)>>4)
+#define RIGHT_REG(r)    ONLY_REG(r)
+
 #endif

@@ -10,11 +10,13 @@ static inline bool doCALL()
     READ_OBJ(idx, uint32_t);
     TRACE("%04d", idx);
 
-    Value* val = createValue(UINT);
+    //Value* val = createValue(UINT);
+    Value val;
+    val.type = UINT;
     //val->data.unum = getIndex();
-    val->data.unum = GET_IP();
+    val.data.unum = GET_IP();
 
-    pushVal(*val);
+    pushVal(val);
 
     SET_IP(idx);
     //return setIndex(idx);

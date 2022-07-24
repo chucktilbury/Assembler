@@ -41,8 +41,8 @@ static inline bool doPEEK()
     //readInstObj(&idx, sizeof(idx));
     READ_OBJ(idx, uint16_t);
 
-    uint8_t dest = (regs & 0xF0) >> 4;
-    uint8_t base = (regs & 0x0F);
+    uint8_t dest = LEFT_REG(regs); //(regs & 0xF0) >> 4;
+    uint8_t base = RIGHT_REG(regs); //(regs & 0x0F);
     TRACE("%s,%s,%d", regToStr(dest), regToStr(base), idx);
 
     int index = (registers[base].data.unum-idx)+1;

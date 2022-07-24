@@ -20,8 +20,9 @@ static inline bool doLOAD()
     if(val == NULL)
         fatalError("value index %d yields no value", idx);
 
-    memcpy(&registers[reg & 0x0F], val, sizeof(Value));
-    registers[reg & 0x0F].isAssigned = true;
+    reg = reg & 0x0F;
+    memcpy(&registers[reg], val, sizeof(Value));
+    registers[reg].isAssigned = true;
 
     return false;
 }
@@ -33,8 +34,8 @@ static inline bool doLOADR()
     //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t dest = (regs & 0xF0) >> 4;
-    uint8_t src = regs & 0x0F;
+    uint8_t dest = LEFT_REG(regs); //(regs & 0xF0) >> 4;
+    uint8_t src = RIGHT_REG(regs); //regs & 0x0F;
     TRACE("%s,%s", regToStr(dest), regToStr(src));
 
     memcpy(&registers[dest], &registers[src], sizeof(Value));
@@ -54,8 +55,9 @@ static inline bool doLOADI()
     READ_OBJ(val, Value);
     TRACE("%s,%s", regToStr(reg), valToStr(&val));
 
-    memcpy(&registers[reg & 0x0F], &val, sizeof(Value));
-    registers[reg & 0x0F].isAssigned = true;
+    reg = reg & 0x0F;
+    memcpy(&registers[reg], &val, sizeof(Value));
+    registers[reg].isAssigned = true;
 
     return false;
 }
@@ -74,8 +76,9 @@ static inline bool doSTORE()
     TRACE("%d,%s", idx, regToStr(reg));
 
     Value* val = getValTab(idx);
-    registers[reg & 0x0F].isAssigned = true;
-    memcpy(val, &registers[reg & 0x0F], sizeof(Value));
+    reg = reg & 0x0F;
+    registers[reg].isAssigned = true;
+    memcpy(val, &registers[reg], sizeof(Value));
 
     return false;
 }
