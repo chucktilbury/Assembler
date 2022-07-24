@@ -117,15 +117,11 @@ extern int errors;
 static inline bool doNEG()
 {
     uint8_t regs;
-    //readInstObj(&regs, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t dest = RIGHT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t reg = LEFT_REG(regs); //regs & 0x000F;
+    uint8_t dest = RIGHT_REG(regs);
+    uint8_t reg = LEFT_REG(regs);
     TRACE("%s,%s", regToStr(dest), regToStr(reg));
-
-    //Value* res = &registers[dest];
-    //Value* val = &registers[reg];
 
     registers[dest].type = registers[reg].type;
     switch(registers[reg].type) {
@@ -148,12 +144,11 @@ static inline bool doNEG()
 static inline bool doADD()
 {
     uint16_t regs;
-    //readInstObj(&regs, sizeof(uint16_t));
     READ_OBJ(regs, uint16_t);
 
-    uint8_t dest = DEST_REG(regs); //(regs & 0x0F00) >> 8;
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t dest = DEST_REG(regs);
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(registers[dest], registers[left], registers[right], +);
@@ -164,12 +159,11 @@ static inline bool doADD()
 static inline bool doSUB()
 {
     uint16_t regs;
-    //readInstObj(&regs, sizeof(uint16_t));
     READ_OBJ(regs, uint16_t);
 
-    uint8_t dest = DEST_REG(regs); //(regs & 0x0F00) >> 8;
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t dest = DEST_REG(regs);
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(registers[dest], registers[left], registers[right], -);
@@ -180,12 +174,11 @@ static inline bool doSUB()
 static inline bool doMUL()
 {
     uint16_t regs;
-    //readInstObj(&regs, sizeof(uint16_t));
     READ_OBJ(regs, uint16_t);
 
-    uint8_t dest = DEST_REG(regs); //(regs & 0x0F00) >> 8;
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t dest = DEST_REG(regs);
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _operation(registers[dest], registers[left], registers[right], *);
@@ -196,12 +189,11 @@ static inline bool doMUL()
 static inline bool doDIV()
 {
     uint16_t regs;
-    //readInstObj(&regs, sizeof(uint16_t));
     READ_OBJ(regs, uint16_t);
 
-    uint8_t dest = DEST_REG(regs); //(regs & 0x0F00) >> 8;
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t dest = DEST_REG(regs);
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
 
     _div_by_zero(registers[right]);
@@ -213,17 +205,12 @@ static inline bool doDIV()
 static inline bool doMOD()
 {
     uint16_t regs;
-    //readInstObj(&regs, sizeof(uint16_t));
     READ_OBJ(regs, uint16_t);
 
-    uint8_t dest = DEST_REG(regs); //(regs & 0x0F00) >> 8;
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t dest = DEST_REG(regs);
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s,%s", regToStr(dest), regToStr(left), regToStr(right));
-
-    // Value* d = &registers[dest];
-    // Value* l = &registers[left];
-    // Value* r = &registers[right];
 
     _div_by_zero(registers[right]); //r);
 
@@ -245,10 +232,10 @@ static inline bool doMOD()
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
+                    runtimeError("cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
                     break;
                 default:
-                    fatalError("fatal error: unknown register type: %d", registers[right].type);
+                    fatalError("unknown register type: %d", registers[right].type);
             }
             break;
         case UINT:
@@ -268,10 +255,10 @@ static inline bool doMOD()
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
+                    runtimeError("cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
                     break;
                 default:
-                    fatalError("fatal error: unknown register type: %d", registers[right].type);
+                    fatalError("unknown register type: %d", registers[right].type);
             }
             break;
         case FLOAT:
@@ -291,19 +278,19 @@ static inline bool doMOD()
                 case BOOL:
                 case STRING:
                 case ERROR:
-                    runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
+                    runtimeError("cannot perform a '%%' on a %s", valTypeToStr(registers[right].type));
                     break;
                 default:
-                    fatalError("fatal error: unknown register type: %d", registers[right].type);
+                    fatalError("unknown register type: %d", registers[right].type);
             }
             break;
         case BOOL:
         case STRING:
         case ERROR:
-            runtimeError("runtime error: cannot perform a '%%' on a %s", valTypeToStr(registers[left].type));
+            runtimeError("cannot perform a '%%' on a %s", valTypeToStr(registers[left].type));
             break;
         default:
-            fatalError("fatal error: unknown register type: %d", registers[left].type);
+            fatalError("unknown register type: %d", registers[left].type);
     }
 
     return false;

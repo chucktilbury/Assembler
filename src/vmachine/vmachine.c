@@ -46,7 +46,6 @@ void read_binary(const char* fname)
 
     loadInstStream(fp);
     loadValTab(fp);
-    //loadStrTab(fp);
 
     initValStack();
 }
@@ -65,8 +64,6 @@ int main(int argc, char** argv)
     verbosity = getNumParam("verbose");
     trace = getTogParam("trace");
 
-    // reset_cmd_excess(cl);
-    // read_binary(iterate_cmd_excess(cl));
     resetCLFileList();
     read_binary(iterateCLFileList());
 

@@ -40,6 +40,7 @@
         "verbo",
         "VMACHINE",
         "vstack",
+        "Wbool",
         "yyparse",
         "Zflag"
     ],

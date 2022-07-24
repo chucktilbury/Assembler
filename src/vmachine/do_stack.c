@@ -6,7 +6,6 @@ extern Value registers[16];
 static inline bool doPOP()
 {
     uint8_t reg;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
@@ -19,7 +18,6 @@ static inline bool doPOP()
 static inline bool doPUSH()
 {
     uint8_t reg;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
@@ -36,13 +34,11 @@ static inline bool doPEEK()
 {
     uint8_t regs;
     uint16_t idx;
-    //readInstObj(&regs, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
-    //readInstObj(&idx, sizeof(idx));
     READ_OBJ(idx, uint16_t);
 
-    uint8_t dest = LEFT_REG(regs); //(regs & 0xF0) >> 4;
-    uint8_t base = RIGHT_REG(regs); //(regs & 0x0F);
+    uint8_t dest = LEFT_REG(regs);
+    uint8_t base = RIGHT_REG(regs);
     TRACE("%s,%s,%d", regToStr(dest), regToStr(base), idx);
 
     int index = (registers[base].data.unum-idx)+1;
@@ -57,7 +53,6 @@ static inline bool doPEEK()
 static inline bool doSIDX()
 {
     uint8_t reg;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 

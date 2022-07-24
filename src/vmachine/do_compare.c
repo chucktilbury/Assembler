@@ -124,7 +124,6 @@ extern Value registers[16];
 static inline bool doNOT()
 {
     uint8_t reg;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(reg, uint8_t);
     TRACE("%s", regToStr(reg));
 
@@ -160,11 +159,10 @@ static inline bool doNOT()
 static inline bool doEQ()
 {
     uint8_t regs;
-    //readInstObj(&regs, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _compare(registers[left], registers[right], ==);
@@ -175,11 +173,10 @@ static inline bool doEQ()
 static inline bool doNEQ()
 {
     uint8_t regs;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _compare(registers[left], registers[right], !=);
@@ -190,11 +187,10 @@ static inline bool doNEQ()
 static inline bool doLTE()
 {
     uint8_t regs;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _compare(registers[left], registers[right], <=);
@@ -205,11 +201,10 @@ static inline bool doLTE()
 static inline bool doGTE()
 {
     uint8_t regs;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _compare(registers[left], registers[right], >=);
@@ -220,13 +215,11 @@ static inline bool doGTE()
 static inline bool doLT()
 {
     uint8_t regs;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
-//printf("left = %ld, right = %ld\n", registers[left].data.num, registers[right].data.num);
 
     _compare(registers[left], registers[right], <);
 
@@ -236,11 +229,10 @@ static inline bool doLT()
 static inline bool doGT()
 {
     uint8_t regs;
-    //readInstObj(&reg, sizeof(uint8_t));
     READ_OBJ(regs, uint8_t);
 
-    uint8_t left = LEFT_REG(regs); //(regs & 0x00F0) >> 4;
-    uint8_t right = RIGHT_REG(regs); //regs & 0x000F;
+    uint8_t left = LEFT_REG(regs);
+    uint8_t right = RIGHT_REG(regs);
     TRACE("%s,%s", regToStr(left), regToStr(right));
 
     _compare(registers[left], registers[right], >);
