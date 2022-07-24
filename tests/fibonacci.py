@@ -5,4 +5,4 @@ def fib(n):
     else:
         return fib(n-1) + fib(n-2)
 
-fib(35)
+print("the 35th number in the fibonacci series is ", fib(35))

@@ -33,9 +33,14 @@ extern unsigned int instr_len;
 bool getZflag();
 void setZflag(bool val);
 
+#ifdef ENA_TRACE
 extern int verbosity;
 extern bool trace;
 #define TRACE(fmt, ...)  do { if(trace) fprintf(stderr, fmt, ## __VA_ARGS__ ); } while(false)
+#else
+#define TRACE(fmt, ...)
+#endif
+
 #define LOG(lev, fmt, ...)  do { \
      if(verbosity >= lev) \
         fprintf(stderr, "log: " fmt, ## __VA_ARGS__ );  \
