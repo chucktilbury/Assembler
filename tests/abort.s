@@ -3,6 +3,7 @@
  * is given by a register.
  */
 #include "system.inc"
+#include "startup.inc"
 
 //string reason
 string abort_msg = "error: '{reason}': cannot continue"
@@ -25,4 +26,4 @@ _start:
 
     // unreacable
     trap DBG_PRINT  // should not happen
-    exit
+    return

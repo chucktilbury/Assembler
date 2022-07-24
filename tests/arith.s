@@ -2,6 +2,7 @@
  *  This test verifies that all of the arithmetic instructions function.
  */
 #include "system.inc"
+#include "startup.inc"
 
 _start:
 
@@ -56,3 +57,5 @@ _start:
     mod     r10,r12,r13
     push    r10
     trap    DBG_PRINT
+
+    return

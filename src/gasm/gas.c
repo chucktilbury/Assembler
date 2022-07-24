@@ -121,7 +121,6 @@ int main(int argc, char** argv)
     initCmdLine(CL_FL_ONE, "This is the assembler. It reads the assembly language input\n"
                             "and converts it to a binary for use by the virtual machine.\n");
     addStrParam("-o", "ofile", "output file name", "output.bin", CL_NONE);
-    addTogParam("-e", "entry", "disable emitting the entry and exit points in the output", true, CL_NONE);
     addNumParam("-v", "verbose", "verbosity number from 0 to 10", 0, CL_NONE);
     addCBwoParam("-h", "show the help information", showUseCmdLine, CL_NONE);
     parseCmdLine(argc, argv);
@@ -144,17 +143,7 @@ int main(int argc, char** argv)
     initStrTab();
 
     module = createModule();
-    if(getTogParam("entry")) {
-        addClass8(module, OP_CALL, "_start");
-        addClass0(module, OP_NOP);
-        addClass8(module, OP_JMP, "_ending");
-    }
     yyparse();
-    if(getTogParam("entry")) {
-        addLabel(module, "_ending");
-        addClass0(module, OP_NOP);
-        addClass0(module, OP_EXIT);
-    }
     doPostProcess(module);
 
     if(!getErrors())

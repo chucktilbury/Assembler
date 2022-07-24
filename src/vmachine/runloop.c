@@ -7,7 +7,6 @@
 #include "do_stack.c"
 #include "do_load.c"
 #include "do_misc.c"
-#include "do_trap.c"
 
 void runloop()
 {

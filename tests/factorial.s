@@ -21,6 +21,7 @@
  *  }
  */
 #include "system.inc"
+#include "startup.inc"
 
 string timer_string = "elapsed time is {timer} seconds\n"
 float timer

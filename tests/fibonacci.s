@@ -22,8 +22,7 @@
  *
  */
 #include "system.inc"
-
-// Must compile with entry enabled.
+#include "startup.inc"
 
 string timer_string = "elapsed time is {timer} seconds\n"
 float timer

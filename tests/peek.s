@@ -2,6 +2,7 @@
  * Test the peek and sidx instructions.
  */
 #include "system.inc"
+#include "startup.inc"
 
 int value1 = 123
 int value2
@@ -25,8 +26,7 @@ _start:
     push    R12         // recover the return value of the function
     trap    DBG_PRINT   // should print 269
 
-    // gracefully exit the program
-    exit
+    return
 
 _the_func:
     peek    r9,r12,1

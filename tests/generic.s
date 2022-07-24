@@ -2,6 +2,7 @@
  * Test the JMP instruction.
  */
 #include "system.inc"
+#include "startup.inc"
 
 string passed = "test passed\n"
 string failed = "test failed\n"
@@ -66,4 +67,4 @@ destination3:
     trap PRINT      // print it
 
 _end:
-    exit
+    return

@@ -249,33 +249,6 @@ static const char* get_base_name()
     }
 
     return retv;
-
-    // for(char* str = iterateCLFileList(); str != NULL; str = iterateCLFileList()) {
-    //     char* found = (char*)find_file(str);
-    //     if(found != NULL) {
-    //         pproc_line = append_str(pproc_line, " %s", found);
-    //         retv = extract_name(found);
-
-    //         Path* p = _alloc_ds(Path);
-    //         p->str = found; //_copy_str(find_file(str));
-    //         p->next = NULL;
-
-    //         if(input_list == NULL) {
-    //             input_list = input_list_end = p;
-    //         }
-    //         else {
-    //             fprintf(stderr, "cmd_err: extra input files. use exactly one and include any others.\n");
-    //             cmd_use();
-    //             // input_list_end->next = p;
-    //             // input_list_end = p;
-    //         }
-    //     }
-    //     else {
-    //         fprintf(stderr, "cmd_err: input file: %s: cannot be found\n", str);
-    //         cmd_use(cl);
-    //     }
-    // }
-    // return retv;
 }
 
 static void print_path(Path* path)
@@ -303,8 +276,8 @@ int main(int argc, char** argv)
     addStrParam("-o", "ofile", "output file name", "output.bin", CL_NONE);
     addStrParam("-p", "opat", "output file path", "./", CL_NONE);
     addTogParam("-r", "run", "run the result in the VM", false, CL_NONE);
-    addTogParam("-t", "trace", "trace the execution in the VM", false, CL_NONE);
-    addTogParam("-d", "dbg", "debug the result in the debugger", false, CL_NONE);
+    //addTogParam("-t", "trace", "trace the execution in the VM", false, CL_NONE);
+    //addTogParam("-d", "dbg", "debug the result in the debugger", false, CL_NONE);
     addTogParam("-k", "keep", "keep intermediate file(s)", false, CL_NONE);
     addNumParam("-v", "verbose", "verbosity level", 0, CL_NONE);
     addCBwParam("-D", "preprocessor definition", add_pp_def, CL_NONE);
@@ -327,9 +300,9 @@ int main(int argc, char** argv)
                     exec_path_str, output_path_str, ifn, pproc_line);
     const char* asm_cmd_line = append_str(NULL, "%s/gasm -o %s/%s -v %d %s/%s",
                     exec_path_str, output_path_str, ofn, verbo, output_path_str, ifn);
-    const char* vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s %s -v %d",
-                    exec_path_str, output_path_str, ofn,
-                    getTogParam("trace")? "-t": "", verbo);
+    const char* vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -v %d",
+                    exec_path_str, output_path_str, ofn, verbo);
+                    //getTogParam("trace")? "-t": "", verbo);
 
     if(verbo > 10) {
         printf("\nexecutable path:\n");

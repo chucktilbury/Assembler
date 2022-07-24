@@ -4,8 +4,9 @@
  *  Calls a function 10 times and prints the counter.
  */
 #include "system.inc"
+#include "startup.inc"
 
-string out_str = "the index is {counter}"
+string out_str = "the index is {counter}\n"
 int counter
 
 _start:
@@ -23,7 +24,7 @@ _top_of_loop:
 
 _bottom_of_loop:
     add     r1,r1,r2
-    geq     r0,r1   // if limit >= counter
+    gte     r0,r1   // if limit >= counter
     br      _top_of_loop    // then branch
     jmp     _finished
 
@@ -37,5 +38,5 @@ _the_func:
     return
 
 _finished:
-    exit
+    return
 
