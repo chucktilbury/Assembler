@@ -2,10 +2,6 @@
 
 - Think about storing debug info, including symbol table.
 - Startup code needs to capture the command line.
-- Generate the system.inc file at build time from source code.
-- Add variable and immediate variants for PUSH and a immediate variant for the STORE instruction.
-- Runtime support for lists and dicts. (as traps)?
-- Look at using more instructions that handle variable a variable index size.
 - Implement equality test and concatenation for strings, as well as other string services, as traps.
 - Implement simple CLI debugger.
   - Step

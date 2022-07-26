@@ -4,6 +4,7 @@
 typedef enum {
     OP_EXIT,    // cause the VM to quit normally
     OP_NOP,     // no operation
+    OP_BREAK,   // no operation in VM
 
     // flow control instructions
     OP_CALL,    // call an absolute address stored in a variable
