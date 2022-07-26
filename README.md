@@ -43,6 +43,6 @@ Using these utilities is intended to be easy, but there are many options. The "-
 ## Build and run, with seeing a lot of state information from the assembler.
 - ```asm -r -v20 fibonacci.s```
 
-There are many other build and run options. Look in the source code and in the CMakeLists.txt files.
+There are many other build and run options. Look in the source code and in the CMakeLists.txt files. All of the utilities also support a help command parameter as ```-h```.
 
 For the current plan and other information, including random thoughts and probably wrong thinking, then take a look at the notes.md file in this directory.
