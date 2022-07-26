@@ -1,7 +1,6 @@
 # Assembler
 
-This is the assembler and virtual machine for the Goldfish language. The idea is to create an assembler and virtual machine, along with support programs that will allow clear definition of any construct. It should be as simple as possible and still allow for robust programming. The Goldfish compiler will
-compile to assembly for this assembler and VM.
+This is a register based virtual machine and the assembler for the Goldfish language. The idea is to create an assembler and virtual machine, along with support programs that will allow clear definition of any construct. It should be as simple as possible and still allow for robust programming. For efficiency and speed, only the most basic functions are implemented in assembly. As much functionality as possible is moved out to native code. So the actual assembly language is limited to flow control, arithmetic, and the native code interface. The Goldfish compiler will compile to assembly for this assembler and VM.
 
 The assembler makes several passes on the source code in order to allow for things like referencing labels before they are defined.
 - Multiple passes over the AST allows for optimizations.
@@ -27,21 +26,22 @@ There are several programs.
 - gasm - The assembler that takes pre-processed text and outputs a binary file for the virtual machine. This is a work in progress. It should be impossible to create incorrect output but there are generation errors that the assembler does not catch. That having been said, correct input produces correct output. (as far as I can tell)
 - disasm - Decompile a binary that was output by the assembler.
 - vmachine - The virtual machine. This runs the binary that was created.
-- asm - This is a simple shell that builds and runs the program. 
+- asm - This is a simple shell that builds and runs the program.
 
-Using these utilities is intended to be easy, but there are many options. The "-v" option is for verbosity and allows quite a bit of introspection of these applications. Note that if you actually have used the setup script, these utilities will be in your path. 
+Using these utilities is intended to be easy, but there are many options. The "-v" option is for verbosity and allows quite a bit of introspection of these applications. Note that if you actually have used the setup script, these utilities will be in your path.
 
 ## Build and run the fibonacci benchmark the hard way.
-- cd ../tests
-- cpp -o fibonacci.i fibonacci.s -I../src/runtime
-- gasm -o fibonacci.bin fibonacci.i
-- vmachine fibonacci.bin
+- ```cd ../tests```
+- ```../bin/cpp -o fibonacci.i fibonacci.s -I../src/runtime```
+- ```../bin/gasm -o fibonacci.bin fibonacci.i```
+- ```../bin/vmachine fibonacci.bin```
 
 ## Build and run the easy way
-- asm -r fibonacci.s
+(assuming you have used the setup utility)
+- ```asm -r fibonacci.s```
 
 ## Build and run, with seeing a lot of state information from the assembler.
-- asm -r -v20 fibonacci.s
+- ```asm -r -v20 fibonacci.s```
 
 There are many other build and run options. Look in the source code and in the CMakeLists.txt files.
 
