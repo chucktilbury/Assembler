@@ -1,3 +1,4 @@
+/* This takes over a minute to run in picoC. */
 #include <stdio.h>
 int fib(int n) {
     if(n < 2)

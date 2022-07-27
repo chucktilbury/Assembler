@@ -298,6 +298,43 @@ void addClass9(Module* mod, OpCode op, Reg dest, Reg base, uint16_t val)
     add_node(mod, (Object*)obj);
 }
 
+void addClass10(Module* mod, OpCode op, const char* symb)
+{
+    Class10* obj = _alloc_ds(Class10);
+    obj->obj.type = OT_CLASS10_INSTR;
+    obj->obj.next = NULL;
+
+    obj->op = op;
+    obj->sym = symb;
+
+    add_node(mod, (Object*)obj);
+}
+
+void addClass11(Module* mod, OpCode op, Value* val)
+{
+    Class11* obj = _alloc_ds(Class11);
+    obj->obj.type = OT_CLASS12_INSTR;
+    obj->obj.next = NULL;
+
+    obj->op = op;
+    obj->val = val;
+
+    add_node(mod, (Object*)obj);
+}
+
+void addClass12(Module* mod, OpCode op, const char* symb, Value* val)
+{
+    Class12* obj = _alloc_ds(Class12);
+    obj->obj.type = OT_CLASS12_INSTR;
+    obj->obj.next = NULL;
+
+    obj->op = op;
+    obj->sym = symb;
+    obj->val = val;
+
+    add_node(mod, (Object*)obj);
+}
+
 void addPPMarker(Module* mod, int line, const char* fname)
 {
     PPMarker* obj = _alloc_ds(PPMarker);

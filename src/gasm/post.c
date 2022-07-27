@@ -18,6 +18,9 @@ static int size_table[] = {
     [OT_CLASS7_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
     [OT_CLASS8_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
     [OT_CLASS9_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS10_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS11_INSTR] = sizeof(uint8_t)+sizeof(Value),
+    [OT_CLASS12_INSTR] = sizeof(uint8_t)+sizeof(ValIdx)+sizeof(Value),
     [OT_DATA_DEFINITION] = 0
 };
 
@@ -336,6 +339,7 @@ static void label_scan(Module* mod)
                 case OT_CLASS4_INSTR:
                 case OT_CLASS6_INSTR:
                 case OT_CLASS9_INSTR:
+                case OT_CLASS11_INSTR:
                     break;
                 case OT_CLASS5_INSTR: {
                         Class5* ptr = (Class5*)obj;
@@ -366,6 +370,29 @@ static void label_scan(Module* mod)
                             ptr->addr = addr;
                         else
                             syntaxError("label %s definition not found", ptr->sym);
+                    }
+                    break;
+                case OT_CLASS10_INSTR: {
+                        Class10* ptr = (Class10*)obj;
+                        ValTab* tab = findValTab(ptr->sym);
+                        if(tab != NULL) {
+                            ptr->idx = tab->idx;
+                            ptr->val = tab->val;
+                        }
+                        else
+                            syntaxError("value %s definition not found", ptr->sym);
+                    }
+                    break;
+                case OT_CLASS12_INSTR: {
+                        Class12* ptr = (Class12*)obj;
+                        ValTab* tab = findValTab(ptr->sym);
+                        if(tab != NULL) {
+                            ptr->idx = tab->idx;
+                            ptr->val = tab->val;
+                        }
+                        else
+                            syntaxError("value %s definition not found", ptr->sym);
+
                     }
                     break;
             default:

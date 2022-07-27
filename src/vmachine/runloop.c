@@ -23,6 +23,7 @@ void runloop()
         switch(op) {
             case OP_EXIT:   finished = doEXIT();   break;
             case OP_NOP:    finished = doNOP();    break;
+            case OP_BREAK:  finished = doBREAK();  break;
             case OP_CALL:   finished = doCALL();   break;
             case OP_TRAP:   finished = doTRAP();   break;
             case OP_RETURN: finished = doRETURN(); break;

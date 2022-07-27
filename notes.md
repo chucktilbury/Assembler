@@ -52,6 +52,7 @@
     - Save settings.
 - Add break instruction that does a hard break in the debugger, but is a NOP in the regular VM.
 - Looking at using pointers for Values instead of indexes at runtime and only using integer indexes when serializing the object file.
+- Write the assembler user manual.
 
 # Current task
 - Tests.

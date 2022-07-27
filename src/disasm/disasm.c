@@ -12,12 +12,12 @@ void show_listing(FILE* fp)
         switch(op) {
             case OP_EXIT:
             case OP_NOP:
+            case OP_BREAK:
             case OP_RETURN:
                 // no parameters, do nothing
                 break;
 
             case OP_SIDX:
-            //case OP_ABORT:
             case OP_PUSH:
             case OP_NOT:
             case OP_POP: {

@@ -1,4 +1,4 @@
-
+# This runs in approximately 1 second with Python3.
 def fib(n):
     if n < 2:
         return n

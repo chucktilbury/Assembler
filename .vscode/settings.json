@@ -27,6 +27,7 @@
         "outv",
         "PUSHI",
         "PUSHR",
+        "PUSHV",
         "retv",
         "runloop",
         "sidx",

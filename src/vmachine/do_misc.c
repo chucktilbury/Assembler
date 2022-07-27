@@ -25,3 +25,10 @@ static inline bool doNOP()
     // continue execution
     return false;
 }
+
+// do nothing at all
+static inline bool doBREAK()
+{
+    // continue execution
+    return false;
+}

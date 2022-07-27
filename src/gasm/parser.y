@@ -63,7 +63,7 @@ extern Module* module;
 %token <type> TOK_INT TOK_FLOAT TOK_UINT TOK_STRING
 %token <type>  TOK_BOOL
 
-%token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP TOK_LINE
+%token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP TOK_LINE TOK_BREAK
 %token <opcode> TOK_RETURN TOK_JMP TOK_BR TOK_PEEK TOK_SIDX
 %token <opcode> TOK_PUSH TOK_POP TOK_LOAD TOK_DIV TOK_MOD
 %token <opcode> TOK_STORE TOK_NOT TOK_EQ TOK_NEQ TOK_LTE
@@ -125,6 +125,9 @@ instruction
     | class7_instr
     | class8_instr
     | class9_instr
+    | class10_instr
+    | class11_instr
+    | class12_instr
     ;
 
 register
@@ -150,6 +153,7 @@ class0_instr
     : TOK_EXIT { addClass0(module, OP_EXIT); }
     | TOK_RETURN { addClass0(module, OP_RETURN); }
     | TOK_NOP { addClass0(module, OP_NOP); }
+    | TOK_BREAK { addClass0(module, OP_BREAK); }
     ;
 
     /* one register parm */
@@ -223,6 +227,19 @@ class9_instr
     : TOK_PEEK register ',' register ',' TOK_INUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
     | TOK_PEEK register ',' register ',' TOK_UNUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
     ;
+
+class10_instr
+    : TOK_PUSH TOK_SYMBOL { addClass10(module, OP_PUSHV, $2); }
+    ;
+
+class11_instr
+    : TOK_PUSH expr_parameter { addClass11(module, OP_PUSHI, $2); }
+    ;
+
+class12_instr
+    : TOK_STORE TOK_SYMBOL ',' expr_parameter { addClass12(module, OP_STOREI, $2, $4); }
+    ;
+
 
 type_name
     : TOK_INT { $$ = createValue(INT); }
