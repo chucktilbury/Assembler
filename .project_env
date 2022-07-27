@@ -25,7 +25,7 @@ export _PROJECT_LOC=$HOME/Src/$_PROJECT_NAME
 export PATH=$_PROJECT_LOC:$_PROJECT_LOC/bin:$_PROJECT_LOC/utils:$PATH
 export _RUNTIME=$_PROJECT_LOC/src/runtime
 
-PS1='\[\e[0;31m\]$_PROJECT_NAME:\[\e[0m\]'$PS1
+PS1='\[\e[0;31m\]$_PROJECT_NAME($_BUILD_TYPE):\[\e[0m\]'$PS1
 cd $_PROJECT_LOC
 
 if [[ -d build ]]; then
@@ -35,4 +35,6 @@ else
     cd build
 fi
 
-cmake -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 -G "Kate - Unix Makefiles" ..
+echo $1
+
+cmake -D CMAKE_C_COMPILER=gcc-10 -D CMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=$_BUILD_TYPE -G "Kate - Unix Makefiles" ..

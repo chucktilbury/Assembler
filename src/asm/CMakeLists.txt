@@ -24,5 +24,13 @@ link_directories (
         ${PROJECT_SOURCE_DIR}/external/lib
 )
 
-#target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-DMEMORY_DEBUG" "-g" "-DTRACE")
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-Ofast")
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    $<$<CONFIG:DEBUG>:-g3>
+    $<$<CONFIG:DEBUG>:-Og>
+    $<$<CONFIG:DEBUG>:-DMEMORY_DEBUG>
+    $<$<CONFIG:DEBUG>:-DENA_TRACE>
+    $<$<CONFIG:RELEASE>:-Ofast>
+    $<$<CONFIG:PROFILE>:-pg -O0>
+)

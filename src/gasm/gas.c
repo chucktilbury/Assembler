@@ -11,7 +11,7 @@
 const char* preformat_str(const char* str)
 {
     String* sptr = createStr(NULL);
-    String* tmp;
+    String* tmp = NULL;
     int sidx = 0;
     int state = 0;
     bool finished = false;
