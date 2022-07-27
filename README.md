@@ -17,7 +17,7 @@ Linux is the only supported operating system for now. The system has not been co
 # Build
 - Clone the repository
 - Edit the .project_env file so that your source code directory is represented in the _PROJECT_LOC environment variable.
-- Run the setup script.
+- Run the setup script: ```./setup <build type>``` where build type is debug, release, or profile.
 - Run make from the build directory.
 
 # Run
