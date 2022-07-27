@@ -313,7 +313,7 @@ void addClass10(Module* mod, OpCode op, const char* symb)
 void addClass11(Module* mod, OpCode op, Value* val)
 {
     Class11* obj = _alloc_ds(Class11);
-    obj->obj.type = OT_CLASS12_INSTR;
+    obj->obj.type = OT_CLASS11_INSTR;
     obj->obj.next = NULL;
 
     obj->op = op;
@@ -330,7 +330,7 @@ void addClass12(Module* mod, OpCode op, const char* symb, Value* val)
 
     obj->op = op;
     obj->sym = symb;
-    obj->val = val;
+    obj->ival = val;
 
     add_node(mod, (Object*)obj);
 }

@@ -11,8 +11,8 @@ const char* opToStr(OpCode op)
             (op == OP_JMP)? "JMP":
             (op == OP_BR)? "BR":
             (op == OP_PUSH)? "PUSH":
-            //(op == OP_PUSHI)? "PUSHI":
-            //(op == OP_PUSHR)? "PUSHR":
+            (op == OP_PUSHI)? "PUSHI":
+            (op == OP_PUSHV)? "PUSHV":
             (op == OP_POP)? "POP":
             (op == OP_PEEK)? "PEEK":
             (op == OP_SIDX)? "SIDX":
@@ -20,7 +20,7 @@ const char* opToStr(OpCode op)
             (op == OP_LOADI)? "LOADI":
             (op == OP_LOADR)? "LOADR":
             (op == OP_STORE)? "STORE":
-            //(op == OP_STOREI)? "STOREI":
+            (op == OP_STOREI)? "STOREI":
             (op == OP_NOT)? "NOT":
             (op == OP_EQ)? "EQ":
             (op == OP_NEQ)? "NEQ":

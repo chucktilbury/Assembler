@@ -30,6 +30,8 @@ void runloop()
             case OP_JMP:    finished = doJMP();    break;
             case OP_BR:     finished = doBR();     break;
             case OP_PUSH:   finished = doPUSH();   break;
+            case OP_PUSHI:  finished = doPUSHI();  break;
+            case OP_PUSHV:  finished = doPUSHV();  break;
             case OP_POP:    finished = doPOP();    break;
             case OP_PEEK:   finished = doPEEK();   break;
             case OP_SIDX:   finished = doSIDX();   break;
@@ -37,6 +39,7 @@ void runloop()
             case OP_LOADI:  finished = doLOADI();  break;
             case OP_LOADR:  finished = doLOADR();  break;
             case OP_STORE:  finished = doSTORE();  break;
+            case OP_STOREI: finished = doSTOREI(); break;
             case OP_NOT:    finished = doNOT();    break;
             case OP_EQ:     finished = doEQ();     break;
             case OP_NEQ:    finished = doNEQ();    break;

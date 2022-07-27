@@ -132,6 +132,8 @@ typedef struct {
     Object obj;
     OpCode op;
     const char* sym;
+    ValIdx idx;
+    Value* val;
     uint32_t addr;
 } Class10;
 
@@ -139,16 +141,17 @@ typedef struct {
     Object obj;
     OpCode op;
     ValIdx idx;
-    uint16_t val;
+    Value* val;
     uint32_t addr;
 } Class11;
 
 typedef struct {
     Object obj;
     OpCode op;
-    ValIdx idx;
     const char* sym;
-    uint16_t val;
+    Value* ival;
+    Value* oval;
+    ValIdx idx;
     uint32_t addr;
 } Class12;
 

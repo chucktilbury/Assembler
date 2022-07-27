@@ -26,6 +26,32 @@ static inline bool doPUSH()
     return false;
 }
 
+static inline bool doPUSHI()
+{
+    Value val;
+    READ_OBJ(val, Value);
+    TRACE("%s", valToStr(&val));
+
+    pushVal(val);
+
+    return false;
+}
+
+static inline bool doPUSHV()
+{
+    ValIdx idx;
+    READ_OBJ(idx, ValIdx);
+    TRACE("value: %d", idx);
+
+    Value* val = getValTab(idx);
+    if(val == NULL)
+        fatalError("value index %d yields no value", idx);
+
+    pushVal(*val);
+
+    return false;
+}
+
 // The dest register is where the result is placed. The base is the saved
 // location in the stack where the function stack starts. The index is the
 // offset from the base pointer. The index is subtracted from from the base

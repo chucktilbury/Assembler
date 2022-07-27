@@ -7,9 +7,9 @@ extern Value registers[16];
 static inline bool doLOAD()
 {
     uint8_t reg;
-    uint32_t idx;
+    ValIdx idx;
     READ_OBJ(reg, uint8_t);
-    READ_OBJ(idx, uint32_t);
+    READ_OBJ(idx, ValIdx);
 
     TRACE("%s,value: %d", regToStr(reg), idx);
 
@@ -70,6 +70,28 @@ static inline bool doSTORE()
     reg = reg & 0x0F;
     registers[reg].isAssigned = true;
     memcpy(val, &registers[reg], sizeof(Value));
+
+    return false;
+}
+
+static inline bool doSTOREI()
+{
+    ValIdx idx;
+    Value val;
+    READ_OBJ(val, Value);
+    READ_OBJ(idx, ValIdx);
+
+    TRACE("value: %d,%s", idx, valToStr(&val));
+
+    // printf("val.type = %s\n", valTypeToStr(val.type));
+    // printf("val = %ld\n", val.data.num);
+
+    Value* value = getValTab(idx);
+    if(value == NULL)
+        fatalError("value index %d yields no value", idx);
+
+    val.isAssigned = true;
+    memcpy(value, &val, sizeof(Value));
 
     return false;
 }

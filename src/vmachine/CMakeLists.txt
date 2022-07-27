@@ -30,5 +30,5 @@ target_include_directories(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/../../external/include
 )
 
-#target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-g" "-DENA_TRACE")
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-Ofast" )
+target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-g" "-DENA_TRACE")
+#target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Wextra" "-Ofast" )

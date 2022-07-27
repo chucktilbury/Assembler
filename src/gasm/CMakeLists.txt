@@ -49,8 +49,8 @@ target_link_libraries(${PROJECT_NAME}
     cord
 )
 
-#target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-g" "-DTRACE")
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Ofast" "-DTRACE")
+target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-g" "-DTRACE")
+#target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-Ofast" "-DTRACE")
 
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/parser.h"

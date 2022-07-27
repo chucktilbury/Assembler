@@ -1,10 +1,8 @@
 # TODO list
 
+- Figure out how to do different builds with cmake!!!
 - Think about storing debug info, including symbol table. Probably store the debug information in a separate file. Just store all of the information that the assembler throws away when it writes the binary.
 - Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime. The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
-- Add PUSH instruction for immediate and variables.
-- Add STORE instruction for immediate.
-- Add BREAK instruction that is a hard break in the debugger and a NOP in normal code.
 - Startup code needs to capture the command line. (requires lists)
 - Implement equality test and concatenation for strings, as well as other string services, as traps.
 - Implement simple CLI debugger.
@@ -78,6 +76,9 @@
   - ~~Add command line flags for mutual excl or reqd and groups.~~
   - ~~Add command line flags to control separator requirements.~~
   - Add command line option to warn extra files in the file list.
+- Add PUSH instruction for immediate and variables.
+- Add STORE instruction for immediate.
+- Add BREAK instruction that is a hard break in the debugger and a NOP in normal code.
 
 # Other thoughts:
 - Traps: there is a notion of a trap and sub-trap. Currently, the trap number is a uint16_t, but with sub-traps, maybe that should be 2 uint8_t instead. There would be a total of 256 trap numbers and 256 sub-traps for each one of them. Or maybe move a bit over so that there are 512 traps and 128 sub-traps.

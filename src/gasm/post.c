@@ -18,7 +18,7 @@ static int size_table[] = {
     [OT_CLASS7_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(ValIdx),
     [OT_CLASS8_INSTR] = sizeof(uint8_t)+sizeof(uint32_t),
     [OT_CLASS9_INSTR] = sizeof(uint8_t)+sizeof(uint8_t)+sizeof(uint16_t),
-    [OT_CLASS10_INSTR] = sizeof(uint8_t)+sizeof(uint16_t),
+    [OT_CLASS10_INSTR] = sizeof(uint8_t)+sizeof(ValIdx),
     [OT_CLASS11_INSTR] = sizeof(uint8_t)+sizeof(Value),
     [OT_CLASS12_INSTR] = sizeof(uint8_t)+sizeof(ValIdx)+sizeof(Value),
     [OT_DATA_DEFINITION] = 0
@@ -307,6 +307,28 @@ static void instrs(Module* mod)
                     writeInst16(ptr->val);
                 }
                 break;
+            case OT_CLASS10_INSTR: {
+                    Class10* ptr = (Class10*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInstObj(&ptr->idx, sizeof(ValIdx));
+                }
+                break;
+            case OT_CLASS11_INSTR: {
+                    Class11* ptr = (Class11*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInstObj(ptr->val, sizeof(Value));
+                }
+                break;
+            case OT_CLASS12_INSTR: {
+                    Class12* ptr = (Class12*)obj;
+                    ptr->addr = getAddr();
+                    writeInst8(ptr->op);
+                    writeInstObj(ptr->ival, sizeof(Value));
+                    writeInstObj(&ptr->idx, sizeof(ValIdx));
+                }
+                break;
             default:
                 printf("unknown instr object type!: %d\n", obj->type);
                 return;
@@ -314,10 +336,6 @@ static void instrs(Module* mod)
 
         obj = obj->next;
     }
-
-    // append 2 NOP to the end
-    writeInst8(OP_NOP);
-    writeInst8(OP_NOP);
 }
 
 /*
@@ -329,72 +347,73 @@ static void label_scan(Module* mod)
     while(obj != NULL) {
 
         switch(obj->type) {
-                case OT_PP_MARKER:
-                case OT_DATA_DEFINITION:
-                case OT_LABEL:
-                case OT_CLASS0_INSTR:
-                case OT_CLASS1_INSTR:
-                case OT_CLASS2_INSTR:
-                case OT_CLASS3_INSTR:
-                case OT_CLASS4_INSTR:
-                case OT_CLASS6_INSTR:
-                case OT_CLASS9_INSTR:
-                case OT_CLASS11_INSTR:
-                    break;
-                case OT_CLASS5_INSTR: {
-                        Class5* ptr = (Class5*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->val = tab->val;
-                            ptr->idx = tab->idx;
-                        }
-                        else
-                            syntaxError("value for %s is not defined", ptr->sym);
+            case OT_PP_MARKER:
+            case OT_DATA_DEFINITION:
+            case OT_LABEL:
+            case OT_CLASS0_INSTR:
+            case OT_CLASS1_INSTR:
+            case OT_CLASS2_INSTR:
+            case OT_CLASS3_INSTR:
+            case OT_CLASS4_INSTR:
+            case OT_CLASS6_INSTR:
+            case OT_CLASS9_INSTR:
+            case OT_CLASS11_INSTR:
+                break;
+            case OT_CLASS5_INSTR: {
+                    Class5* ptr = (Class5*)obj;
+                    ValTab* tab = findValTab(ptr->sym);
+                    if(tab != NULL) {
+                        ptr->val = tab->val;
+                        ptr->idx = tab->idx;
                     }
-                    break;
-                case OT_CLASS7_INSTR: {
-                        Class7* ptr = (Class7*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->val = tab->val;
-                            ptr->idx = tab->idx;
-                        }
-                        else
-                            syntaxError("value for %s is not defined", ptr->sym);
+                    else
+                        syntaxError("value for %s is not defined", ptr->sym);
+                }
+                break;
+            case OT_CLASS7_INSTR: {
+                    Class7* ptr = (Class7*)obj;
+                    ValTab* tab = findValTab(ptr->sym);
+                    if(tab != NULL) {
+                        ptr->val = tab->val;
+                        ptr->idx = tab->idx;
                     }
-                    break;
-                case OT_CLASS8_INSTR: {
-                        Class8* ptr = (Class8*)obj;
-                        uint32_t addr = findLabTab(ptr->sym);
-                        if(addr != TREE_ERROR)
-                            ptr->addr = addr;
-                        else
-                            syntaxError("label %s definition not found", ptr->sym);
+                    else
+                        syntaxError("value for %s is not defined", ptr->sym);
+                }
+                break;
+            case OT_CLASS8_INSTR: {
+                    Class8* ptr = (Class8*)obj;
+                    uint32_t addr = findLabTab(ptr->sym);
+                    if(addr != TREE_ERROR)
+                        ptr->addr = addr;
+                    else
+                        syntaxError("label %s definition not found", ptr->sym);
+                }
+                break;
+            case OT_CLASS10_INSTR: {
+                    Class10* ptr = (Class10*)obj;
+                    ValTab* tab = findValTab(ptr->sym);
+                    if(tab != NULL) {
+                        ptr->idx = tab->idx;
+                        ptr->val = tab->val;
                     }
-                    break;
-                case OT_CLASS10_INSTR: {
-                        Class10* ptr = (Class10*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->idx = tab->idx;
-                            ptr->val = tab->val;
-                        }
-                        else
-                            syntaxError("value %s definition not found", ptr->sym);
+                    else
+                        syntaxError("value %s definition not found", ptr->sym);
+                }
+                break;
+            case OT_CLASS12_INSTR: {
+                    Class12* ptr = (Class12*)obj;
+                    // Map the symbol to an index in the table.
+                    ValTab* tab = findValTab(ptr->sym);
+                    if(tab != NULL) {
+                        ptr->idx = tab->idx;
+                        ptr->oval = tab->val;
                     }
-                    break;
-                case OT_CLASS12_INSTR: {
-                        Class12* ptr = (Class12*)obj;
-                        ValTab* tab = findValTab(ptr->sym);
-                        if(tab != NULL) {
-                            ptr->idx = tab->idx;
-                            ptr->val = tab->val;
-                        }
-                        else
-                            syntaxError("value %s definition not found", ptr->sym);
+                    else
+                        syntaxError("value %s definition not found", ptr->sym);
 
-                    }
-                    break;
+                }
+                break;
             default:
                 printf("unknown label object type!: %d\n", obj->type);
                 return;
@@ -411,29 +430,28 @@ static void format_strs(Module* mod)
     while(obj != NULL) {
 
         switch(obj->type) {
-                case OT_DATA_DEFINITION: {
-                        DataDef* ptr = (DataDef*)obj;
-                        if(ptr->val->type == STRING && ptr->val->isAssigned) {
-                            // StrIdx idx = ptr->val->data.str;
-                            // const char* str = getStr(idx);
-                            // replaceStr(idx, preformat_str(str));
-                            ptr->val->data.str = preformat_str(ptr->val->data.str);
-                        }
-                    }
-                    break;
-                case OT_PP_MARKER:
-                case OT_LABEL:
-                case OT_CLASS0_INSTR:
-                case OT_CLASS1_INSTR:
-                case OT_CLASS2_INSTR:
-                case OT_CLASS3_INSTR:
-                case OT_CLASS4_INSTR:
-                case OT_CLASS5_INSTR:
-                case OT_CLASS6_INSTR:
-                case OT_CLASS7_INSTR:
-                case OT_CLASS8_INSTR:
-                case OT_CLASS9_INSTR:
-                    break;
+            case OT_DATA_DEFINITION: {
+                    DataDef* ptr = (DataDef*)obj;
+                    if(ptr->val->type == STRING && ptr->val->isAssigned)
+                        ptr->val->data.str = preformat_str(ptr->val->data.str);
+                }
+                break;
+            case OT_PP_MARKER:
+            case OT_LABEL:
+            case OT_CLASS0_INSTR:
+            case OT_CLASS1_INSTR:
+            case OT_CLASS2_INSTR:
+            case OT_CLASS3_INSTR:
+            case OT_CLASS4_INSTR:
+            case OT_CLASS5_INSTR:
+            case OT_CLASS6_INSTR:
+            case OT_CLASS7_INSTR:
+            case OT_CLASS8_INSTR:
+            case OT_CLASS9_INSTR:
+            case OT_CLASS10_INSTR:
+            case OT_CLASS11_INSTR:
+            case OT_CLASS12_INSTR:
+                break;
             default:
                 printf("unknown format object type!: %d\n", obj->type);
                 return;
@@ -473,6 +491,9 @@ static void addr_scan(Module* mod)
                 case OT_CLASS7_INSTR: addr += size_table[OT_CLASS7_INSTR]; break;
                 case OT_CLASS8_INSTR: addr += size_table[OT_CLASS8_INSTR]; break;
                 case OT_CLASS9_INSTR: addr += size_table[OT_CLASS9_INSTR]; break;
+                case OT_CLASS10_INSTR: addr += size_table[OT_CLASS10_INSTR]; break;
+                case OT_CLASS11_INSTR: addr += size_table[OT_CLASS11_INSTR]; break;
+                case OT_CLASS12_INSTR: addr += size_table[OT_CLASS12_INSTR]; break;
             default:
                 printf("unknown addr object type!: %d\n", obj->type);
                 return;
