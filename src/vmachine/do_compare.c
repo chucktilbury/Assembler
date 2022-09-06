@@ -153,8 +153,8 @@ static inline bool doNOT()
 }
 
 // Some of these macro expansions are always true, but still correct.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wbool-compare"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wbool-compare"
 
 static inline bool doEQ()
 {
@@ -240,4 +240,4 @@ static inline bool doGT()
     return false;
 }
 
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic pop

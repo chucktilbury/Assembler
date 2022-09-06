@@ -3,12 +3,12 @@ project(vmachine)
 
 add_executable(${PROJECT_NAME}
     vmachine.c
-    do_arith.c
-    do_compare.c
-    do_branch.c
-    do_stack.c
-    do_load.c
-    do_misc.c
+    #do_arith.c
+    #do_compare.c
+    #do_branch.c
+    #do_stack.c
+    #do_load.c
+    #do_misc.c
     runloop.c
     vm_errors.c
     val_stack.c
@@ -35,6 +35,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Wextra
     $<$<CONFIG:DEBUG>:-g3>
     $<$<CONFIG:DEBUG>:-Og>
+    $<$<CONFIG:DEBUG>:-Wno-tautological-constant-compare>
     $<$<CONFIG:DEBUG>:-DMEMORY_DEBUG>
     $<$<CONFIG:DEBUG>:-DENA_TRACE>
     $<$<CONFIG:RELEASE>:-Ofast>

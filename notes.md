@@ -1,6 +1,5 @@
 # TODO list
 
-- Figure out how to do different builds with cmake!!!
 - Think about storing debug info, including symbol table. Probably store the debug information in a separate file. Just store all of the information that the assembler throws away when it writes the binary.
 - Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime. The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
 - Startup code needs to capture the command line. (requires lists)
@@ -48,7 +47,6 @@
     - Number of lines to show for source and lists.
     - Whether to sho meta-data for variables.
     - Save settings.
-- Add break instruction that does a hard break in the debugger, but is a NOP in the regular VM.
 - Looking at using pointers for Values instead of indexes at runtime and only using integer indexes when serializing the object file.
 - Write the assembler user manual.
 
@@ -59,7 +57,7 @@
 - Needs to create and destroy variables in ASM code in order to support high level code. Examples are class objects and local variables. This can mostly be done with traps, but creating class methods and such has to be in ASM code. What does this look like?
 - Need to think about exception handling. Thinking about a try{} stack. In emitted code, the handlers are defined before the try block and the try is like a setjmp() destination and the handlers are like an upsides down if/else construct.
 
-# Finished
+# Finished TODO items
 - Add a "magic" number at beginning of binary file to make the VM fail on an invalid input.
 - Save file name at beginning of the binary for error messaging in VM.
 - Turn the ABORT instruction into a trap.
@@ -79,6 +77,8 @@
 - Add PUSH instruction for immediate and variables.
 - Add STORE instruction for immediate.
 - Add BREAK instruction that is a hard break in the debugger and a NOP in normal code.
+- Figure out how to do different builds with cmake!!!
+- Add break instruction that does a hard break in the debugger, but is a NOP in the regular VM.
 
 # Other thoughts:
 - Traps: there is a notion of a trap and sub-trap. Currently, the trap number is a uint16_t, but with sub-traps, maybe that should be 2 uint8_t instead. There would be a total of 256 trap numbers and 256 sub-traps for each one of them. Or maybe move a bit over so that there are 512 traps and 128 sub-traps.
