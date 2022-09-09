@@ -1,5 +1,6 @@
 # TODO list
 
+- Delete INTEGER and UNSIGNED types and replace with NUMBER, which is always a double. This is a fairly sweeping change that will require changes to most files.
 - Think about storing debug info, including symbol table. Probably store the debug information in a separate file. Just store all of the information that the assembler throws away when it writes the binary.
 - Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime. The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
 - Startup code needs to capture the command line. (requires lists)
@@ -168,3 +169,36 @@ Implemented as user defined types using traps. An object is implemented using a 
 - SQLITE
 - Curses??
 - Regular expressions would be nice.
+
+# Type conversion matrix
+This is a matrix that describes all type conversions for binary arithmetic operations. Unary arithmetic operations result in the type of the operand or an ERROR. All binary and unary comparison operations result in a boolean value. Valid types are ERROR, NOTHING, NUMBER, STRING, BOOLEAN, LIST, HASH, and USER. The USER type is defined by the user and the resulting type is always USER. In cases where the user desires the result to be a native type, then they must provide the conversion method.
+
+Note that HASH and LIST types "hold" other Values and the type of those values is used in the matrix. 
+
+|         | ERROR | NOTHING | NUMBER  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
+| ------- | ----- | ------- | ------- | ------- | ------- | ----- | ----- | ----- |
+| ERROR   | ERROR | ERROR   | ERROR   | ERROR   | ERROR   | ERROR | ERROR | ERROR |
+| NOTHING | ERROR | NOTHING | ERROR   | ERROR   | ERROR   | ERROR | ERROR | USER  |
+| NUMBER  | ERROR | ERROR   | NUMBER  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
+| STRING  | ERROR | ERROR   | STRING  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
+| BOOLEAN | ERROR | ERROR   | BOOLEAN | BOOLEAN | BOOLEAN | LIST  | HASH  | USER  |
+| LIST    | ERROR | ERROR   | LIST    | LIST    | LIST    | LIST  | HASH  | USER  |
+| HASH    | ERROR | ERROR   | HASH    | HASH    | HASH    | HASH  | HASH  | USER  |
+| USER    | ERROR | USER    | USER    | USER    | USER    | USER  | USER  | USER  |
+
+Also note that casting is supported. To find the result of a cast, then find the type casted TO on the top row and then find the type of the value to cast in the left column and take the intersection.
+
+|         | ERROR | NOTHING | NUMBER    | STRING    | BOOLEAN    | LIST    | HASH    | USER    |
+| ------- | ----- | ------- | --------- | --------- | ---------- | ------- | ------- | ------- |
+| ERROR   | ERROR | ERROR   | ERROR     | ERROR     | ERROR      | ERROR   | ERROR   | ERROR   |
+| NOTHING | ERROR | ERROR   | ERROR     | ERROR     | ERROR      | ERROR   | ERROR   | ERROR   |
+| NUMBER  | ERROR | ERROR   | NUMBER    | STRING    | BOOLEAN    | LIST(1) | ERROR   | USER(2) |
+| STRING  | ERROR | ERROR   | NUMBER    | STRING    | BOOLEAN    | LIST(1) | ERROR   | USER(2) |
+| BOOLEAN | ERROR | ERROR   | NUMBER    | STRING    | BOOLEAN    | LIST(1) | ERROR   | USER(2) |
+| LIST    | ERROR | ERROR   | ERROR     | ERROR     | ERROR      | LIST    | ERROR   | USER(2) |
+| HASH    | ERROR | ERROR   | ERROR     | ERROR     | ERROR      | LIST(3) | HASH    | USER(2) |
+| USER    | ERROR | ERROR   | NUMBER(2) | STRING(2) | BOOLEAN(2) | LIST(2) | HASH(2) | USER(2) |
+
+(1) Creates a list with one item in the it.
+(2) User must supply the conversion to the type. The default conversion is to ERROR.
+(3) Flatten the HASH into a LIST.
