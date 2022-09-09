@@ -175,16 +175,18 @@ This is a matrix that describes all type conversions for binary arithmetic opera
 
 Note that HASH and LIST types "hold" other Values and the type of those values is used in the matrix. 
 
-|         | ERROR | NOTHING | NUMBER  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
-| ------- | ----- | ------- | ------- | ------- | ------- | ----- | ----- | ----- |
-| ERROR   | ERROR | ERROR   | ERROR   | ERROR   | ERROR   | ERROR | ERROR | ERROR |
-| NOTHING | ERROR | NOTHING | ERROR   | ERROR   | ERROR   | ERROR | ERROR | USER  |
-| NUMBER  | ERROR | ERROR   | NUMBER  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
-| STRING  | ERROR | ERROR   | STRING  | STRING  | BOOLEAN | LIST  | HASH  | USER  |
-| BOOLEAN | ERROR | ERROR   | BOOLEAN | BOOLEAN | BOOLEAN | LIST  | HASH  | USER  |
-| LIST    | ERROR | ERROR   | LIST    | LIST    | LIST    | LIST  | HASH  | USER  |
-| HASH    | ERROR | ERROR   | HASH    | HASH    | HASH    | HASH  | HASH  | USER  |
-| USER    | ERROR | USER    | USER    | USER    | USER    | USER  | USER  | USER  |
+|         | ERROR | NOTHING | NUMBER     | STRING     | BOOLEAN    | LIST       | HASH       | USER    |
+| ------- | ----- | ------- | ---------- | ---------- | ---------- | ---------- | ---------- | ------- |
+| ERROR   | ERROR | ERROR   | ERROR      | ERROR      | ERROR      | ERROR      | ERROR      | ERROR   |
+| NOTHING | ERROR | NOTHING | ERROR      | ERROR      | ERROR      | ERROR      | ERROR      | USER(5) |
+| NUMBER  | ERROR | ERROR   | NUMBER     | STRING     | BOOLEAN(1) | LIST(3)    | HASH(3)(4) | USER(5) |
+| STRING  | ERROR | ERROR   | STRING     | STRING     | BOOLEAN(2) | LIST(3)    | HASH(3)(4) | USER(5) |
+| BOOLEAN | ERROR | ERROR   | BOOLEAN(1) | BOOLEAN(2) | BOOLEAN    | LIST(3)    | HASH(3)(4) | USER(5) |
+| LIST    | ERROR | ERROR   | LIST(3)    | LIST(3)    | LIST(3)    | LIST(3)    | HASH(3)(4) | USER(5) |
+| HASH    | ERROR | ERROR   | HASH(3)(4) | HASH(3)(4) | HASH(3)(4) | HASH(3)(4) | HASH(3)(4) | USER(5) |
+| USER    | ERROR | USER(5) | USER(5)    | USER(5)    | USER(5)    | USER(5)    | USER(5)    | USER(5) |
+
+(1) If the number is not **exactly** zero then it's boolean TRUE. (2) A string is always boolean TRUE. (3) Addition only. (4) Must supply a text key. (5) User must supply implementation for supported operator. Default type result is ERROR.
 
 Also note that casting is supported. To find the result of a cast, then find the type casted TO on the top row and then find the type of the value to cast in the left column and take the intersection.
 
@@ -199,6 +201,4 @@ Also note that casting is supported. To find the result of a cast, then find the
 | HASH    | ERROR | ERROR   | ERROR     | ERROR     | ERROR      | LIST(3) | HASH    | USER(2) |
 | USER    | ERROR | ERROR   | NUMBER(2) | STRING(2) | BOOLEAN(2) | LIST(2) | HASH(2) | USER(2) |
 
-(1) Creates a list with one item in the it.
-(2) User must supply the conversion to the type. The default conversion is to ERROR.
-(3) Flatten the HASH into a LIST.
+(1) Creates a list with one item in the it. (2) User must supply the conversion to the type. The default conversion is to ERROR. (3) Flatten the HASH into a LIST.
