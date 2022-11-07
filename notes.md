@@ -2,6 +2,7 @@
 
 - Delete INTEGER and UNSIGNED types and replace with NUMBER, which is always a double. This is a fairly sweeping change that will require changes to most files.
 - Think about storing debug info, including symbol table. Probably store the debug information in a separate file. Just store all of the information that the assembler throws away when it writes the binary.
+- See if a Value data structure will fit into a uint64_t. See the bullet point below.
 - Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime. The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
 - Startup code needs to capture the command line. (requires lists)
 - Implement equality test and concatenation for strings, as well as other string services, as traps.
@@ -173,7 +174,7 @@ Implemented as user defined types using traps. An object is implemented using a 
 # Type conversion matrix
 This is a matrix that describes all type conversions for binary arithmetic operations. Unary arithmetic operations result in the type of the operand or an ERROR. All binary and unary comparison operations result in a boolean value. Valid types are ERROR, NOTHING, NUMBER, STRING, BOOLEAN, LIST, HASH, and USER. The USER type is defined by the user and the resulting type is always USER. In cases where the user desires the result to be a native type, then they must provide the conversion method.
 
-Note that HASH and LIST types "hold" other Values and the type of those values is used in the matrix. 
+Note that HASH and LIST types "hold" other Values and the type of those values is used in the matrix.
 
 |         | ERROR | NOTHING | NUMBER     | STRING     | BOOLEAN    | LIST       | HASH       | USER    |
 | ------- | ----- | ------- | ---------- | ---------- | ---------- | ---------- | ---------- | ------- |
