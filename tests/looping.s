@@ -7,7 +7,7 @@
 #include "startup.inc"
 
 string out_str = "the index is {counter}\n"
-int counter
+num counter
 
 _start:
 

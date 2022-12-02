@@ -7,8 +7,8 @@
 bool get_time_trap()
 {
     Value val;
-    val.type = FLOAT;
-    val.data.fnum = (double)time(NULL);
+    val.type = NUM;
+    val.data.num = (double)time(NULL);
 
     pushVal(val);
 
@@ -20,7 +20,7 @@ bool show_time_trap()
 {
     Value val = popVal();
 
-    if(val.type != INT) {
+    if(val.type != NUM) {
         runtimeError("print_time_trap: invalid time");
         return true;
     }
@@ -35,8 +35,8 @@ bool show_time_trap()
 bool get_clock_trap()
 {
     Value val;
-    val.type = FLOAT;
-    val.data.fnum = (double)clock();
+    val.type = NUM;
+    val.data.num = (double)clock();
 
     pushVal(val);
 
@@ -53,8 +53,8 @@ bool dif_clock_trap()
 
     // printf("end = %0.4f, start = %0.4f\n", end.data.fnum, start.data.fnum);
     Value out;
-    out.type = FLOAT;
-    out.data.fnum = (end.data.fnum - start.data.fnum) / (double)CLOCKS_PER_SEC;
+    out.type = NUM;
+    out.data.num = (end.data.num - start.data.num) / (double)CLOCKS_PER_SEC;
 
     pushVal(out);
 

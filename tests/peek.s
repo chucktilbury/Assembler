@@ -4,8 +4,8 @@
 #include "system.inc"
 #include "startup.inc"
 
-int value1 = 123
-int value2
+num value1 = 123
+num value2
 
 _start:
     load    r12,value1

@@ -25,10 +25,10 @@
 #include "startup.inc"
 
 string timer_string = "elapsed time is {timer} seconds\n"
-float timer
+num timer
 string result_string = "the {value}th value of the fibonacci series is {result}\n"
-int result
-int value = 35
+num result
+number value = 35
 
 /*
  * fibonacci function.

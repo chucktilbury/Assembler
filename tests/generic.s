@@ -6,9 +6,9 @@
 
 string passed = "test passed\n"
 string failed = "test failed\n"
-float timer = 0.0
+number timer = 0.0
 string print_timer = "elapsed time is {timer} seconds\n"
-uint test_addr = 59
+number test_addr = 59
 
 _start:
     NOP

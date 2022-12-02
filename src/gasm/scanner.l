@@ -68,9 +68,8 @@ static void __append_str(const char* str)
 [ \t\r;]        {}
 
     /* keywords */
-"UINT"          { yylval.type = UINT; return TOK_UINT; }
-"INT"           { yylval.type = INT; return TOK_INT; }
-"FLOAT"         { yylval.type = FLOAT; return TOK_FLOAT; }
+"NUM"           { yylval.type = NUM; return TOK_NUM; }
+"NUMBER"        { yylval.type = NUM; return TOK_NUM; }
 "BOOL"          { yylval.type = BOOL; return TOK_BOOL; }
 "STRING"        { yylval.type = STRING; return TOK_STRING; }
 
@@ -147,19 +146,19 @@ static void __append_str(const char* str)
     }
 
 [0-9]+ {
-        yylval.num = strtol(yytext, NULL, 10);
-        return TOK_INUM;
+        yylval.num = strtod(yytext, NULL);
+        return TOK_NUM_VAL;
     }
 
     /* recognize a float */
 ([0-9]*\.)?[0-9]+([Ee][-+]?[0-9]+)? {
-        yylval.fnum = strtod(yytext, NULL);
-        return TOK_FNUM;
+        yylval.num = strtod(yytext, NULL);
+        return TOK_NUM_VAL;
     }
 
 0[Xx][0-9a-fA-F]+ {
-        yylval.unum = strtol(yytext, NULL, 16);
-        return TOK_UNUM;
+        yylval.num = (double)strtol(yytext, NULL, 16);
+        return TOK_NUM_VAL;
     }
 
     /* double quoted strings have escapes managed */

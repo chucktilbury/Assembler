@@ -32,7 +32,7 @@ void loadValTab(FILE* fp)
         vbuf.buf[idx] = _alloc(sizeof(Value));
         fread(vbuf.buf[idx], sizeof(Value), 1, fp);
         if(vbuf.buf[idx]->type == STRING)
-            vbuf.buf[idx]->data.str = getStr(vbuf.buf[idx]->data.unum);
+            vbuf.buf[idx]->data.str = getStr(vbuf.buf[idx]->data.stridx);
     }
 }
 
@@ -43,7 +43,7 @@ void saveValTab(FILE* fp)
     for(uint32_t idx = 0; idx < vbuf.len; idx++) {
         if(vbuf.buf[idx]->type == STRING) {
             if(vbuf.buf[idx]->isAssigned && vbuf.buf[idx]->data.str != NULL)
-                vbuf.buf[idx]->data.unum = addStr(vbuf.buf[idx]->data.str);
+                vbuf.buf[idx]->data.stridx = addStr(vbuf.buf[idx]->data.str);
         }
     }
     saveStrTab(fp);
@@ -92,14 +92,17 @@ void printVal(Value* val)
     if(val != NULL) {
         //printf("(%s)", valTypeToStr(val->type));
         switch(val->type) {
-            case INT:
-                printf("%ld", val->data.num);
-                break;
-            case UINT:
-                printf("0x%lX", val->data.unum);
-                break;
-            case FLOAT:
-                printf("%0.5f", val->data.fnum);
+            // case INT:
+            //     printf("%ld", val->data.num);
+            //     break;
+            // case UINT:
+            //     printf("0x%lX", val->data.unum);
+            //     break;
+            // case FLOAT:
+            //     printf("%0.5f", val->data.fnum);
+            //     break;
+            case NUM:
+                printf("%0.5f", val->data.num);
                 break;
             case BOOL:
                 printf("%s", val->data.bval? "true": "false");
@@ -131,66 +134,16 @@ Value* castVal(ValType type, Value* val)
 {
     if(val != NULL) {
         switch(type) {
-            case INT:
+            case NUM:
                 switch(val->type) {
-                    case INT:
-                        break;
-                    case UINT:
-                        val->data.num = (int64_t)val->data.unum;
-                        break;
-                    case FLOAT:
-                        val->data.num = (int64_t)val->data.fnum;
+                    case NUM:
                         break;
                     case BOOL:
-                        val->data.num = val->data.bval? 1: 0;
-                        break;
-                    case STRING:
-                        //val->data.num = (int64_t)strtol(getStr(val->data.str), NULL, 10);
-                        val->data.num = (int64_t)strtol(val->data.str, NULL, 10);
-                        break;
-                    default:
-                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
-                        exit(1);
-                }
-                break;
-            case UINT:
-                switch(val->type) {
-                    case INT:
-                        val->data.unum = (uint64_t)val->data.num;
-                        break;
-                    case UINT:
-                        break;
-                    case FLOAT:
-                        val->data.unum = (uint64_t)((int64_t)val->data.fnum);
-                        break;
-                    case BOOL:
-                        val->data.unum = val->data.bval? 1: 0;
-                        break;
-                    case STRING:
-                        //val->data.unum = (uint64_t)strtol(getStr(val->data.str), NULL, 10);
-                        val->data.unum = (uint64_t)strtol(val->data.str, NULL, 10);
-                        break;
-                    default:
-                        fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
-                        exit(1);
-                }
-                break;
-            case FLOAT:
-                switch(val->type) {
-                    case INT:
-                        val->data.fnum = (double)val->data.num;
-                        break;
-                    case UINT:
-                        val->data.fnum = (double)((int64_t)val->data.unum);
-                        break;
-                    case FLOAT:
-                        break;
-                    case BOOL:
-                        val->data.fnum = val->data.bval? 1.0: 0.0;
+                        val->data.num = val->data.bval? 1.0: 0.0;
                         break;
                     case STRING:
                         //val->data.fnum = strtod(getStr(val->data.str), NULL);
-                        val->data.fnum = strtod(val->data.str, NULL);
+                        val->data.num = strtod(val->data.str, NULL);
                         break;
                     default:
                         fprintf(stderr, "fatal error: unknown type value: %d\n", val->type);
@@ -199,14 +152,8 @@ Value* castVal(ValType type, Value* val)
                 break;
             case BOOL:
                 switch(val->type) {
-                    case INT:
-                        val->data.bval = val->data.num? true: false;
-                        break;
-                    case UINT:
-                        val->data.bval = val->data.unum? true: false;
-                        break;
-                    case FLOAT:
-                        val->data.bval = val->data.fnum != 0.0? true: false;
+                    case NUM:
+                        val->data.bval = val->data.num != 0.0? true: false;
                         break;
                     case BOOL:
                         break;
@@ -221,9 +168,7 @@ Value* castVal(ValType type, Value* val)
                 break;
             case STRING:
                 switch(val->type) {
-                    case INT:
-                    case UINT:
-                    case FLOAT:
+                    case NUM:
                     case BOOL:
                         fprintf(stderr, "syntax: cannot convert a %s to a STRING. Use format instead.", valTypeToStr(val->type));
                         exit(1);
@@ -246,9 +191,7 @@ Value* castVal(ValType type, Value* val)
 
 const char* valTypeToStr(ValType type)
 {
-    return (type == INT)? "INT":
-            (type == UINT)? "UINT":
-            (type == FLOAT)? "FLOAT":
+    return (type == NUM)? "NUMBER":
             (type == BOOL)? "BOOL":
             (type == UDATA)? "UDATA":
             (type == STRING)? "STRING": "UNKNOWN";
@@ -265,14 +208,8 @@ const char* valToStr(Value* val)
     char buf[60];
     if(val->isAssigned) {
         switch(val->type) {
-            case INT:
-                snprintf(buf, sizeof(buf), "%ld", val->data.num);
-                break;
-            case UINT:
-                snprintf(buf, sizeof(buf), "0x%lX", val->data.unum);
-                break;
-            case FLOAT:
-                snprintf(buf, sizeof(buf), "%0.4f", val->data.fnum);
+            case NUM:
+                snprintf(buf, sizeof(buf), "%0.4f", val->data.num);
                 break;
             case BOOL:
                 snprintf(buf, sizeof(buf), "%s", val->data.bval? "true": "false");

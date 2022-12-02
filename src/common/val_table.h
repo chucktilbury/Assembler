@@ -3,11 +3,10 @@
 
 typedef enum {
     ERROR,
-    INT,
-    UINT,
-    FLOAT,
+    NUM,
     BOOL,
     STRING,
+    ADDR,
     UDATA, // this is only used by traps
 } ValType;
 
@@ -19,12 +18,12 @@ typedef struct {
     bool isConst;
     int references;
     union {
-        uint64_t unum;
-        int64_t num;
-        double fnum;
+        double num;
         bool bval;
         //StrIdx str;
         const char* str;
+        int stridx;
+        unsigned int addr;
         void* usr;
     } data;
 } Value;

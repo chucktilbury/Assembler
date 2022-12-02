@@ -12,14 +12,8 @@ extern Value registers[16];
                     case STRING: \
                         setZflag(true op true); \
                         break; \
-                    case INT: \
-                        setZflag(true op ((r).data.num != 0)); \
-                        break; \
-                    case UINT: \
-                        setZflag(true op ((r).data.unum != 0)); \
-                        break; \
-                    case FLOAT: \
-                        setZflag(true op ((r).data.fnum != 0.0)); \
+                    case NUM: \
+                        setZflag(true op ((r).data.num != 0.0)); \
                         break; \
                     case BOOL: \
                         setZflag(true op (r).data.bval); \
@@ -28,67 +22,17 @@ extern Value registers[16];
                         fatalError("invalid right var type"); \
                 } \
                 break; \
-             case INT: \
+            case NUM: \
                 switch((r).type) { \
                     case ERROR: \
                     case STRING: \
-                        setZflag(((l).data.num != 0) op true); \
+                        setZflag(((r).data.num != 0.0) op true); \
                         break; \
-                    case INT: \
+                    case NUM: \
                         setZflag((l).data.num op (r).data.num); \
                         break; \
-                    case UINT: \
-                        setZflag((l).data.num op (int64_t)(r).data.unum); \
-                        break; \
-                    case FLOAT: \
-                        setZflag((l).data.num op (r).data.fnum); \
-                        break; \
                     case BOOL: \
-                        setZflag(((l).data.num != 0) op (r).data.bval); \
-                        break; \
-                    default: \
-                        fatalError("invalid right var type"); \
-                } \
-                break; \
-            case UINT: \
-                switch((r).type) { \
-                    case ERROR: \
-                    case STRING: \
-                        setZflag(((r).data.unum != 0) op true); \
-                        break; \
-                    case INT: \
-                        setZflag((int64_t)(l).data.unum op (r).data.num); \
-                        break; \
-                    case UINT: \
-                        setZflag((l).data.unum op (r).data.unum); \
-                        break; \
-                    case FLOAT: \
-                        setZflag((double)(l).data.unum op (r).data.fnum); \
-                        break; \
-                    case BOOL: \
-                        setZflag(((l).data.unum != 0) op (r).data.bval); \
-                        break; \
-                    default: \
-                        fatalError("invalid right var type"); \
-                } \
-                break; \
-            case FLOAT: \
-                switch((r).type) { \
-                    case ERROR: \
-                    case STRING: \
-                        setZflag(((r).data.fnum != 0.0) op true); \
-                        break; \
-                    case INT: \
-                        setZflag((l).data.fnum op (r).data.num); \
-                        break; \
-                    case UINT: \
-                        setZflag((l).data.fnum op (r).data.unum); \
-                        break; \
-                    case FLOAT: \
-                        setZflag((l).data.fnum op (r).data.fnum); \
-                        break; \
-                    case BOOL: \
-                        setZflag(((l).data.fnum != 0.0) op (r).data.bval); \
+                        setZflag(((l).data.num != 0.0) op (r).data.bval); \
                         break; \
                     default: \
                         fatalError("invalid right var type"); \
@@ -100,14 +44,8 @@ extern Value registers[16];
                     case STRING: \
                         setZflag((l).data.bval op true); \
                         break; \
-                    case INT: \
+                    case NUM: \
                         setZflag((l).data.bval op ((r).data.num != 0)); \
-                        break; \
-                    case UINT: \
-                        setZflag((l).data.bval op ((r).data.unum != 0)); \
-                        break; \
-                    case FLOAT: \
-                        setZflag((l).data.bval op ((r).data.fnum != 0)); \
                         break; \
                     case BOOL: \
                         setZflag((l).data.bval op (r).data.bval); \
@@ -133,14 +71,8 @@ static inline bool doNOT()
         case STRING:
             setZflag(true); // always not zero, so not = true
             break;
-        case INT:
-            setZflag(val.data.num != 0);
-            break;
-        case UINT:
-            setZflag(val.data.unum != 0);
-            break;
-        case FLOAT:
-            setZflag(val.data.fnum != 0.0);
+        case NUM:
+            setZflag(val.data.num != 0.0);
             break;
         case BOOL:
             setZflag(val.data.bval? false: true);
@@ -153,8 +85,8 @@ static inline bool doNOT()
 }
 
 // Some of these macro expansions are always true, but still correct.
-// #pragma GCC diagnostic push
-// #pragma GCC diagnostic ignored "-Wbool-compare"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtautological-constant-compare"
 
 static inline bool doEQ()
 {
@@ -240,4 +172,4 @@ static inline bool doGT()
     return false;
 }
 
-// #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop

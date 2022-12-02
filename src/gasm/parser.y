@@ -30,9 +30,7 @@ extern Module* module;
 %locations
 
 %union {
-    uint64_t unum;
-    int64_t num;
-    double fnum;
+    double num;
     bool boolval;
     int opcode;
     int type;
@@ -47,9 +45,7 @@ extern Module* module;
 };
 
 %token <symbol> TOK_SYMBOL
-%token <unum> TOK_UNUM
-%token <num> TOK_INUM
-%token <fnum> TOK_FNUM
+%token <num> TOK_NUM_VAL
 %token <boolval> TOK_TRUE TOK_FALSE
     /*
     %type <literal> expression expression_factor expr_parameter
@@ -60,7 +56,7 @@ extern Module* module;
     // %token <usr> TOK_USRTYPE
 %token <qstr> TOK_QSTR
 
-%token <type> TOK_INT TOK_FLOAT TOK_UINT TOK_STRING
+%token <type> TOK_NUM TOK_STRING
 %token <type>  TOK_BOOL
 
 %token <opcode> TOK_EXIT TOK_NOP TOK_CALL TOK_TRAP TOK_LINE TOK_BREAK
@@ -74,8 +70,9 @@ extern Module* module;
 
 %type <reg> register
 %type <lab> label
-%type <val> expr_parameter expression type_name  type_specifier
+%type <val> expr_parameter expression type_specifier
 %type <val> expression_factor bool_value str_value
+%type <val> type_name
 %type <ddef> data_declaration data_definition
 
 %token TOK_CONST
@@ -104,7 +101,7 @@ module_item
     ;
 
 pp_marker
-    : TOK_LINE TOK_INUM TOK_QSTR {
+    : TOK_LINE TOK_NUM_VAL TOK_QSTR {
         set_line_no($2);
         set_file_name($3);
     }
@@ -193,8 +190,7 @@ expr_parameter
 
     /* Numeric literal as parameter */
 class4_instr
-    : TOK_TRAP TOK_UNUM { addClass4(module, OP_TRAP, $2); }
-    | TOK_TRAP TOK_INUM { addClass4(module, OP_TRAP, $2); }
+    : TOK_TRAP TOK_NUM_VAL { addClass4(module, OP_TRAP, (uint32_t)$2); }
     ;
 
     /* moving data in and out of registers */
@@ -224,8 +220,7 @@ class8_instr
     ;
 
 class9_instr
-    : TOK_PEEK register ',' register ',' TOK_INUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
-    | TOK_PEEK register ',' register ',' TOK_UNUM { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
+    : TOK_PEEK register ',' register ',' TOK_NUM_VAL { addClass9(module, OP_PEEK, $2, $4, (uint16_t)$6); }
     ;
 
 class10_instr
@@ -240,11 +235,8 @@ class12_instr
     : TOK_STORE TOK_SYMBOL ',' expr_parameter { addClass12(module, OP_STOREI, $2, $4); }
     ;
 
-
 type_name
-    : TOK_INT { $$ = createValue(INT); }
-    | TOK_UINT { $$ = createValue(UINT); }
-    | TOK_FLOAT { $$ = createValue(FLOAT); }
+    : TOK_NUM { $$ = createValue(NUM); }
     | TOK_BOOL { $$ = createValue(BOOL); }
     | TOK_STRING { $$ = createValue(STRING); }
     ;
@@ -287,20 +279,10 @@ bool_value
     ;
 
 expression_factor
-    : TOK_UNUM {
-        $$ = createValue(UINT);
-        $$->isAssigned = true;
-        $$->data.unum = $1;
-    }
-    | TOK_INUM {
-        $$ = createValue(INT);
+    : TOK_NUM_VAL {
+        $$ = createValue(NUM);
         $$->isAssigned = true;
         $$->data.num = $1;
-    }
-    | TOK_FNUM {
-        $$ = createValue(FLOAT);
-        $$->isAssigned = true;
-        $$->data.fnum = $1;
     }
     ;
 

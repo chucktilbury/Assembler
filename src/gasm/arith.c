@@ -5,63 +5,11 @@
     dest->isAssigned = true; \
     dest->isConst = true; \
     switch(left->type) { \
-        case INT: \
+        case NUM: \
             switch(right->type) { \
-                case INT: \
-                    dest->type = INT; \
+                case NUM: \
+                    dest->type = NUM; \
                     dest->data.num = left->data.num op right->data.num; \
-                    break; \
-                case UINT: \
-                    dest->type = INT; \
-                    dest->data.num = left->data.num op right->data.unum; \
-                    break; \
-                case FLOAT: \
-                    dest->type = FLOAT; \
-                    dest->data.fnum = left->data.num op right->data.fnum; \
-                    break; \
-                case BOOL: \
-                case STRING: \
-                    syntaxError("invalid right operand to constant expression"); \
-                    break; \
-                default: \
-                    fatalError("invalid right operand type in constant expression"); \
-            } \
-            break; \
-        case UINT: \
-            switch(right->type) { \
-                case INT: \
-                    dest->type = INT; \
-                    dest->data.num = left->data.unum op right->data.num; \
-                    break; \
-                case UINT: \
-                    dest->type = UINT; \
-                    dest->data.unum = left->data.unum op right->data.unum; \
-                    break; \
-                case FLOAT: \
-                    dest->type = FLOAT; \
-                    dest->data.fnum = left->data.unum op right->data.fnum; \
-                    break; \
-                case BOOL: \
-                case STRING: \
-                    syntaxError("invalid right operand to constant expression"); \
-                    break; \
-                default: \
-                    fatalError("invalid right operand type in constant expression"); \
-            } \
-            break; \
-        case FLOAT: \
-            switch(right->type) { \
-                case INT: \
-                    dest->type = FLOAT; \
-                    dest->data.fnum = left->data.fnum op right->data.num; \
-                    break; \
-                case UINT: \
-                    dest->type = FLOAT; \
-                    dest->data.fnum = left->data.fnum op right->data.unum; \
-                    break; \
-                case FLOAT: \
-                    dest->type = FLOAT; \
-                    dest->data.fnum = left->data.fnum op right->data.fnum; \
                     break; \
                 case BOOL: \
                 case STRING: \
@@ -98,16 +46,8 @@ void mulNum(Value* dest, Value* left, Value* right)
 void divNum(Value* dest, Value* left, Value* right)
 {
     switch(right->type) {
-        case INT:
-            if(right->data.num == 0)
-                syntaxError("divide by zero in constant expression");
-            break;
-        case UINT:
-            if(right->data.unum == 0)
-                syntaxError("divide by zero in constant expression");
-            break;
-        case FLOAT:
-            if(right->data.fnum == 0)
+        case NUM:
+            if(right->data.num == 0.0)
                 syntaxError("divide by zero in constant expression");
             break;
         case BOOL:
@@ -127,17 +67,9 @@ void negNum(Value* dest, Value* val)
     dest->isConst = true;
 
     switch(val->type) {
-        case INT:
-            dest->type = INT;
+        case NUM:
+            dest->type = NUM;
             dest->data.num = -val->data.num;
-            break;
-        case UINT:
-            dest->type = UINT;
-            dest->data.unum = (uint64_t)(-((int64_t)val->data.num));
-            break;
-        case FLOAT:
-            dest->type = FLOAT;
-            dest->data.fnum = -val->data.fnum;
             break;
         case BOOL:
         case STRING:
