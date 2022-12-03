@@ -4,10 +4,10 @@
 # things like the compiler and its libraries.
 
 if [ -z "$1" ]; then
-    echo "must have build type debug, release, or profile "
-    exit
+    echo "Build types are debug, release, or profile. Set default to debug."
+    export BUILD_TYPE=debug
 else
-    export _BUILD_TYPE=$1
+    export BUILD_TYPE=$1
 fi
 
 if [ -z "$_PROJECT_NAME" ]; then
