@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(gasm)
+project(gfas)
 
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
