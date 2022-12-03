@@ -32,8 +32,8 @@ _start:
     push    r10
     trap    DBG_PRINT
 
-    load    r12,(float)123
-    load    r13,(float)2
+    load    r12,(num)123
+    load    r13,(number)2
     mul     r10,r12,r13
     push    r10
     trap    DBG_PRINT

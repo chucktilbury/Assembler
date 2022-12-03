@@ -5,7 +5,7 @@
 #include "system.inc"
 #include "startup.inc"
 
-int test
+num test
 
 _start:
     store   test,123    // storeI

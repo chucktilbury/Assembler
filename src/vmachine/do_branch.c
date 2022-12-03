@@ -10,8 +10,8 @@ static inline bool doCALL()
     TRACE("%04d", idx);
 
     Value val;
-    val.type = UINT;
-    val.data.unum = GET_IP();
+    val.type = ADDR;
+    val.data.addr = GET_IP();
 
     pushVal(val);
 
@@ -46,12 +46,12 @@ static inline bool doBR()
 static inline bool doRETURN()
 {
     Value val = popVal();
-    if(val.type != UINT && val.type != INT) {
+    if(val.type != ADDR) {
         runtimeError("invalid type for return instruction: %d", val.type);
         return true;
     }
     else
-        SET_IP((uint32_t)val.data.unum);
+        SET_IP((uint32_t)val.data.addr);
     return false;
 }
 

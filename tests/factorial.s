@@ -24,10 +24,10 @@
 #include "startup.inc"
 
 string timer_string = "elapsed time is {timer} seconds\n"
-float timer
+number timer
 string fact_string = "factorial of {value} is {factor}\n"
-int factor
-int value
+number factor
+number value
 
 _start:
 

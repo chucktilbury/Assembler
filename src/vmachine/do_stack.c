@@ -67,7 +67,7 @@ static inline bool doPEEK()
     uint8_t base = RIGHT_REG(regs);
     TRACE("%s,%s,%d", regToStr(dest), regToStr(base), idx);
 
-    int index = (registers[base].data.unum-idx)+1;
+    int index = (registers[base].data.addr-idx)+1;
     Value val = peekVal(index);
 
     memcpy(&registers[dest], &val, sizeof(Value));
@@ -83,8 +83,8 @@ static inline bool doSIDX()
     TRACE("%s", regToStr(reg));
 
     uint8_t idx = reg & 0x0F;
-    registers[idx].type = UINT;
-    registers[idx].data.unum = getStackIdx()-1;
+    registers[idx].type = ADDR;
+    registers[idx].data.addr = getStackIdx()-1;
 
     return false;
 }
