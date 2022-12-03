@@ -1,9 +1,10 @@
+
+
 # TODO list
 
-- Merge the goldfish tree to this tree.
-- Merge the garbage collector to this tree. Fix the build so that it builds with the rest of the code.
+- Rework things like strings and numbers to be objects in the assembler. Calls serialization into question. Save instances of arbitrary objects.
+- Update all documentations
 - Think about storing debug info, including symbol table. Probably store the debug information in a separate file. Just store all of the information that the assembler throws away when it writes the binary.
-- Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime. The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
 - Startup code needs to capture the command line. (requires lists)
 - Implement equality test and concatenation for strings, as well as other string services, as traps.
 - Implement simple CLI debugger.
@@ -56,12 +57,15 @@
 - Tests.
 
 # Questions
-- Needs to create and destroy variables in ASM code in order to support high level code. Examples are class objects and local variables. This can mostly be done with traps, but creating class methods and such has to be in ASM code. What does this look like?
+- Needs to create and destroy variables in ASM code in order to support high level code. Examples are class objects and local variables. This can mostly be done with traps, but creating class methods and such has to be in ASM code. What does this look like? (see converting to objects in the TODO list)
 - Need to think about exception handling. Thinking about a try{} stack. In emitted code, the handlers are defined before the try block and the try is like a setjmp() destination and the handlers are like an upsides down if/else construct.
 - ~~Look at keeping pointers in uint32_t instead of uint64_t sized memory object.~~ This could save time when manipulating pointers by reducing the amount of data that is read from memory when executing a data stream. However, it also requires that a pointer be reconstituted when it is used. Some sort of caching could be implemented, but this also breaks garbage collections and requires a special implementation. Rejecting the feature.
 - ~~See if a Value data structure will fit into a uint64_t.~~ The only way this can work is to use truncated pointers as indicated in the previous bullet point. Since that feature is rejected, then this feature is also rejected.
+- This cannot be made to work. ~~Look at changing the VM so that it loads variables as pointers instead of indexes, for efficiency at runtime.~~ The problem is with linking the pointer to actual instructions, as instructions are loaded as a single block. Note that addresses in Linux are 48 bits where the lower 32 bits are the actual index and the upper 16 bits are the segment selector. The segment selector does not change for the life of the program, so this lower 32 bits can be used as an index. Variable indexes are already 32 bits in the VM. There are implications for the object model...
 
 # Finished TODO items
+- Merge the garbage collector to this tree. ~~Fix the build so that it builds with the rest of the code~~.
+- Merge the goldfish tree to this tree.
 - Delete INTEGER and UNSIGNED types and replace with NUMBER, which is always a double. This is a fairly sweeping change that will require changes to most files.
 - Add a "magic" number at beginning of binary file to make the VM fail on an invalid input.
 - Save file name at beginning of the binary for error messaging in VM.
