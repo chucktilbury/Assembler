@@ -13,4 +13,4 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${LIBRARY_OUTPU
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${EXECUTABLE_OUTPUT_PATH}")
 
 add_subdirectory(src)
-#add_subdirectory(docs EXCLUDE_FROM_ALL)
+add_subdirectory(docs EXCLUDE_FROM_ALL)

@@ -6,6 +6,8 @@ parser.output
 scanner.c
 gas
 bin/
+docs/out/
+
 .vscode/
 
 *.i
