@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['c99_5fcompliant_2794',['c99_compliant',['../macro_8c.html#a7cdf6b3f09fe8f6bd658a050f71de0e2',1,'c99_compliant():&#160;macro.c'],['../cpp_8h.html#a7cdf6b3f09fe8f6bd658a050f71de0e2',1,'c99_compliant():&#160;macro.c']]],
+  ['c99_5fhosted_2795',['c99_hosted',['../cpp_8h.html#a0e9d3978b0aaa4ce575f1846eafd125d',1,'c99_hosted():&#160;cpp.h'],['../macro_8c.html#a0e9d3978b0aaa4ce575f1846eafd125d',1,'c99_hosted():&#160;macro.c']]],
+  ['cap_2796',['cap',['../struct_str_tab.html#a9bd2fa9715a463fc662bea8e7c016da9',1,'StrTab::cap()'],['../struct_inst_buffer.html#ac15006fd8834b46088ee862e642fd6f6',1,'InstBuffer::cap()'],['../struct_val_stack.html#a70b5ab80821003b6b42032244d30d75e',1,'ValStack::cap()'],['../struct_string.html#a36d5b62a305c96fe07cd200d8d5ed1d4',1,'String::cap()'],['../struct__compound__name.html#acbde3ade5b2955172e66dd947bbefdbd',1,'_compound_name::cap()'],['../struct_str_list.html#a1c9abc46b4449a698bcdf42636af9549',1,'StrList::cap()'],['../struct_value_tab.html#a10d0c8f64699f56a60acdb81664651e7',1,'ValueTab::cap()']]],
+  ['cd_2797',['cd',['../struct_g_c__finalizer__closure.html#a98d66ae6b2b9d01314528f3543a5033f',1,'GC_finalizer_closure']]],
+  ['cfirst_2798',['cfirst',['../struct__cmd__line.html#a28b4e9486b58c238218638b31fa449ea',1,'_cmd_line']]],
+  ['clast_2799',['clast',['../struct__cmd__line.html#a6ea122ede542fc8ae0fe6dc672086fe3',1,'_cmd_line']]],
+  ['cli_2800',['cli',['../structlexer__state.html#a369127301933ab5aeace69621088bed1',1,'lexer_state']]],
+  ['cmds_2801',['cmds',['../cmdline_8c.html#a846ab47ab3d7a254f31af6a305d0595d',1,'cmdline.c']]],
+  ['cmpdata_2802',['cmpdata',['../struct_h_t.html#af6164c67e3270c329d13375b0e96bc2d',1,'HT']]],
+  ['condcomp_2803',['condcomp',['../structlexer__state.html#a4ecc2262dacb62b533950dd63a598468',1,'lexer_state']]],
+  ['condf_2804',['condf',['../structlexer__state.html#a522e3086491cc3a08ba1996e15acd806',1,'lexer_state']]],
+  ['condmet_2805',['condmet',['../structlexer__state.html#ad6764a2bd92466297fe9d6f9eaf3ae0b',1,'lexer_state']]],
+  ['condnest_2806',['condnest',['../structlexer__state.html#abcafb893600d3053f5cb046b1fbdf7e2',1,'lexer_state']]],
+  ['copy_5fline_2807',['copy_line',['../structlexer__state.html#a5fd6304ecb575acacf156da28e3a3be8',1,'lexer_state']]],
+  ['cord_5foom_5ffn_2808',['CORD_oom_fn',['../cord_8h.html#a63a31c71059ce440d005b0d7fa3c2852',1,'cord.h']]],
+  ['count_5ftrigraphs_2809',['count_trigraphs',['../structlexer__state.html#a3b3e785fde46e6a72371f6e57c8f8a45',1,'lexer_state']]],
+  ['cppm_2810',['cppm',['../lexer_8c.html#a7314f8641ad748f21490f3e739dbd2fe',1,'lexer.c']]],
+  ['cppm_5fvch_2811',['cppm_vch',['../lexer_8c.html#a43165cda1a6fcf32cb654a059492a3fb',1,'lexer.c']]],
+  ['cppms_2812',['cppms',['../lexer_8c.html#a4a5223a8849a5fac9387a92fdc020270',1,'lexer.c']]],
+  ['crnt_2813',['crnt',['../struct__cmd__line.html#a739e1674f663b615d43cb42df802efa6',1,'_cmd_line']]],
+  ['ctok_2814',['ctok',['../structlexer__state.html#abccd5ec13ab66970fc526d408c3cf4a1',1,'lexer_state']]],
+  ['current_5ffilename_2815',['current_filename',['../cpp_8c.html#af9cd463ff622e32234c9447f333fb3e5',1,'current_filename():&#160;cpp.c'],['../cpp_8h.html#af9cd463ff622e32234c9447f333fb3e5',1,'current_filename():&#160;cpp.c']]],
+  ['current_5fincdir_2816',['current_incdir',['../cpp_8c.html#a1004f4d77114d7639b6fc0717e14d2a6',1,'cpp.c']]],
+  ['current_5flong_5ffilename_2817',['current_long_filename',['../cpp_8c.html#af13bf179a78ac91b7c10d60b55467c82',1,'current_long_filename():&#160;cpp.c'],['../cpp_8h.html#af13bf179a78ac91b7c10d60b55467c82',1,'current_long_filename():&#160;cpp.h']]],
+  ['cval_2818',['cval',['../structmacro.html#aa21b5dda04439671f841f6551c6dcde1',1,'macro']]]
+];
