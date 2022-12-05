@@ -5,9 +5,9 @@
 
 if [ -z "$1" ]; then
     echo "Build types are debug, release, or profile. Set default to debug."
-    export BUILD_TYPE=debug
+    export _BUILD_TYPE=debug
 else
-    export BUILD_TYPE=$1
+    export _BUILD_TYPE=$1
 fi
 
 if [ -z "$_PROJECT_NAME" ]; then
