@@ -20,6 +20,7 @@
  */
 #include <linux/limits.h> // for PATH_MAX = 4096 and NAME_MAX = 255
 #include <stdarg.h>
+#include "memory.h"
 #include "common.h"
 #include "cmdline.h"
 //#include "str_utils.h"
