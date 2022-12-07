@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(gfas)
+project(compiler)
 
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
@@ -21,24 +21,24 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} ./ )
 add_executable(${PROJECT_NAME}
     ${BISON_PARSER_OUTPUTS}
     ${FLEX_SCANNER_OUTPUTS}
-    post.c
-    ast.c
-    arith.c
-    asm_errors.c
-    gas.c
+    errors.c
+    main.c
+    symtable.c
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/../include
         ${PROJECT_SOURCE_DIR}/../common
+        ${PROJECT_SOURCE_DIR}/../gc/include
+        ${PROJECT_SOURCE_DIR}/../gc/include/gc
 )
 
 target_link_libraries(${PROJECT_NAME}
     common
     m
     gc
-    cord
+    pthread
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

@@ -1,4 +1,4 @@
-# ASM
+# GFASM
 This is a simple stand-alone utility that binds the pre-processor and the assembler together. It is only used when actually writing code in the VM assembly language.
 
 ```

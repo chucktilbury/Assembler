@@ -1,5 +1,5 @@
 
-project(disasm)
+project(gfdbg)
 
 add_executable(${PROJECT_NAME}
     disasm.c
@@ -8,13 +8,15 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     common
     gc
-    cord
+    pthread
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/../include
         ${PROJECT_SOURCE_DIR}/../common
+        ${PROJECT_SOURCE_DIR}/../gc/include
+        ${PROJECT_SOURCE_DIR}/../gc/include/gc
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
