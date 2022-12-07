@@ -5,6 +5,8 @@ add_library(${PROJECT_NAME} STATIC
     opcodes.c
     registers.c
     cmdline.c
+    hash.c
+    list.c
     inst_buf.c
     str_table.c
     val_table.c
