@@ -8,13 +8,15 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     common
     gc
-    cord
+    pthread
 )
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/../common
         ${PROJECT_SOURCE_DIR}/../include
+        ${PROJECT_SOURCE_DIR}/../gc/include
+        ${PROJECT_SOURCE_DIR}/../gc/include/gc
 )
 
 link_directories (

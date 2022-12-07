@@ -30,13 +30,15 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/../include
         ${PROJECT_SOURCE_DIR}/../common
+        ${PROJECT_SOURCE_DIR}/../gc/include
+        ${PROJECT_SOURCE_DIR}/../gc/include/gc
 )
 
 target_link_libraries(${PROJECT_NAME}
     common
     m
     gc
-    cord
+    pthread
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
