@@ -26,6 +26,7 @@
 #define _realloc(p, s) GC_realloc((p), (s))
 #define _realloc_ds_array(p, t, n) (t*)GC_realloc((p), sizeof(t)*(n))
 #define _copy_str(s) GC_strdup(s)
+#define _free(p)
 #endif
 
 #endif
