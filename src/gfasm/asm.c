@@ -298,7 +298,7 @@ int main(int argc, char** argv)
 
     const char* pp_cmd_line = append_str(NULL, "%s/cpp -o %s/%s %s",
                     exec_path_str, output_path_str, ifn, pproc_line);
-    const char* asm_cmd_line = append_str(NULL, "%s/gfas -o %s/%s -v %d %s/%s",
+    const char* asm_cmd_line = append_str(NULL, "%s/assembler -o %s/%s -v %d %s/%s",
                     exec_path_str, output_path_str, ofn, verbo, output_path_str, ifn);
     const char* vm_cmd_line = append_str(NULL, "%s/vmachine %s/%s -v %d",
                     exec_path_str, output_path_str, ofn, verbo);
