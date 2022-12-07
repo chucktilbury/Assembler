@@ -1,8 +1,8 @@
 
-project(disasm)
+project(gfasm)
 
 add_executable(${PROJECT_NAME}
-    disasm.c
+    asm.c
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -13,8 +13,14 @@ target_link_libraries(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/../include
         ${PROJECT_SOURCE_DIR}/../common
+        ${PROJECT_SOURCE_DIR}/../include
+)
+
+link_directories (
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/bin
+        ${PROJECT_SOURCE_DIR}/external/lib
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

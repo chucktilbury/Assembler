@@ -1,0 +1,46 @@
+# Goldfish Debugger.
+This is a stand-alone command line debugger that reads a binary output file and implements doing things like stepping through the executable and dumping sections of it to an assembly file.
+
+- Implement simple CLI debugger.
+  - Step
+  - Continue
+  - Quit
+  - Load
+    - Program
+    - Symbols
+    - Both
+    - State
+  - Store
+    - Settings
+    - Program state
+  - Show
+    - Variables
+      - By index
+      - By name
+      - As a list, using less
+    - Breakpoints
+      - By index
+      - As a list, using less, with indexes
+    - Source
+      - As single line
+      - As block of lines
+        - From center at current line
+        - From current line down
+    - Registers
+      - Single
+      - All
+    - Help
+      - As text, using less
+      - By topic
+  - Breakpoints
+    - Set by address
+    - Set by label name
+    - Set by source code line number
+    - Set by value change
+    - Set by register change
+    - Clear all
+    - Clear by index
+  - Set
+    - Number of lines to show for source and lists.
+    - Whether to sho meta-data for variables.
+    - Save settings.
