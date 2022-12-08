@@ -31,5 +31,6 @@ void HashDestroy(Hash* table);
 HashResult HashInsert(Hash* table, const char* key, void* data, size_t size);
 HashResult HashFind(Hash* tab, const char* key, void* data, size_t size);
 HashResult HashRemove(Hash* tab, const char* key);
+void HashDump(Hash* tab);
 
 #endif

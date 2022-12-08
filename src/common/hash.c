@@ -207,9 +207,7 @@ HashResult HashRemove(Hash* tab, const char* key) {
     return HASH_NF;
 }
 
-#ifdef TEST
-
-void dump(Hash* tab) {
+void HashDump(Hash* tab) {
 
     printf("\ntab->cap = %d\n", tab->cap);
     printf("tab->count = %d\n", tab->count);
@@ -228,6 +226,8 @@ void dump(Hash* tab) {
 
     printf("\n");
 }
+
+#ifdef TEST
 
 int main() {
 
