@@ -6,7 +6,8 @@
 
 #include "common.h"
 #include "scanner.h"
-#include "symtable.h"
+#include "symbol_tab.h"
+#include "name_context.h"
 
 FILE* outfile = NULL;
 extern const char* file_name;
@@ -62,12 +63,16 @@ extern const char* file_name;
 
 module
     : {
-        // emit things before the input
+        // initialize the parser here
         EMIT("// before everything\n");
+        initSymbolTab();
+        initNameContext();
+        pushNameContext("root");
     } module_list {
         // emit things after the input
         EMIT("// after everything\n");
         EMIT_LINE();
+        // tear down the parser here
     }
     ;
 
@@ -115,16 +120,17 @@ namespace_name
             EMIT_LINE();
             EMIT("// namespace: %s\n", $2);
             $$ = $2;
-            pushContext($2);
+            pushNameContext($2);
         }
     ;
 
 namespace_definition
     : namespace_name '{' module_definition_list '}' {
-            popContext();
+            popNameContext();
         }
     | namespace_name '{' '}' {
-            popContext();
+            popNameContext();
+            EMIT("// context: %s\n", getNameContext());
         }
     ;
 
@@ -132,7 +138,7 @@ class_name
     : CLASS SYMBOL {
             EMIT_LINE();
             EMIT("// class: %s\n", $2);
-            addSym($2, CLASS, NULL);
+            addSymbol($2, CLASS, NULL);
             $$ = $2;
         }
     ;

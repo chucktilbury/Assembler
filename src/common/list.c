@@ -125,7 +125,7 @@ int listGetSize(List* lst) {
     return lst->len;
 }
 
-void* listGetRaw(List* lst) {
+ListItem** listGetRaw(List* lst) {
 
     return lst->list;
 }

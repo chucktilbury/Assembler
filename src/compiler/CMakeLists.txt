@@ -27,7 +27,9 @@ add_executable(${PROJECT_NAME}
     ${FLEX_SCANNER_OUTPUTS}
     errors.c
     main.c
-    symtable.c
+    #symtable.c
+    symbol_tab.c
+    name_context.c
 )
 
 target_include_directories(${PROJECT_NAME}

@@ -33,7 +33,7 @@ ListErr listPush(List* lst, void* val, size_t size);
 ListErr listPop(List* lst, void* val, size_t size);
 ListErr listPeek(List* lst, void* val, size_t size);
 int listGetSize(List* lst);
-void* listGetRaw(List* lst);
+ListItem** listGetRaw(List* lst);
 
 
 #endif
