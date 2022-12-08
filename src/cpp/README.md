@@ -1,4 +1,4 @@
-#ucpp
+# ucpp
 A C preprocessor designed to be embeddable, quick, light and fully compliant to ISO Standard 9899:1999, aka ISO C99, or simply, C99
 
 ucpp-1.3.2 is a C preprocessor compliant to ISO-C99.
@@ -868,7 +868,7 @@ From 0.1 to 0.2:
 THANKS TO
 ---------
 
-Volker Barthelmann, Neil Booth, Stephen Davies, Stéphane Ecolivet,
+Volker Barthelmann, Neil Booth, Stephen Davies, Stï¿½phane Ecolivet,
 Marc Espie, Marcus Holland-Moritz, Antoine Leca, Cyrille Lefevre,
 Dave Rivers, Loic Tortay and Laurent Wacrenier, for suggestions and
 beta-testing.

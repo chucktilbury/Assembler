@@ -1,4 +1,4 @@
-#Boehm - Demers - Weiser Garbage Collector
+# Boehm-Demers-Weiser Garbage Collector
 
 [![Travis-CI build status](https://app.travis-ci.com/ivmai/bdwgc.svg?branch=master)](https://app.travis-ci.com/github/ivmai/bdwgc)
 [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/github/ivmai/bdwgc?branch=master&svg=true)](https://ci.appveyor.com/project/ivmai/bdwgc)
