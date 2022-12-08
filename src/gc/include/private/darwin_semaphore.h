@@ -19,11 +19,11 @@
 #define GC_DARWIN_SEMAPHORE_H
 
 #if !defined(GC_DARWIN_THREADS)
-# error darwin_semaphore.h included with GC_DARWIN_THREADS not defined
+#error darwin_semaphore.h included with GC_DARWIN_THREADS not defined
 #endif
 
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 
 /* This is a very simple semaphore implementation for Darwin.  It is    */
@@ -37,37 +37,37 @@ typedef struct {
     int value;
 } sem_t;
 
-GC_INLINE int sem_init(sem_t *sem, int pshared, int value) {
-    if (pshared != 0) {
+GC_INLINE int sem_init(sem_t* sem, int pshared, int value) {
+    if(pshared != 0) {
         errno = EPERM; /* unsupported */
         return -1;
     }
     sem->value = value;
-    if (pthread_mutex_init(&sem->mutex, NULL) != 0)
-      return -1;
-    if (pthread_cond_init(&sem->cond, NULL) != 0) {
-      (void)pthread_mutex_destroy(&sem->mutex);
-      return -1;
+    if(pthread_mutex_init(&sem->mutex, NULL) != 0)
+        return -1;
+    if(pthread_cond_init(&sem->cond, NULL) != 0) {
+        (void)pthread_mutex_destroy(&sem->mutex);
+        return -1;
     }
     return 0;
 }
 
-GC_INLINE int sem_post(sem_t *sem) {
-    if (pthread_mutex_lock(&sem->mutex) != 0)
-      return -1;
+GC_INLINE int sem_post(sem_t* sem) {
+    if(pthread_mutex_lock(&sem->mutex) != 0)
+        return -1;
     sem->value++;
-    if (pthread_cond_signal(&sem->cond) != 0) {
-      (void)pthread_mutex_unlock(&sem->mutex);
-      return -1;
+    if(pthread_cond_signal(&sem->cond) != 0) {
+        (void)pthread_mutex_unlock(&sem->mutex);
+        return -1;
     }
     return pthread_mutex_unlock(&sem->mutex) != 0 ? -1 : 0;
 }
 
-GC_INLINE int sem_wait(sem_t *sem) {
-    if (pthread_mutex_lock(&sem->mutex) != 0)
-      return -1;
-    while (sem->value == 0) {
-        if (pthread_cond_wait(&sem->cond, &sem->mutex) != 0) {
+GC_INLINE int sem_wait(sem_t* sem) {
+    if(pthread_mutex_lock(&sem->mutex) != 0)
+        return -1;
+    while(sem->value == 0) {
+        if(pthread_cond_wait(&sem->cond, &sem->mutex) != 0) {
             (void)pthread_mutex_unlock(&sem->mutex);
             return -1;
         }
@@ -76,13 +76,15 @@ GC_INLINE int sem_wait(sem_t *sem) {
     return pthread_mutex_unlock(&sem->mutex) != 0 ? -1 : 0;
 }
 
-GC_INLINE int sem_destroy(sem_t *sem) {
-    return pthread_cond_destroy(&sem->cond) != 0
-           || pthread_mutex_destroy(&sem->mutex) != 0 ? -1 : 0;
+GC_INLINE int sem_destroy(sem_t* sem) {
+    return pthread_cond_destroy(&sem->cond) != 0 ||
+    pthread_mutex_destroy(&sem->mutex) != 0 ?
+    -1 :
+    0;
 }
 
 #ifdef __cplusplus
-  } /* extern "C" */
+} /* extern "C" */
 #endif
 
 #endif

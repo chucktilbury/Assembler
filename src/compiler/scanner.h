@@ -1,12 +1,12 @@
 #ifndef _SCANNER_H_
 #define _SCANNER_H_
 
-char *get_file_name();
+char* get_file_name();
 int get_line_no();
 int get_col_number();
-int open_file(const char *fname);
+int open_file(const char* fname);
 void close_file();
-const char *get_tok_str();
+const char* get_tok_str();
 int get_token();
 
 /*
@@ -15,9 +15,9 @@ int get_token();
  */
 extern int yylex();
 extern int yyparse();
-extern FILE *yyin;
+extern FILE* yyin;
 
 // void yyerror(char *s, ...);
-void yyerror(const char *s);
+void yyerror(const char* s);
 
 #endif

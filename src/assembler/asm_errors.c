@@ -4,8 +4,7 @@
 static int errors = 0;
 static int warnings = 0;
 
-void syntaxError(const char* fmt, ...)
-{
+void syntaxError(const char* fmt, ...) {
     va_list args;
     fprintf(stderr, "syntax error: %d: ", get_line_no());
 
@@ -16,8 +15,7 @@ void syntaxError(const char* fmt, ...)
     errors++;
 }
 
-void syntaxWarning(const char* fmt, ...)
-{
+void syntaxWarning(const char* fmt, ...) {
     va_list args;
     fprintf(stderr, "warning: ");
 
@@ -28,8 +26,7 @@ void syntaxWarning(const char* fmt, ...)
     warnings++;
 }
 
-void fatalError(const char* fmt, ...)
-{
+void fatalError(const char* fmt, ...) {
     va_list args;
 
     fprintf(stderr, "error: ");
@@ -42,13 +39,10 @@ void fatalError(const char* fmt, ...)
     exit(1);
 }
 
-int getErrors()
-{
+int getErrors() {
     return errors;
 }
 
-int getWarnings()
-{
+int getWarnings() {
     return warnings;
 }
-

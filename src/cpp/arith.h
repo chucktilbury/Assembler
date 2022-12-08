@@ -91,81 +91,81 @@
 #define ARITH_H__
 
 enum {
-	/* Warnings */
-	ARITH_EXCEP_CONV_O,    /* overflow on conversion */
-	ARITH_EXCEP_NEG_O,     /* overflow on unary minus */
-	ARITH_EXCEP_NOT_T,     /* trap representation on bitwise inversion */
-	ARITH_EXCEP_PLUS_O,    /* overflow on addition */
-	ARITH_EXCEP_PLUS_U,    /* underflow on addition */
-	ARITH_EXCEP_MINUS_O,   /* overflow on subtraction */
-	ARITH_EXCEP_MINUS_U,   /* underflow on subtraction */
-	ARITH_EXCEP_AND_T,     /* trap representation on bitwise and */
-	ARITH_EXCEP_XOR_T,     /* trap representation on bitwise xor */
-	ARITH_EXCEP_OR_T,      /* trap representation on bitwise or */
-	ARITH_EXCEP_LSH_W,     /* left shift by type width or more */
-	ARITH_EXCEP_LSH_C,     /* left shift by negative count */
-	ARITH_EXCEP_LSH_O,     /* overflow on left shift */
-	ARITH_EXCEP_LSH_U,     /* underflow on left shift */
-	ARITH_EXCEP_RSH_W,     /* right shift by type width or more */
-	ARITH_EXCEP_RSH_C,     /* right shift by negative count */
-	ARITH_EXCEP_RSH_N,     /* right shift of negative value */
-	ARITH_EXCEP_STAR_O,    /* overflow on multiplication */
-	ARITH_EXCEP_STAR_U,    /* underflow on multiplication */
+    /* Warnings */
+    ARITH_EXCEP_CONV_O,  /* overflow on conversion */
+    ARITH_EXCEP_NEG_O,   /* overflow on unary minus */
+    ARITH_EXCEP_NOT_T,   /* trap representation on bitwise inversion */
+    ARITH_EXCEP_PLUS_O,  /* overflow on addition */
+    ARITH_EXCEP_PLUS_U,  /* underflow on addition */
+    ARITH_EXCEP_MINUS_O, /* overflow on subtraction */
+    ARITH_EXCEP_MINUS_U, /* underflow on subtraction */
+    ARITH_EXCEP_AND_T,   /* trap representation on bitwise and */
+    ARITH_EXCEP_XOR_T,   /* trap representation on bitwise xor */
+    ARITH_EXCEP_OR_T,    /* trap representation on bitwise or */
+    ARITH_EXCEP_LSH_W,   /* left shift by type width or more */
+    ARITH_EXCEP_LSH_C,   /* left shift by negative count */
+    ARITH_EXCEP_LSH_O,   /* overflow on left shift */
+    ARITH_EXCEP_LSH_U,   /* underflow on left shift */
+    ARITH_EXCEP_RSH_W,   /* right shift by type width or more */
+    ARITH_EXCEP_RSH_C,   /* right shift by negative count */
+    ARITH_EXCEP_RSH_N,   /* right shift of negative value */
+    ARITH_EXCEP_STAR_O,  /* overflow on multiplication */
+    ARITH_EXCEP_STAR_U,  /* underflow on multiplication */
 
-	/* Errors */
-	ARITH_EXCEP_SLASH_D,   /* division by 0 */
-	ARITH_EXCEP_SLASH_O,   /* overflow on division */
-	ARITH_EXCEP_PCT_D,     /* division by 0 on modulus operator */
-	ARITH_EXCEP_CONST_O    /* constant too large */
+    /* Errors */
+    ARITH_EXCEP_SLASH_D, /* division by 0 */
+    ARITH_EXCEP_SLASH_O, /* overflow on division */
+    ARITH_EXCEP_PCT_D,   /* division by 0 on modulus operator */
+    ARITH_EXCEP_CONST_O  /* constant too large */
 };
 
-#define arith_strc_(x, y)	x ## y
-#define arith_strc(x, y)	arith_strc_(x, y)
+#define arith_strc_(x, y) x##y
+#define arith_strc(x, y) arith_strc_(x, y)
 
-#define arith_u		arith_strc(u_, ARITH_TYPENAME)
-#define arith_s		arith_strc(s_, ARITH_TYPENAME)
-#define arith_op_u(op)	arith_strc(ARITH_TYPENAME, arith_strc(_u_, op))
-#define arith_op_s(op)	arith_strc(ARITH_TYPENAME, arith_strc(_s_, op))
+#define arith_u arith_strc(u_, ARITH_TYPENAME)
+#define arith_s arith_strc(s_, ARITH_TYPENAME)
+#define arith_op_u(op) arith_strc(ARITH_TYPENAME, arith_strc(_u_, op))
+#define arith_op_s(op) arith_strc(ARITH_TYPENAME, arith_strc(_s_, op))
 
-#define ARITH_DECL_MONO_U_U(op)    ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_u(op)(arith_u x)
-#define ARITH_DECL_MONO_U_S(op)    ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_u(op)(arith_u x)
-#define ARITH_DECL_MONO_U_I(op)    ARITH_FUNCTION_HEADER int \
-                                   arith_op_u(op)(arith_u x)
-#define ARITH_DECL_MONO_U_L(op)    ARITH_FUNCTION_HEADER unsigned long \
-                                   arith_op_u(op)(arith_u x)
-#define ARITH_DECL_MONO_S_U(op)    ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_s(op)(arith_s x)
-#define ARITH_DECL_MONO_S_S(op)    ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_s(op)(arith_s x)
-#define ARITH_DECL_MONO_S_I(op)    ARITH_FUNCTION_HEADER int \
-                                   arith_op_s(op)(arith_s x)
-#define ARITH_DECL_MONO_S_L(op)    ARITH_FUNCTION_HEADER long \
-                                   arith_op_s(op)(arith_s x)
-#define ARITH_DECL_MONO_I_U(op)    ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_u(op)(int x)
-#define ARITH_DECL_MONO_L_U(op)    ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_u(op)(unsigned long x)
-#define ARITH_DECL_MONO_I_S(op)    ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_s(op)(int x)
-#define ARITH_DECL_MONO_L_S(op)    ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_s(op)(long x)
-#define ARITH_DECL_MONO_ST_US(op)  ARITH_FUNCTION_HEADER char *arith_op_u(op) \
-                                   (char *c, arith_u *ru, arith_s *rs, int *sp)
+#define ARITH_DECL_MONO_U_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_u(op)(arith_u x)
+#define ARITH_DECL_MONO_U_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_u(op)(arith_u x)
+#define ARITH_DECL_MONO_U_I(op) \
+    ARITH_FUNCTION_HEADER int arith_op_u(op)(arith_u x)
+#define ARITH_DECL_MONO_U_L(op) \
+    ARITH_FUNCTION_HEADER unsigned long arith_op_u(op)(arith_u x)
+#define ARITH_DECL_MONO_S_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_s(op)(arith_s x)
+#define ARITH_DECL_MONO_S_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_s(op)(arith_s x)
+#define ARITH_DECL_MONO_S_I(op) \
+    ARITH_FUNCTION_HEADER int arith_op_s(op)(arith_s x)
+#define ARITH_DECL_MONO_S_L(op) \
+    ARITH_FUNCTION_HEADER long arith_op_s(op)(arith_s x)
+#define ARITH_DECL_MONO_I_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_u(op)(int x)
+#define ARITH_DECL_MONO_L_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_u(op)(unsigned long x)
+#define ARITH_DECL_MONO_I_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_s(op)(int x)
+#define ARITH_DECL_MONO_L_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_s(op)(long x)
+#define ARITH_DECL_MONO_ST_US(op) \
+    ARITH_FUNCTION_HEADER char* arith_op_u(op)(char* c, arith_u* ru, arith_s* rs, int* sp)
 
-#define ARITH_DECL_BI_UU_U(op)     ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_u(op)(arith_u x, arith_u y)
-#define ARITH_DECL_BI_UI_U(op)     ARITH_FUNCTION_HEADER arith_u \
-                                   arith_op_u(op)(arith_u x, int y)
-#define ARITH_DECL_BI_UU_I(op)     ARITH_FUNCTION_HEADER int \
-                                   arith_op_u(op)(arith_u x, arith_u y)
-#define ARITH_DECL_BI_SS_S(op)     ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_s(op)(arith_s x, arith_s y)
-#define ARITH_DECL_BI_SI_S(op)     ARITH_FUNCTION_HEADER arith_s \
-                                   arith_op_s(op)(arith_s x, int y)
-#define ARITH_DECL_BI_SS_I(op)     ARITH_FUNCTION_HEADER int \
-                                   arith_op_s(op)(arith_s x, arith_s y)
+#define ARITH_DECL_BI_UU_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_u(op)(arith_u x, arith_u y)
+#define ARITH_DECL_BI_UI_U(op) \
+    ARITH_FUNCTION_HEADER arith_u arith_op_u(op)(arith_u x, int y)
+#define ARITH_DECL_BI_UU_I(op) \
+    ARITH_FUNCTION_HEADER int arith_op_u(op)(arith_u x, arith_u y)
+#define ARITH_DECL_BI_SS_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_s(op)(arith_s x, arith_s y)
+#define ARITH_DECL_BI_SI_S(op) \
+    ARITH_FUNCTION_HEADER arith_s arith_op_s(op)(arith_s x, int y)
+#define ARITH_DECL_BI_SS_I(op) \
+    ARITH_FUNCTION_HEADER int arith_op_s(op)(arith_s x, arith_s y)
 
 #endif
 
@@ -180,11 +180,11 @@ typedef NATIVE_UNSIGNED arith_u;
 #error Native subtype too small for arithmetic simulation.
 #endif
 
-#define SIMUL_MSW_WIDTH   (SIMUL_NUMBITS / 2)
-#define SIMUL_LSW_WIDTH   ((SIMUL_NUMBITS + 1) / 2)
+#define SIMUL_MSW_WIDTH (SIMUL_NUMBITS / 2)
+#define SIMUL_LSW_WIDTH ((SIMUL_NUMBITS + 1) / 2)
 
 typedef struct {
-	SIMUL_ARITH_SUBTYPE msw, lsw;
+    SIMUL_ARITH_SUBTYPE msw, lsw;
 } arith_u, arith_s;
 
 #endif
@@ -198,7 +198,7 @@ ARITH_DECL_MONO_U_I(toint);
 ARITH_DECL_MONO_U_L(toulong);
 
 ARITH_DECL_MONO_U_U(neg);
-ARITH_DECL_MONO_U_U(not);
+ARITH_DECL_MONO_U_U(not );
 ARITH_DECL_MONO_U_I(lnot);
 ARITH_DECL_MONO_U_I(lval);
 
@@ -228,7 +228,7 @@ ARITH_DECL_MONO_S_I(toint);
 ARITH_DECL_MONO_S_L(tolong);
 
 ARITH_DECL_MONO_S_S(neg);
-ARITH_DECL_MONO_S_S(not);
+ARITH_DECL_MONO_S_S(not );
 ARITH_DECL_MONO_S_I(lnot);
 ARITH_DECL_MONO_S_I(lval);
 

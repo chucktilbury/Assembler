@@ -4,14 +4,14 @@
 
 #include <stdbool.h>
 
-//TODO: Add groups for mutual exclusion and mutual requirement.
+// TODO: Add groups for mutual exclusion and mutual requirement.
 typedef enum {
-    CL_NONE = 0,        // no flags
-    CL_REQD = 0x01,     // parameter required
-    CL_FL_REQD = 0x02,  // file list required
-    CL_FL_ONE = 0x04,   // limit file list to one file
-    CL_NO_FL = 0x08,    // file list is a syntax error
-    CL_PRESENT = 0x10,  // set by the parser to check for required params
+    CL_NONE = 0,       // no flags
+    CL_REQD = 0x01,    // parameter required
+    CL_FL_REQD = 0x02, // file list required
+    CL_FL_ONE = 0x04,  // limit file list to one file
+    CL_NO_FL = 0x08,   // file list is a syntax error
+    CL_PRESENT = 0x10, // set by the parser to check for required params
 } CLFlags;
 
 typedef void (*callback_w)(const char*);

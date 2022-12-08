@@ -13,15 +13,15 @@
  *    products derived from this software without specific prior written
  *    permission.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR 
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
  * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
  * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
@@ -119,7 +119,7 @@
  * embedded inside tokens, neither directly nor by macro substitution and
  * stringization. Besides, '\n' is portable.
  */
-#define PRAGMA_TOKEN_END	((unsigned char)'\n')
+#define PRAGMA_TOKEN_END ((unsigned char)'\n')
 
 /*
  * Define this if you want ucpp to include encountered #pragma directives
@@ -181,7 +181,7 @@
  * For Linux, get gcc includes too, or you will miss things like stddef.h.
  * The exact path varies much, depending on the distribution.
  */
-#define STD_INCLUDE_PATH	"/usr/local/include", "/usr/include"
+#define STD_INCLUDE_PATH "/usr/local/include", "/usr/include"
 
 /* ====================================================================== */
 /*
@@ -235,11 +235,11 @@
 /*
  * For native type evaluation with a 64-bit "long long" type.
  */
-#define NATIVE_SIGNED           long long
-#define NATIVE_UNSIGNED         unsigned long long
-#define NATIVE_UNSIGNED_BITS    64
-#define NATIVE_SIGNED_MIN       (-9223372036854775807LL - 1)
-#define NATIVE_SIGNED_MAX       9223372036854775807LL
+#define NATIVE_SIGNED long long
+#define NATIVE_UNSIGNED unsigned long long
+#define NATIVE_UNSIGNED_BITS 64
+#define NATIVE_SIGNED_MIN (-9223372036854775807LL - 1)
+#define NATIVE_SIGNED_MAX 9223372036854775807LL
 
 /*
  * For emulation of a 64-bit type using a native 32-bit "unsigned long"
@@ -283,7 +283,7 @@
  */
 /*
 #define STD_ASSERT	"cpu(i386)", "machine(i386)", "system(unix)", \
-			"system(freebsd)"
+            "system(freebsd)"
 */
 
 /* ====================================================================== */
@@ -295,7 +295,7 @@
  */
 /*
 #define STD_MACROS	"__FreeBSD=4", "__unix", "__i386", \
-			"__FreeBSD__=4", "__unix__", "__i386__"
+            "__FreeBSD__=4", "__unix__", "__i386__"
 */
 
 /* ====================================================================== */
@@ -303,14 +303,13 @@
  * Default flags; HANDLE_ASSERTIONS is required for Solaris system headers.
  * See cpp.h for the definition of these flags.
  */
-#define DEFAULT_CPP_FLAGS	(DISCARD_COMMENTS | WARN_STANDARD \
-				| WARN_PRAGMA | FAIL_SHARP | MACRO_VAARG \
-				| CPLUSPLUS_COMMENTS | LINE_NUM | TEXT_OUTPUT \
-				| KEEP_OUTPUT | HANDLE_TRIGRAPHS \
-				| HANDLE_ASSERTIONS)
-#define DEFAULT_LEXER_FLAGS	(DISCARD_COMMENTS | WARN_STANDARD | FAIL_SHARP \
-				| MACRO_VAARG | CPLUSPLUS_COMMENTS | LEXER \
-				| HANDLE_TRIGRAPHS | HANDLE_ASSERTIONS)
+#define DEFAULT_CPP_FLAGS                                                      \
+    (DISCARD_COMMENTS | WARN_STANDARD | WARN_PRAGMA | FAIL_SHARP |             \
+     MACRO_VAARG | CPLUSPLUS_COMMENTS | LINE_NUM | TEXT_OUTPUT | KEEP_OUTPUT | \
+     HANDLE_TRIGRAPHS | HANDLE_ASSERTIONS)
+#define DEFAULT_LEXER_FLAGS                                        \
+    (DISCARD_COMMENTS | WARN_STANDARD | FAIL_SHARP | MACRO_VAARG | \
+     CPLUSPLUS_COMMENTS | LEXER | HANDLE_TRIGRAPHS | HANDLE_ASSERTIONS)
 
 /* ====================================================================== */
 /*
@@ -332,7 +331,7 @@
  * that lexer.c defines a static array of size MSTATE * MAX_CHAR_VAL
  * values of type int (MSTATE is defined in lexer.c and is about 40).
  */
-#define MAX_CHAR_VAL	128
+#define MAX_CHAR_VAL 128
 
 /*
  * If you want some extra character to be considered as whitespace,
@@ -365,15 +364,15 @@
  */
 
 /* for cpp.c */
-#define COPY_LINE_LENGTH	80
-#define INPUT_BUF_MEMG		8192
-#define OUTPUT_BUF_MEMG		8192
-#define TOKEN_NAME_MEMG		64	/* must be at least 4 */
-#define TOKEN_LIST_MEMG		32
-#define INCPATH_MEMG		16
-#define GARBAGE_LIST_MEMG	32
-#define LS_STACK_MEMG		4
-#define FNAME_MEMG		32
+#define COPY_LINE_LENGTH 80
+#define INPUT_BUF_MEMG 8192
+#define OUTPUT_BUF_MEMG 8192
+#define TOKEN_NAME_MEMG 64 /* must be at least 4 */
+#define TOKEN_LIST_MEMG 32
+#define INCPATH_MEMG 16
+#define GARBAGE_LIST_MEMG 32
+#define LS_STACK_MEMG 4
+#define FNAME_MEMG 32
 
 /* ====================================================================== */
 
@@ -384,7 +383,7 @@
 
 #if defined(UCPP_MMAP) || defined(POSIX_JMP)
 #ifndef _POSIX_SOURCE
-#define _POSIX_SOURCE	1
+#define _POSIX_SOURCE 1
 #endif
 #endif
 

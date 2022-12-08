@@ -43,7 +43,7 @@ typedef struct {
     Value* val;
     ValIdx idx;
     uint32_t references;
-    //const char* str;
+    // const char* str;
     StrIdx sidx;
 } DataDef;
 

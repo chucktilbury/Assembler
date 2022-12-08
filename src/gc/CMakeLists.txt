@@ -34,11 +34,10 @@ add_library(${PROJECT_NAME} STATIC
     cordxtra.c
 )
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../include
-        ${PROJECT_SOURCE_DIR}/../include/gc
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/../include
+    ${PROJECT_SOURCE_DIR}/../include/gc
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

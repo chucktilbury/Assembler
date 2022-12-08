@@ -3,13 +3,13 @@
  *  application code.
  */
 #ifndef _SCANNER_H_
-#  define _SCANNER_H_
+#define _SCANNER_H_
 
 void set_line_no(int no);
 int get_line_no();
 void set_file_name(const char* fname);
 const char* get_file_name();
-int open_file(const char *fname);
+int open_file(const char* fname);
 // const char *get_tok_str(void);
 // int get_token(void);
 
@@ -19,9 +19,9 @@ int open_file(const char *fname);
  */
 extern int yylex(void);
 extern int yyparse(void);
-extern FILE *yyin;
+extern FILE* yyin;
 
 // void yyerror(char *s, ...);
-void yyerror(const char *s);
+void yyerror(const char* s);
 
 #endif /* _SCANNER_H_ */

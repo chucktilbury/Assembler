@@ -4,19 +4,25 @@ project(assembler)
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
-BISON_TARGET(PARSER parser.y
-    ${CMAKE_CURRENT_BINARY_DIR}/parser.c
-    COMPILE_FLAGS "--report=lookahead -tvdo")
+BISON_TARGET(
+    PARSER
+        parser.y
+        ${CMAKE_CURRENT_BINARY_DIR}/parser.c
+        COMPILE_FLAGS "--report=lookahead -tvdo"
+)
 
-FLEX_TARGET(SCANNER scanner.l
-    ${CMAKE_CURRENT_BINARY_DIR}/scanner.c
-    COMPILE_FLAGS "-i" )
+FLEX_TARGET(
+    SCANNER
+        scanner.l
+        ${CMAKE_CURRENT_BINARY_DIR}/scanner.c
+        COMPILE_FLAGS "-i"
+)
 
 ADD_FLEX_BISON_DEPENDENCY(SCANNER PARSER)
 
 #set(BISON_PARSER_COMPILE_FLAG "--report=lookahead -tv")
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} ./ )
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ./)
 
 add_executable(${PROJECT_NAME}
     ${BISON_PARSER_OUTPUTS}
@@ -43,18 +49,17 @@ target_link_libraries(${PROJECT_NAME}
     pthread
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-    -Wall
-    -Wextra
-    -Wno-sign-compare
-    -Wno-unused-variable
-    -Wno-parentheses-equality
-    $<$<CONFIG:DEBUG>:-g3>
-    $<$<CONFIG:DEBUG>:-Og>
-    $<$<CONFIG:DEBUG>:-DMEMORY_DEBUG>
-    $<$<CONFIG:DEBUG>:-DENA_TRACE>
-    $<$<CONFIG:RELEASE>:-Ofast>
-    $<$<CONFIG:PROFILE>:-pg -O0>
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+        -Wall -Wextra -Wno-sign-compare
+        -Wno-unused-variable
+        -Wno-parentheses-equality
+        $<$<CONFIG:DEBUG>:-g3>
+        $<$<CONFIG:DEBUG>:-Og>
+        $<$<CONFIG:DEBUG>:-DMEMORY_DEBUG>
+        $<$<CONFIG:DEBUG>:-DENA_TRACE>
+        $<$<CONFIG:RELEASE>:-Ofast>
+        $<$<CONFIG:PROFILE>:-pg - O0>
 )
 
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES

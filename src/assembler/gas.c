@@ -8,8 +8,7 @@
  * replace them with the index number of the variable. If the name does not
  * name a variable, then leave the sequence in the string unchanged.
  */
-const char* preformat_str(const char* str)
-{
+const char* preformat_str(const char* str) {
     String* sptr = createStr(NULL);
     String* tmp = NULL;
     int sidx = 0;
@@ -29,9 +28,7 @@ const char* preformat_str(const char* str)
                         tmp = createStr(NULL);
                         state = 1;
                         break;
-                    default:
-                        addStrChar(sptr, str[sidx]);
-                        break;
+                    default: addStrChar(sptr, str[sidx]); break;
                 }
                 break;
 
@@ -58,15 +55,14 @@ const char* preformat_str(const char* str)
                 break;
 
             case 2: { // try to resolve a found marker symbol
-                    Index idx = findValTabIdx(tmp->buf);
-                    if(idx != 0)
-                        addStrFmt(sptr, "{%d}", idx);
-                    else
-                        addStrFmt(sptr, "{%s}", tmp->buf);
-                    sidx--;
-                    state = 0;
-                }
-                break;
+                Index idx = findValTabIdx(tmp->buf);
+                if(idx != 0)
+                    addStrFmt(sptr, "{%d}", idx);
+                else
+                    addStrFmt(sptr, "{%s}", tmp->buf);
+                sidx--;
+                state = 0;
+            } break;
 
             case 3: // abort marker and end
                 addStrChar(sptr, '{');
@@ -92,8 +88,7 @@ const char* preformat_str(const char* str)
     return sptr->buf;
 }
 
-static void save_binary(const char* fname)
-{
+static void save_binary(const char* fname) {
     FILE* fp = fopen(fname, "w");
     if(fp == NULL)
         fatalError("cannot open output file: %s: %s", fname, strerror(errno));
@@ -104,28 +99,29 @@ static void save_binary(const char* fname)
 
     char fbuf[FNAME_LEN];
     memset(fbuf, 0, sizeof(fbuf));
-    strncpy(fbuf, fname, FNAME_LEN-1);
+    strncpy(fbuf, fname, FNAME_LEN - 1);
     fwrite(fbuf, sizeof(fbuf), 1, fp);
 
     saveInstStream(fp);
     saveValTab(fp);
-    //saveStrTab(fp);
+    // saveStrTab(fp);
 }
 
 
 Module* module;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     _init_memory();
-    initCmdLine(CL_FL_ONE, "This is the assembler. It reads the assembly language input\n"
-                            "and converts it to a binary for use by the virtual machine.\n");
+    initCmdLine(CL_FL_ONE,
+                "This is the assembler. It reads the assembly language input\n"
+                "and converts it to a binary for use by the virtual "
+                "machine.\n");
     addStrParam("-o", "ofile", "output file name", "output.bin", CL_NONE);
     addNumParam("-v", "verbose", "verbosity number from 0 to 10", 0, CL_NONE);
     addCBwoParam("-h", "show the help information", showUseCmdLine, CL_NONE);
     parseCmdLine(argc, argv);
 
-    //initVM();
+    // initVM();
 
     if(isatty(fileno(stdin))) {
         resetCLFileList();
@@ -151,6 +147,3 @@ int main(int argc, char** argv)
 
     return getErrors();
 }
-
-
-

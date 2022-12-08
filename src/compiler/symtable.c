@@ -1,11 +1,11 @@
 
-#include "goldfish.h"
-#include "memory.h"
+#include "common.h"
 #include "errors.h"
+#include "memory.h"
 
 typedef struct _symtab_elem {
     const char* key;
-    //VarIdx idx;
+    // VarIdx idx;
     int type;
     void* value;
     struct _symtab_elem* left;
@@ -30,8 +30,7 @@ static Context* first = NULL;
 static Context* last = NULL;
 
 static char name_buffer[1024];
-static void build_name(Context* cont, const char* name)
-{
+static void build_name(Context* cont, const char* name) {
     if(cont != NULL) {
         strcat(name_buffer, cont->name);
         strcat(name_buffer, ".");
@@ -42,21 +41,19 @@ static void build_name(Context* cont, const char* name)
     }
 }
 
-static const char* create_name(const char* name)
-{
+static const char* create_name(const char* name) {
     memset(name_buffer, 0, sizeof(name_buffer));
     name_buffer[0] = '.';
     if(first != NULL)
-		build_name(first, name);
-	else
-		strcat(name_buffer, name);
+        build_name(first, name);
+    else
+        strcat(name_buffer, name);
 
     return name_buffer;
 }
 
 // left is always the value that is being searched for
-static int comp_names(const char* left, const char* right)
-{
+static int comp_names(const char* left, const char* right) {
     int llen = strlen(left);
     int rlen = strlen(right);
 
@@ -64,26 +61,24 @@ static int comp_names(const char* left, const char* right)
         rlen--;
         llen--;
         if(llen == 0 || rlen == 0)
-            return 0;   // match
+            return 0; // match
     }
 
     return left[llen] - right[rlen];
 }
 
-static void dump_table(SymTabNode* node)
-{
+static void dump_table(SymTabNode* node) {
     if(node->left != NULL)
         dump_table(node->left);
     if(node->right != NULL)
         dump_table(node->right);
 
     printf("    %s <%d> <%p>\n", node->key, node->type, node->value);
-    //printVal(getVar(&vm->vstore, node->idx));
-    //printf("\n");
+    // printVal(getVar(&vm->vstore, node->idx));
+    // printf("\n");
 }
 
-static void add_node(SymTabNode* tree, SymTabNode* node)
-{
+static void add_node(SymTabNode* tree, SymTabNode* node) {
     int x = strcmp(tree->key, node->key);
     if(x > 0) {
         if(tree->right != NULL)
@@ -107,8 +102,7 @@ static void add_node(SymTabNode* tree, SymTabNode* node)
     }
 }
 
-static SymTabNode* find_node(SymTabNode* node, const char* key)
-{
+static SymTabNode* find_node(SymTabNode* node, const char* key) {
     int x = comp_names(node->key, key);
     if(x > 0) {
         if(node->right != NULL)
@@ -132,8 +126,7 @@ static SymTabNode* find_node(SymTabNode* node, const char* key)
 
 
 // symbol definition
-void addSym(const char* key, int idx, void* value)
-{
+void addSym(const char* key, int idx, void* value) {
     SymTabNode* node = _alloc_ds(SymTabNode);
     node->key = _copy_str(create_name(key));
     node->type = idx;
@@ -146,19 +139,17 @@ void addSym(const char* key, int idx, void* value)
 }
 
 // symbol reference
-int symToType(const char* key)
-{
+int symToType(const char* key) {
     SymTabNode* node = find_node(symtab, create_name(key));
 
     if(node != NULL)
         return node->type;
     else
-        return 0;   // error Var
+        return 0; // error Var
 }
 
 // symbol reference
-void* symToVal(const char*key)
-{
+void* symToVal(const char* key) {
     SymTabNode* node = find_node(symtab, key);
     void* val;
 
@@ -170,38 +161,34 @@ void* symToVal(const char*key)
     return val;
 }
 
-void dumpSymtab()
-{
+void dumpSymtab() {
     printf("Dump Symbol Table\n");
     dump_table(symtab);
     printf("----------- end dump -----------\n");
 }
 
-void pushContext(const char* name)
-{
+void pushContext(const char* name) {
     Context* cont = _alloc_ds(Context);
-	cont->name = _copy_str(name);
+    cont->name = _copy_str(name);
 
-	if(first != NULL) {
-		last->next = cont;
-		cont->prev = last;
-		last = cont;
-	}
-	else {
-		last = first = cont;
-	}
-
+    if(first != NULL) {
+        last->next = cont;
+        cont->prev = last;
+        last = cont;
+    }
+    else {
+        last = first = cont;
+    }
 }
 
-void popContext()
-{
+void popContext() {
     Context* cont = last;
 
     if(cont != NULL) {
         last = last->prev;
         if(last != NULL) {
-			last->next = NULL;
-		}
+            last->next = NULL;
+        }
     }
 }
 
@@ -217,4 +204,3 @@ CompoundName* createCompoundName(const char* str) {
 
     return cn;
 }
-

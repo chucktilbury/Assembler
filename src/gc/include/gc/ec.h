@@ -15,11 +15,11 @@
 #define EC_H
 
 #ifndef CORD_H
-# include "cord.h"
+#include "cord.h"
 #endif
 
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 
 /* Extensible cords are strings that may be destructively appended to.  */
@@ -47,14 +47,14 @@
  * may be replaced by a call to CORD_to_char_star.
  */
 
-# ifndef CORD_BUFSZ
-#   define CORD_BUFSZ 128
-# endif
+#ifndef CORD_BUFSZ
+#define CORD_BUFSZ 128
+#endif
 
 typedef struct CORD_ec_struct {
     CORD ec_cord;
-    char * ec_bufptr;
-    char ec_buf[CORD_BUFSZ+1];
+    char* ec_bufptr;
+    char ec_buf[CORD_BUFSZ + 1];
 } CORD_ec[1];
 
 /* This structure represents the concatenation of ec_cord with  */
@@ -64,24 +64,23 @@ typedef struct CORD_ec_struct {
 void CORD_ec_flush_buf(CORD_ec x);
 
 /* Convert an extensible cord to a cord. */
-# define CORD_ec_to_cord(x) (CORD_ec_flush_buf(x), (x)[0].ec_cord)
+#define CORD_ec_to_cord(x) (CORD_ec_flush_buf(x), (x)[0].ec_cord)
 
 /* Initialize an extensible cord. */
 #define CORD_ec_init(x) \
-                ((x)[0].ec_cord = 0, (void)((x)[0].ec_bufptr = (x)[0].ec_buf))
+    ((x)[0].ec_cord = 0, (void)((x)[0].ec_bufptr = (x)[0].ec_buf))
 
 /* Append a character to an extensible cord.    */
-#define CORD_ec_append(x, c) \
-                ((void)((x)[0].ec_bufptr == (x)[0].ec_buf + CORD_BUFSZ \
-                        ? (CORD_ec_flush_buf(x), 0) : 0), \
-                 (void)(*(x)[0].ec_bufptr++ = (c)))
+#define CORD_ec_append(x, c)                                                                 \
+    ((void)((x)[0].ec_bufptr == (x)[0].ec_buf + CORD_BUFSZ ? (CORD_ec_flush_buf(x), 0) : 0), \
+     (void)(*(x)[0].ec_bufptr++ = (c)))
 
 /* Append a cord to an extensible cord.  Structure remains shared with  */
 /* original.                                                            */
 void CORD_ec_append_cord(CORD_ec x, CORD s);
 
 #ifdef __cplusplus
-  } /* extern "C" */
+} /* extern "C" */
 #endif
 
 #endif /* EC_H */
