@@ -57,7 +57,8 @@ disable assertion support.
 disable support for macros with a variable number of arguments: in C99,
 a macro may be declared with
 .I ...
-as the last argument; inside the replacement list,
+as the last argument;
+inside the replacement list,
 .I __VA_ARGS__
 is replaced with the optional extra arguments given in the call to the macro.
 Use this option to get closer to C90 behaviour.
@@ -172,7 +173,8 @@ to the list of assertions.
 .BI \-B foo(bar)
 remove
 .I foo(bar)
-of the list of assertions; you may also use
+of the list of assertions;
+you may also use
 .BI \-B foo
 to remove all
 .BI \-B foo(xxx)

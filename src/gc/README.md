@@ -1,4 +1,4 @@
-# Boehm-Demers-Weiser Garbage Collector
+#Boehm - Demers - Weiser Garbage Collector
 
 [![Travis-CI build status](https://app.travis-ci.com/ivmai/bdwgc.svg?branch=master)](https://app.travis-ci.com/github/ivmai/bdwgc)
 [![AppVeyor CI build status](https://ci.appveyor.com/api/projects/status/github/ivmai/bdwgc?branch=master&svg=true)](https://ci.appveyor.com/project/ivmai/bdwgc)
@@ -381,8 +381,8 @@ near the top of gc_priv.h.
 
 If only `GC_malloc` is intended to be used, it might be appropriate to define:
 
-    #define malloc(n) GC_malloc(n)
-    #define calloc(m,n) GC_malloc((m)*(n))
+#define malloc(n) GC_malloc(n)
+#define calloc(m, n) GC_malloc((m) * (n))
 
 For small pieces of VERY allocation intensive code, `gc_inline.h` includes
 some allocation macros that may be used in place of `GC_malloc` and

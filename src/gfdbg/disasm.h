@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "memory.h"
 #include "cmdline.h"
+#include "memory.h"
 
 #endif

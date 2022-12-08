@@ -10,4 +10,11 @@ add_executable(${PROJECT_NAME}
     eval.c
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE "-Wall" "-DSTAND_ALONE" "-DUCPP_CONFIG" "-Wextra" "-g" "-DTRACE")
+target_compile_options(${PROJECT_NAME} PRIVATE
+    "-Wall"
+    "-DSTAND_ALONE"
+    "-DUCPP_CONFIG"
+    "-Wextra"
+    "-g"
+    "-DTRACE"
+)

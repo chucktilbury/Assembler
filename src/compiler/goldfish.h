@@ -3,7 +3,7 @@
 
 #include "system.h"
 
-#include "memory.h"
 #include "errors.h"
+#include "memory.h"
 
 #endif

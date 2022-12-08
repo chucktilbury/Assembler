@@ -1,4 +1,4 @@
-# ucpp
+#ucpp
 A C preprocessor designed to be embeddable, quick, light and fully compliant to ISO Standard 9899:1999, aka ISO C99, or simply, C99
 
 ucpp-1.3.2 is a C preprocessor compliant to ISO-C99.
@@ -15,30 +15,37 @@ A C preprocessor is a part of a C compiler responsible for macro
 replacement, conditional compilation and inclusion of header files.
 It is often found as a stand-alone program on Unix systems.
 
-ucpp is such a preprocessor; it is designed to be quick and light,
-but anyway fully compliant to the ISO standard 9899:1999, also known
-as C99. ucpp can be compiled as a stand-alone program, or linked to
-some other code; in the latter case, ucpp will output tokens, one
-at a time, on demand, as an integrated lexer.
+ucpp is such a preprocessor;
+it is designed to be quick and light,
+but anyway fully compliant to the ISO standard 9899 : 1999,
+also known as C99.ucpp can be compiled as a stand - alone program,
+or linked to some other code;
+in the latter case, ucpp will output tokens, one at a time, on demand,
+as an integrated lexer.
 
-ucpp operates in two modes:
--- lexer mode: ucpp is linked to some other code and outputs a stream of
-tokens (each call to the lex() function will yield one token)
--- non-lexer mode: ucpp preprocesses text and outputs the resulting text
-to a file descriptor; if linked to some other code, the cpp() function
-must be called repeatedly, otherwise ucpp is a stand-alone binary.
+ucpp operates in two modes : --lexer mode
+: ucpp is linked to some other code and outputs a stream of
+  tokens(each call to the lex() function will yield one token)-- non
+- lexer mode : ucpp preprocesses text and outputs the resulting text to a file descriptor;
+if linked
+    to some other code, the cpp() function must be called repeatedly,
+    otherwise ucpp is a stand -
+    alone binary
+    .
 
 
+    INSTALLATION-- ----------
 
-INSTALLATION
-------------
+    1. Uncompress the archive file and extract the source files
+    .
 
-1. Uncompress the archive file and extract the source files.
+    2. Edit tune.h.Here is a short explanation of compile
+    -
+    time options :
 
-2. Edit tune.h. Here is a short explanation of compile-time options:
-
-  LOW_MEM
-     Enable memory-saving functions; this is for low-end and old systems,
+    LOW_MEM Enable memory
+    -
+    saving functions; this is for low-end and old systems,
      but seems to be good for larger systems too. Keep it.
   NO_LIBC_BUF
   NO_UCPP_BUF
@@ -52,19 +59,20 @@ INSTALLATION
      improvement, but will work only on a limited set of architectures.
   PRAGMA_TOKENIZE
      Make ucpp generate tokenized PRAGMA tokens on #pragma and _Pragma();
-     tokenization is made this way: tokens are assembled as a null
-     terminated array of unsigned chars; if a token has a string value
-     (as defined by the STRING_TOKEN macro), the value follows the token,
-     terminated by PRAGMA_TOKEN_END (by default, a newline character cast
-     to unsigned char). Whitespace tokens are skipped. The "name" value
-     of the PRAGMA token is a pointer to that array. This setting is
-     irrelevant in non-lexer mode.
-  PRAGMA_DUMP
-     In non-lexer mode, keep #pragma in output; non-void _Pragma() are
-     translated to the equivalent #pragma. Irrelevant in lexer mode.
-  NO_PRAGMA_IN_DIRECTIVE
-     Do not evaluate _Pragma() inside #if, #include, #include_next and #line
-     directives; instead, emit an error (since the remaining _Pragma will
+tokenization is made this way
+: tokens are assembled as a null terminated array of unsigned chars;
+if a
+    token has a string value(as defined by the STRING_TOKEN macro), the value follows the token,
+    terminated by PRAGMA_TOKEN_END(by default, a newline character cast to unsigned char)
+    .Whitespace tokens are skipped
+    .The "name" value of the PRAGMA token is a pointer to that array.This setting is irrelevant in non
+    - lexer mode.PRAGMA_DUMP In non - lexer mode,
+    keep #pragma in output;
+non -
+void _Pragma() are translated to the equivalent
+#pragma.Irrelevant in lexer mode.NO_PRAGMA_IN_DIRECTIVE Do not evaluate
+_Pragma() inside #if,
+#include, #include_next and#line directives; instead, emit an error (since the remaining _Pragma will
      surely imply a syntax error).
   DSHARP_TOKEN_MERGE
      When two tokens are to be merged with the `##' operator, but fail
@@ -134,10 +142,9 @@ INSTALLATION
      (see NO_UCPP_BUF option).
 
 3. Edit the Makefile. You should define the variables CC and FLAGS;
-   there are the following options:
+there are the following options :
 
-  -DAUDIT
-     Enable internal sanity checks; this slows down a bit ucpp. Do not
+-DAUDIT Enable internal sanity checks; this slows down a bit ucpp. Do not
      define unless you plan to debug ucpp.
   -DMEM_CHECK
      With this setting, ucpp will check for the return value of malloc()
@@ -186,45 +193,45 @@ file.
 
 The C90 and C99 standards state that external linkage names might be
 considered equal or different based upon only their first 6 characters;
-this rule might make ucpp not compile on a conformant C implementation.
-I have yet to see such an implementation, however.
+this rule might make ucpp not compile on a conformant C implementation.I have yet to see such an implementation,
+however.
 
-If you want to use ucpp as an integrated preprocessor and lexer, see the
-section REUSE. Compiling ucpp as a library is an exercise left to the
-reader.
+If you want to use ucpp as an integrated preprocessor and lexer,
+see the section
+REUSE.Compiling ucpp as a library is an exercise left to the reader.
 
-With the LOW_MEM code enabled, ucpp can run on a Minix-i86 or Msdos
-16-bit small-memory-model machine. It will not be fully compliant
-on such an architecture to C99, since C99 states that at least one
-source code with 4095 simultaneously defined macros must be processed;
-ucpp will be limited to about 1500 macros (at most) due to memory
-restrictions. At least ucpp can preprocess its own code in these
-conditions. LOW_MEM is on by default because it seems to improve
-performance on large systems.
+With the LOW_MEM code enabled,
+ucpp can run on a Minix - i86 or
+Msdos 16 - bit small - memory -
+model machine.It will not be fully compliant on such an architecture to C99,
+since C99 states that at least one source code with 4095 simultaneously defined macros must be processed;
+ucpp will be limited to about 1500 macros(at most) due to memory
+restrictions.At least ucpp can preprocess its own code in these conditions
+.LOW_MEM is on by default because it seems to improve performance on large systems
+.
 
 
+LICENSE-- -----
 
-LICENSE
--------
-
-The copyright notice and license is at the beginning of the Makefile and
-each source file. It is basically a BSD license, without the advertising
-subclause (which BSD dropped recently anyway) and with no reference to
-Berkeley (since the code is all mine, written from scratch). Informally,
+The copyright notice and license is at the beginning of the Makefile and each source file
+.It is basically a BSD license,
+without the advertising subclause(which BSD dropped recently anyway) and
+with no reference to Berkeley(since the code is all mine, written from scratch).Informally,
 this means that you can reuse and redistribute the code as you want,
-provided that you state in the documentation (or any substantial part of
-the software) of redistributed code that I am the original author. (If
-you press a cdrom with 200 software packages, I do not insist on having
-my name on the cover of the cdrom -- just keep a Readme file somewhere
-on the cdrom, with the copyright notice included.)
+provided that you state in the
+documentation(or any substantial part of the software) of redistributed code that
+I am the original author.(If you press a cdrom with 200 software packages,
+                          I do not insist on having my name on the cover of the
+                          cdrom-- just keep a Readme file somewhere on the cdrom,
+                          with the copyright notice included.)
 
-As a courteous gesture, if you reuse my code, please drop me a mail.
-It raises my self-esteem.
+As a courteous gesture,
+if you reuse my code,
+please drop me a mail.It raises my self -
+esteem.
 
 
-
-REUSE
------
+REUSE-- ---
 
 The code has been thought as part of a bigger project; it might be
 used as an integrated lexer, that will read files, process them as a
@@ -243,8 +250,8 @@ See the file 'sample.c' for an example.
 		it affects the redefinition of such macros (which are
 		allowed if the special macros are not defined)
 	c99_compliant
-		if non-zero, define __STDC_VERSION__ to 199901L; this
-		is the default; otherwise, do not define __STDC_VERSION__.
+		if non-zero, define __STDC_VERSION__ to 199901L;
+this is the default; otherwise, do not define __STDC_VERSION__.
 		Note that ucpp will accept to undefine __STDC_VERSION__
 		with a #undef directive.
 	c99_hosted
@@ -281,38 +288,33 @@ See the file 'sample.c' for an example.
 		part in this README file for details
 
 6. call set_init_filename() with the initial filename as argument;
-   the second argument indicates whether the filename is real or
-   conventional ("real" means "an fopen() on it will work").
+the second argument indicates whether the filename is real or
+conventional("real" means "an fopen() on it will work")
+.
 
-7. initialize your struct lexer_state:
-	call init_lexer_state()
-	call init_lexer_mode() if the preprocessor is supposed to
-	   output a list of tokens, otherwise set the flags field
-	   to DEFAULT_CPP_FLAGS and set the output field to the
-	   FILE * where output should be sent
-	(init_lexer_mode(), if called at all, must be called after
-	 init_lexer_state())
-	adjust the flags field; here is the meaning of flags:
+7. initialize your struct lexer_state
+: call init_lexer_state() call
+  init_lexer_mode() if the preprocessor is supposed to output a list of tokens,
+otherwise set the flags field to DEFAULT_CPP_FLAGS and set the output field to the FILE* where output should be
+sent(init_lexer_mode(), if called at all, must be called after init_lexer_state()) adjust the flags field;
+here is the meaning of flags :
 
-WARN_STANDARD
-	emit the standard warnings
-WARN_ANNOYING
-	emit the useless and annoying warnings
-WARN_TRIGRAPHS
-	count trigraphs encountered; it is up to the caller to emit
-	a warning if some trigraphs were indeed encountered; the count
+WARN_STANDARD emit the standard warnings WARN_ANNOYING emit the
+useless and annoying warnings WARN_TRIGRAPHS count trigraphs encountered;
+it is up to the caller to emit a warning if some trigraphs were indeed encountered; the count
 	is stored in the count_trigraphs field of the struct lexer_state
 WARN_TRIGRAPHS_MORE
 	emit a warning for each trigraph encountered
 WARN_PRAGMA
 	emit a warning for each non-void _Pragma encountered in non-lexer
 	mode (because these are dumped as #pragma in the output) and for each
-	#pragma too, if ucpp was compiled without PRAGMA_DUMP
+#pragma too, if ucpp was compiled without PRAGMA_DUMP
 FAIL_SHARP
 	emit errors on '#' tokens beginning a line and not followed
 	by a valid cpp directive
 CCHARSET
-	emit errors when non-C characters are encountered; if this flag
+	emit errors when non-C characters are encountered;
+if this flag
 	is not set, each non-C character will be considered as a BUNCH
 	token (since C99 states that non-C characters are allowed as
 	long as they "disappear" during preprocessing [through macro
@@ -460,7 +462,7 @@ the programmer's responsibility.
 -- If you use a standard character such as '+' or '{', tokens which
 begin with those characters cease to exist. This can be troublesome.
 If you use set_identifier_char() on the '<' character, the handling of
-#include directives will be greatly disturbed. Therefore the use of any
+#include directives will be greatly disturbed.Therefore the use of any
 standard C character in set_identifier_char() of unset_identifier_char()
 is declared unsupported, forbidden and altogether unwise.
 
@@ -555,8 +557,8 @@ corresponding #pragma and dumped also.
 ucpp does not macro-replace the contents of #pragma and _Pragma();
 If you want a macro-replaced pragma, use this:
 
-#define pragma_(x)	_Pragma(#x)
-#define pragma(x)	pragma_(x)
+#define pragma_(x) _Pragma(#x)
+#define pragma(x) pragma_(x)
 
 Anyway, pragmas do not nest (an _Pragma() cannot be evaluated if it is
 inside a #pragma or another _Pragma).
@@ -570,8 +572,8 @@ For assertions and #include_next, I mimicked the behaviour of GNU cpp,
 as is stated in the GNU cpp info documentation. An open question is
 related to the following code:
 
-#define undefined	!
-#define makeun(x)	un ## x
+#define undefined !
+#define makeun(x) un##x
 #if makeun(defined foo)
 qux
 #else
@@ -609,9 +611,9 @@ behaviour).
 Another point about macro replacement has been discussed at length in
 several occasions. It is about the following code:
 
-#define CAT(a, b)    CAT_(a, b)
-#define CAT_(a, b)   a ## b
-#define AB(x, y)     CAT(x, y)
+#define CAT(a, b) CAT_(a, b)
+#define CAT_(a, b) a##b
+#define AB(x, y) CAT(x, y)
 CAT(A, B)(X, Y)
 
 ucpp will produce `CAT(X,Y)' as replacement for the last line, whereas

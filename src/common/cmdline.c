@@ -47,8 +47,7 @@ typedef struct {
 
 static _cmd_line* cmds = NULL;
 
-static void* alloc_mem(size_t size)
-{
+static void* alloc_mem(size_t size) {
     void* ptr = malloc(size);
     if(ptr == NULL) {
         fprintf(stderr, "cannot allocate memory\n");
@@ -59,20 +58,18 @@ static void* alloc_mem(size_t size)
     return ptr;
 }
 
-static void free_mem(void* ptr)
-{
+static void free_mem(void* ptr) {
     if(ptr != NULL)
         free(ptr);
 }
 
-static const char* dup_string(const char* str)
-{
+static const char* dup_string(const char* str) {
     char* ptr;
     size_t len;
 
     if(str != NULL && (len = strlen(str)) > 0) {
-        ptr = alloc_mem(len+1);
-        memcpy(ptr, str, len+1);
+        ptr = alloc_mem(len + 1);
+        memcpy(ptr, str, len + 1);
     }
     else {
         ptr = alloc_mem(1);
@@ -82,8 +79,7 @@ static const char* dup_string(const char* str)
     return ptr;
 }
 
-void initCmdLine(CLFlags flags, const char* intro)
-{
+void initCmdLine(CLFlags flags, const char* intro) {
     cmds = alloc_mem(sizeof(_cmd_line));
 
     cmds->cfirst = NULL;
@@ -93,11 +89,9 @@ void initCmdLine(CLFlags flags, const char* intro)
     cmds->crnt = NULL;
     cmds->intro = dup_string(intro);
     cmds->flags = flags;
-
 }
 
-void destroyCmdLine()
-{
+void destroyCmdLine() {
     if(cmds == NULL)
         return;
 
@@ -126,8 +120,7 @@ void destroyCmdLine()
     }
 }
 
-static inline _cmd_line_elem* find_param(const char* param)
-{
+static inline _cmd_line_elem* find_param(const char* param) {
     _cmd_line_elem* crnt;
     for(crnt = cmds->cfirst; crnt != NULL; crnt = crnt->next) {
         size_t len = strlen(crnt->param);
@@ -138,8 +131,7 @@ static inline _cmd_line_elem* find_param(const char* param)
     return crnt;
 }
 
-static inline void add_file(const char* fn)
-{
+static inline void add_file(const char* fn) {
     _file_list_elem* fe = alloc_mem(sizeof(_file_list_elem));
     fe->str = dup_string(fn);
 
@@ -150,8 +142,7 @@ static inline void add_file(const char* fn)
     cmds->flast = fe;
 }
 
-void parseCmdLine(int argc, char** argv)
-{
+void parseCmdLine(int argc, char** argv) {
     int index = 0;
     const char* arg;
 
@@ -181,16 +172,16 @@ void parseCmdLine(int argc, char** argv)
             }
             else {
                 // there is a space.
-                index++;    // index the arg
+                index++; // index the arg
                 arg = argv[index];
-                index++;    // index the next param
+                index++; // index the next param
             }
         }
 
         // parse the parameter arguments
         switch(param->type) {
             case CL_TOGGLE:
-                param->data.bval = param->data.bval? false: true;
+                param->data.bval = param->data.bval ? false : true;
                 param->flags |= CL_PRESENT;
                 break;
             case CL_CB_WO:
@@ -218,7 +209,8 @@ void parseCmdLine(int argc, char** argv)
     // verify that required params are present
     for(_cmd_line_elem* cel = cmds->cfirst; cel != NULL; cel = cel->next) {
         if((cel->flags & CL_REQD) && !(cel->flags & CL_PRESENT)) {
-            fprintf(stderr, "cmd line error: required parameter '%s' is not found\n", cel->param);
+            fprintf(stderr, "cmd line error: required parameter '%s' is not found\n",
+                    cel->param);
             showUseCmdLine();
         }
     }
@@ -230,7 +222,7 @@ void parseCmdLine(int argc, char** argv)
         }
     }
     else {
-        if(cmds->flags & (CL_FL_REQD|CL_FL_ONE)) {
+        if(cmds->flags & (CL_FL_REQD | CL_FL_ONE)) {
             if(cmds->ffirst == NULL) {
                 fprintf(stderr, "cmd line error: required file list is not found\n");
                 showUseCmdLine();
@@ -246,23 +238,26 @@ void parseCmdLine(int argc, char** argv)
     }
 }
 
-void showUseCmdLine()
-{
-    fprintf(stderr, "\nuse: %s <parameters> %s\n", cmds->fname, cmds->flags & CL_NO_FL? "": "<file(s)>");
+void showUseCmdLine() {
+    fprintf(stderr, "\nuse: %s <parameters> %s\n", cmds->fname,
+            cmds->flags & CL_NO_FL ? "" : "<file(s)>");
     fprintf(stderr, "%s\n", cmds->intro);
 
     for(_cmd_line_elem* cel = cmds->cfirst; cel != NULL; cel = cel->next) {
         switch(cel->type) {
             case CL_TOGGLE:
             case CL_CB_WO:
-                fprintf(stderr, "    %s ----- %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                fprintf(stderr, "    %s ----- %s %s\n", cel->param, cel->help,
+                        cel->flags & CL_REQD ? "(reqd)" : "");
                 break;
             case CL_NUMBER:
-                fprintf(stderr, "    %s <num> %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                fprintf(stderr, "    %s <num> %s %s\n", cel->param, cel->help,
+                        cel->flags & CL_REQD ? "(reqd)" : "");
                 break;
             case CL_STRING:
             case CL_CB_W:
-                fprintf(stderr, "    %s <str> %s %s\n", cel->param, cel->help, cel->flags & CL_REQD? "(reqd)": "");
+                fprintf(stderr, "    %s <str> %s %s\n", cel->param, cel->help,
+                        cel->flags & CL_REQD ? "(reqd)" : "");
                 break;
             default:
                 fprintf(stderr, "internal cmd error: unknown type: %d\n", cel->type);
@@ -273,8 +268,8 @@ void showUseCmdLine()
     exit(1);
 }
 
-static inline _cmd_line_elem* create_cel(CLType type, const char* param, const char* name, const char* help)
-{
+static inline _cmd_line_elem*
+create_cel(CLType type, const char* param, const char* name, const char* help) {
     _cmd_line_elem* cel = alloc_mem(sizeof(_cmd_line_elem));
 
     cel->param = dup_string(param);
@@ -285,8 +280,7 @@ static inline _cmd_line_elem* create_cel(CLType type, const char* param, const c
     return cel;
 }
 
-static inline void add_cel(_cmd_line_elem* cel)
-{
+static inline void add_cel(_cmd_line_elem* cel) {
     if(cmds->cfirst != NULL)
         cmds->clast->next = cel;
     else
@@ -294,8 +288,7 @@ static inline void add_cel(_cmd_line_elem* cel)
     cmds->clast = cel;
 }
 
-void addNumParam(const char* param, const char* name, const char* help, int def, CLFlags flags)
-{
+void addNumParam(const char* param, const char* name, const char* help, int def, CLFlags flags) {
     _cmd_line_elem* cel = create_cel(CL_NUMBER, param, name, help);
     cel->data.num = def;
     cel->flags = flags;
@@ -303,8 +296,7 @@ void addNumParam(const char* param, const char* name, const char* help, int def,
     add_cel(cel);
 }
 
-void addStrParam(const char* param, const char* name, const char* help, const char* def, CLFlags flags)
-{
+void addStrParam(const char* param, const char* name, const char* help, const char* def, CLFlags flags) {
     _cmd_line_elem* cel = create_cel(CL_STRING, param, name, help);
     cel->data.str = dup_string(def);
     cel->flags = flags;
@@ -312,8 +304,7 @@ void addStrParam(const char* param, const char* name, const char* help, const ch
     add_cel(cel);
 }
 
-void addTogParam(const char* param, const char* name, const char* help, bool def, CLFlags flags)
-{
+void addTogParam(const char* param, const char* name, const char* help, bool def, CLFlags flags) {
     _cmd_line_elem* cel = create_cel(CL_TOGGLE, param, name, help);
     cel->data.bval = def;
     cel->flags = flags;
@@ -321,8 +312,7 @@ void addTogParam(const char* param, const char* name, const char* help, bool def
     add_cel(cel);
 }
 
-void addCBwParam(const char* param, const char* help, callback_w def, CLFlags flags)
-{
+void addCBwParam(const char* param, const char* help, callback_w def, CLFlags flags) {
     _cmd_line_elem* cel = create_cel(CL_CB_W, param, NULL, help);
     cel->data.with = def;
     cel->flags = flags;
@@ -330,8 +320,7 @@ void addCBwParam(const char* param, const char* help, callback_w def, CLFlags fl
     add_cel(cel);
 }
 
-void addCBwoParam(const char* param, const char* help, callback_wo def, CLFlags flags)
-{
+void addCBwoParam(const char* param, const char* help, callback_wo def, CLFlags flags) {
     _cmd_line_elem* cel = create_cel(CL_CB_WO, param, NULL, help);
     cel->data.without = def;
     cel->flags = flags;
@@ -339,8 +328,7 @@ void addCBwoParam(const char* param, const char* help, callback_wo def, CLFlags 
     add_cel(cel);
 }
 
-static inline _cmd_line_elem* find_name(const char* name)
-{
+static inline _cmd_line_elem* find_name(const char* name) {
     _cmd_line_elem* crnt;
     for(crnt = cmds->cfirst; crnt != NULL; crnt = crnt->next) {
         if(!strcmp(name, crnt->name))
@@ -350,8 +338,7 @@ static inline _cmd_line_elem* find_name(const char* name)
     return crnt;
 }
 
-int getNumParam(const char* name)
-{
+int getNumParam(const char* name) {
     _cmd_line_elem* crnt = find_name(name);
 
     if(crnt != NULL)
@@ -363,8 +350,7 @@ int getNumParam(const char* name)
     return 0; // happy compiler
 }
 
-const char* getStrParam(const char* name)
-{
+const char* getStrParam(const char* name) {
     _cmd_line_elem* crnt = find_name(name);
 
     if(crnt != NULL)
@@ -376,8 +362,7 @@ const char* getStrParam(const char* name)
     return NULL; // happy compiler
 }
 
-bool getTogParam(const char* name)
-{
+bool getTogParam(const char* name) {
     _cmd_line_elem* crnt = find_name(name);
 
     if(crnt != NULL)
@@ -389,13 +374,11 @@ bool getTogParam(const char* name)
     return false; // happy compiler
 }
 
-void resetCLFileList()
-{
+void resetCLFileList() {
     cmds->crnt = cmds->ffirst;
 }
 
-const char* iterateCLFileList()
-{
+const char* iterateCLFileList() {
     _file_list_elem* crnt = cmds->crnt;
     if(crnt != NULL)
         cmds->crnt = cmds->crnt->next;
@@ -405,4 +388,3 @@ const char* iterateCLFileList()
     else
         return NULL;
 }
-

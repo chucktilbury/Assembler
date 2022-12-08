@@ -1,4 +1,4 @@
-# Assembler
+#Assembler
 This is the goldfish assembler. It is a stand-alone program that accepts the output of the compiler and converts it to the binary format that the virtual machine can use.
 
 ```

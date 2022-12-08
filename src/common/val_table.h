@@ -20,7 +20,7 @@ typedef struct {
     union {
         double num;
         bool bval;
-        //StrIdx str;
+        // StrIdx str;
         const char* str;
         int stridx;
         unsigned int addr;

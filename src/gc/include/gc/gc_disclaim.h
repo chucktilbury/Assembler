@@ -18,7 +18,7 @@
 #include "gc.h"
 
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 
 /* This API is defined only if the library has been suitably compiled   */
@@ -30,7 +30,7 @@
 GC_API void GC_CALL GC_init_finalized_malloc(void);
 
 /* Type of a disclaim call-back.  Called with the allocation lock held. */
-typedef int (GC_CALLBACK * GC_disclaim_proc)(void * /*obj*/);
+typedef int(GC_CALLBACK* GC_disclaim_proc)(void* /*obj*/);
 
 /* Register "proc" to be called on each object of "kind" ready to be    */
 /* reclaimed.  If "proc" returns non-zero, the collector will not       */
@@ -41,14 +41,13 @@ typedef int (GC_CALLBACK * GC_disclaim_proc)(void * /*obj*/);
 /* long chains of objects will take many cycles to reclaim.             */
 /* Calls to GC_free() will free its argument without inquiring "proc".  */
 /* No-op in the leak-finding mode.                                      */
-GC_API void GC_CALL GC_register_disclaim_proc(int /*kind*/,
-                                GC_disclaim_proc /*proc*/,
-                                int /*mark_from_all*/) GC_ATTR_NONNULL(2);
+GC_API void GC_CALL GC_register_disclaim_proc(int /*kind*/, GC_disclaim_proc /*proc*/, int /*mark_from_all*/)
+GC_ATTR_NONNULL(2);
 
 /* The finalizer closure used by GC_finalized_malloc.                   */
 struct GC_finalizer_closure {
     GC_finalization_proc proc;
-    void *cd;
+    void* cd;
 };
 
 /* Allocate "size" bytes which is finalized by "fc".  This uses a       */
@@ -63,12 +62,12 @@ struct GC_finalizer_closure {
 /* slightly bigger than the specified allocation size, and that GC_base */
 /* result points to a word prior to the start of the allocated object.  */
 /* The disclaim procedure is not invoked in the leak-finding mode.      */
-GC_API GC_ATTR_MALLOC GC_ATTR_ALLOC_SIZE(1) void * GC_CALL
-        GC_finalized_malloc(size_t /*size*/,
-                const struct GC_finalizer_closure * /*fc*/) GC_ATTR_NONNULL(2);
+GC_API GC_ATTR_MALLOC GC_ATTR_ALLOC_SIZE(1) void* GC_CALL
+GC_finalized_malloc(size_t /*size*/, const struct GC_finalizer_closure* /*fc*/)
+GC_ATTR_NONNULL(2);
 
 #ifdef __cplusplus
-  } /* extern "C" */
+} /* extern "C" */
 #endif
 
 #endif

@@ -3,12 +3,12 @@
 
 #include "common.h"
 
-#include "asm_errors.h"
-#include "scanner.h"
-#include "ast.h"
 #include "arith.h"
-#include "post.h"
+#include "asm_errors.h"
+#include "ast.h"
 #include "parser.h"
+#include "post.h"
+#include "scanner.h"
 
 //#include "symtab.h"
 

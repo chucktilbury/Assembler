@@ -1,5 +1,8 @@
 
-#include "goldfish.h"
+#include "common.h"
+#include "errors.h"
+#include "memory.h"
+
 #include "scanner.h"
 #include <stdarg.h>
 
