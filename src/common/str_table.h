@@ -1,5 +1,5 @@
-#ifndef STR_TABLE_H
-#define STR_TABLE_H
+#ifndef _COMMON_STR_TABLE_H
+#define _COMMON_STR_TABLE_H
 
 typedef Index StrIdx;
 
@@ -11,4 +11,4 @@ const char* getStr(StrIdx idx);
 void replaceStr(StrIdx idx, const char* str);
 void dumpStrTab();
 
-#endif
+#endif /* _COMMON_STR_TABLE_H */

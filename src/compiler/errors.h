@@ -1,5 +1,5 @@
-#ifndef _ERRORS_H_
-#define _ERRORS_H_
+#ifndef _COMPILER_ERRORS_H
+#define _COMPILER_ERRORS_H
 
 void error(const char* fmt, ...);
 void warning(const char* fmt, ...);
@@ -10,4 +10,4 @@ int get_warnings();
 
 void set_err_stream(FILE* s);
 
-#endif
+#endif /* _COMPILER_ERRORS_H */

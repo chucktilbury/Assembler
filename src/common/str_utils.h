@@ -1,5 +1,5 @@
-#ifndef STR_UTILS_H
-#define STR_UTILS_H
+#ifndef _COMMON_STR_UTILS_H
+#define _COMMON_STR_UTILS_H
 
 typedef struct {
     char* buf;
@@ -28,4 +28,4 @@ String* getStrList(StrList* lst, uint32_t idx);
 String* resetStrList(StrList* lst);
 String* iterateStrList(StrList* lst);
 
-#endif
+#endif /* _COMMON_STR_UTILS_H */

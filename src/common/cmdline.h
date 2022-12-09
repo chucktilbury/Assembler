@@ -1,6 +1,6 @@
 
-#ifndef _CMDLINE_H_
-#define _CMDLINE_H_
+#ifndef _COMMON_CMDLINE_H
+#define _COMMON_CMDLINE_H
 
 #include <stdbool.h>
 
@@ -35,4 +35,4 @@ bool getTogParam(const char* name);
 void resetCLFileList();
 const char* iterateCLFileList();
 
-#endif
+#endif /* _COMMON_CMDLINE_H */

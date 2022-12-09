@@ -87,8 +87,8 @@
  *
  */
 
-#ifndef ARITH_H__
-#define ARITH_H__
+#ifndef _CPP_ARITH_H
+#define _CPP_ARITH_H
 
 enum {
     /* Warnings */
@@ -187,7 +187,7 @@ typedef struct {
     SIMUL_ARITH_SUBTYPE msw, lsw;
 } arith_u, arith_s;
 
-#endif
+#endif /* _CPP_ARITH_H */
 
 /* functions with the unsigned type */
 

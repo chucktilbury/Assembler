@@ -1,5 +1,5 @@
-#ifndef _SYSTEM_H_
-#define _SYSTEM_H_
+#ifndef _COMPILER_SYSTEM_H
+#define _COMPILER_SYSTEM_H
 
 #include <ctype.h>
 #include <stdbool.h>
@@ -10,4 +10,4 @@
 #include <string.h>
 #include <unistd.h>
 
-#endif
+#endif /* _COMPILER_SYSTEM_H */

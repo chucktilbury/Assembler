@@ -1,5 +1,5 @@
-#ifndef INST_BUFFER_H
-#define INST_BUFFER_H
+#ifndef _COMMON_INST_BUF_H
+#define _COMMON_INST_BUF_H
 
 
 void initInstStream();
@@ -18,4 +18,4 @@ bool instrIsEnd();
 const uint8_t* getInstBuffer();
 unsigned int getInstBufferLen();
 
-#endif
+#endif /* _COMMON_INST_BUF_H */

@@ -1,5 +1,5 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef _INCLUDE_COMMON_H
+#define _INCLUDE_COMMON_H
 
 #include <ctype.h>
 #include <errno.h>
@@ -24,4 +24,4 @@ typedef uint32_t Index;
 #define MAGIC_NUMBER ((uint64_t)(0x474F4C4446495348UL))
 #define FNAME_LEN 64
 
-#endif
+#endif /* _INCLUDE_COMMON_H */

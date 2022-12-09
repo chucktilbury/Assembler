@@ -1,5 +1,5 @@
-#ifndef OPCODES_H
-#define OPCODES_H
+#ifndef _COMMON_OPCODES_H
+#define _COMMON_OPCODES_H
 
 typedef enum {
     OP_EXIT,  // cause the VM to quit normally
@@ -48,4 +48,4 @@ typedef enum {
 
 const char* opToStr(OpCode op);
 
-#endif
+#endif /* _COMMON_OPCODES_H */

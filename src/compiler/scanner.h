@@ -1,5 +1,5 @@
-#ifndef _SCANNER_H_
-#define _SCANNER_H_
+#ifndef _COMPILER_SCANNER_H
+#define _COMPILER_SCANNER_H
 
 char* get_file_name();
 int get_line_no();
@@ -20,4 +20,4 @@ extern FILE* yyin;
 // void yyerror(char *s, ...);
 void yyerror(const char* s);
 
-#endif
+#endif /* _COMPILER_SCANNER_H */

@@ -1,5 +1,5 @@
-#ifndef GAS_H
-#define GAS_H
+#ifndef _ASSEMBLER_GAS_H
+#define _ASSEMBLER_GAS_H
 
 #include "common.h"
 
@@ -15,4 +15,4 @@
 
 const char* preformat_str(const char* str);
 
-#endif
+#endif /* _ASSEMBLER_GAS_H */

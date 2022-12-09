@@ -1,6 +1,6 @@
 
-#ifndef _ARRAY_H_
-#define _ARRAY_H_
+#ifndef _COMMON_LIST_H
+#define _COMMON_LIST_H
 
 #include <stdlib.h>
 
@@ -36,4 +36,4 @@ int listGetSize(List* lst);
 ListItem** listGetRaw(List* lst);
 
 
-#endif
+#endif /* _COMMON_LIST_H */

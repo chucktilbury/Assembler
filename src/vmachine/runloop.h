@@ -1,8 +1,8 @@
-#ifndef RUNLOOP_H
-#define RUNLOOP_H
+#ifndef _VMACHINE_RUNLOOP_H
+#define _VMACHINE_RUNLOOP_H
 
 typedef bool (*runloopHandler)();
 
 void runloop();
 
-#endif
+#endif /* _VMACHINE_RUNLOOP_H */

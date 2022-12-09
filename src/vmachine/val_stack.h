@@ -1,5 +1,5 @@
-#ifndef VAL_STACK_H
-#define VAL_STACK_H
+#ifndef _VMACHINE_VAL_STACK_H
+#define _VMACHINE_VAL_STACK_H
 
 void initValStack();
 void pushVal(Value val);
@@ -9,4 +9,4 @@ ValIdx getStackIdx();
 void validateStackIdx(ValIdx idx);
 void dumpStack();
 
-#endif
+#endif /* _VMACHINE_VAL_STACK_H */
