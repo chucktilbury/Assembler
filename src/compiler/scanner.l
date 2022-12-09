@@ -53,9 +53,8 @@ static void __append_str(const char* str) {
 "namespace" { return NAMESPACE; }
 "class"     { return CLASS; }
 "struct"    { return STRUCT; }
-"int"       { return INT; }
-"uint"      { return UINT; }
-"float"     { return FLOAT; }
+"num"       { return NUMBER; }
+"number"    { return NUMBER; }
 "nothing"   { return NOTHING; }
 "string"    { return STRTYPE; }
 "bool"      { return BOOLTYPE; }
@@ -118,19 +117,19 @@ static void __append_str(const char* str) {
     }
 
 [0-9]+ {
-        yylval.inum = strtol(yytext, NULL, 10);
-        return INUM;
+        yylval.num = (double)strtol(yytext, NULL, 10);
+        return LNUM;
     }
 
     /* recognize a float */
 ([0-9]*\.)?[0-9]+([Ee][-+]?[0-9]+)? {
-        yylval.fnum = strtod(yytext, NULL);
-        return FNUM;
+        yylval.num = strtod(yytext, NULL);
+        return LNUM;
     }
 
 0[Xx][0-9a-fA-F]+ {
-        yylval.unum = strtol(yytext, NULL, 16);
-        return UNUM;
+        yylval.num = (double)strtol(yytext, NULL, 16);
+        return LNUM;
     }
 
     /* double quoted strings have escapes managed */

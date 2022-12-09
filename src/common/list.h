@@ -30,7 +30,7 @@ ListErr listAdd(List* lst, void* val, size_t size);
 ListErr listGet(List* lst, int idx, void* val, size_t size);
 ListErr listSet(List* lst, int idx, void* val, size_t size);
 ListErr listPush(List* lst, void* val, size_t size);
-ListErr listPop(List* lst, void* val, size_t size);
+ListErr listPop(List* lst); //, void* val, size_t size);
 ListErr listPeek(List* lst, void* val, size_t size);
 int listGetSize(List* lst);
 ListItem** listGetRaw(List* lst);

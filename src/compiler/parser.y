@@ -24,25 +24,20 @@ extern const char* file_name;
 
 %union {
     char* str;
-    uint64_t unum;
-    int64_t inum;
-    double fnum;
+    double num;
 };
 
 %token BREAK CASE CONTINUE CONST DEFAULT
 %token DO ELSE FOR IF RETURN SWITCH IMPORT
 %token NAMESPACE CLASS STRUCT WHILE
-%token INT
-%token UINT
-%token FLOAT NOTHING STRTYPE
+%token NUMBER
+%token NOTHING STRTYPE
 %token BOOLTYPE TRUE FALSE IN YIELD EXIT
 %token EQU NEQU LORE GORE OR AND
 %token TRY EXCEPT RAISE CTOR DTOR
 %token PUBLIC PRIVATE PROTECTED MARKER
 %token<str> SYMBOL
-%token<inum> INUM
-%token<unum> UNUM
-%token<fnum> FNUM
+%token<num> LNUM
 %token<str> STRG
 
 %type<str> namespace_name class_name
@@ -100,7 +95,7 @@ module_definition_list
     ;
 
 preproc_marker
-    : MARKER INUM STRG {
+    : MARKER LNUM STRG {
             EMIT("#line %ld \"%s\"\n", $2, $3);
             file_name = _copy_str($3);
         }
@@ -129,6 +124,7 @@ namespace_definition
             popNameContext();
         }
     | namespace_name '{' '}' {
+            EMIT("// context: %s\n", getNameContext());
             popNameContext();
             EMIT("// context: %s\n", getNameContext());
         }
@@ -138,7 +134,7 @@ class_name
     : CLASS SYMBOL {
             EMIT_LINE();
             EMIT("// class: %s\n", $2);
-            addSymbol($2, CLASS, NULL);
+            addSymbol(createName($2), CLASS, NULL);
             $$ = $2;
         }
     ;
@@ -169,9 +165,7 @@ class_definition_item
     ;
 
 type_name
-    : INT {}
-    | UINT {}
-    | FLOAT {}
+    : NUMBER {}
     | STRTYPE { /* TODO: Make this a compound type, like a class */ }
     | BOOLTYPE {}
     | NOTHING {}
@@ -367,9 +361,7 @@ do_statement
     ;
 
 constant_expression
-    : UNUM {}
-    | INUM {}
-    | FNUM {}
+    : LNUM {}
     | TRUE {}
     | FALSE {}
     | STRG { /* string literals are formatted */ };

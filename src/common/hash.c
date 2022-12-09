@@ -215,8 +215,8 @@ void HashDump(Hash* tab) {
     for(int i = 0; i < tab->cap; i++) {
         if(tab->table[i] != NULL) {
             if(tab->table[i]->key != NULL)
-                printf("%3d.\t%s\t%lu\n", i + 1, tab->table[i]->key,
-                       *(long*)tab->table[i]->data); //, tab->table[i]->hash);
+                printf("%3d.\t%s\t%p\n", i + 1, tab->table[i]->key,
+                       tab->table[i]->data); //, tab->table[i]->hash);
             else
                 printf("%3d.\ttombstone\n", i + 1);
         }

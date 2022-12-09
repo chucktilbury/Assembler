@@ -3,7 +3,8 @@
 
 void initNameContext();
 int pushNameContext(const char* name);
-const char* popNameContext();
+int popNameContext();
 const char* getNameContext();
+const char* createName(const char* name);
 
 #endif

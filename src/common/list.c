@@ -85,20 +85,22 @@ ListErr listPush(List* lst, void* val, size_t size) {
     return listAdd(lst, val, size);
 }
 
-ListErr listPop(List* lst, void* val, size_t size) {
+ListErr listPop(List* lst) { //, void* val, size_t size) {
 
     if(lst->len > 0) {
-        ListItem* item = lst->list[--lst->len];
-        ListErr err = LIST_OK;
-        if(item->size != size)
-            err = LIST_SIZE;
+        lst->len--;
+        return LIST_OK;
+        // ListItem* item = lst->list[--lst->len];
+        // ListErr err = LIST_OK;
+        // if(item->size != size)
+        //     err = LIST_SIZE;
 
-        memcpy(item->data, val, MIN(size, item->size));
+        // memcpy(item->data, val, MIN(size, item->size));
 
-        _free(lst->list[lst->len]->data);
-        _free(lst->list[lst->len]);
+        // _free(lst->list[lst->len]->data);
+        // _free(lst->list[lst->len]);
 
-        return err;
+        // return err;
     }
     else
         return LIST_BOUNDS;
