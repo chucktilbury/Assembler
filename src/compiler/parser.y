@@ -96,14 +96,14 @@ module_definition_list
 
 preproc_marker
     : MARKER LNUM STRG {
-            EMIT("#line %ld \"%s\"\n", $2, $3);
+            EMIT("#line %d \"%s\"\n", (int)$2, $3);
             file_name = _copy_str($3);
         }
     ;
 
 compound_name
-    : SYMBOL {}
-    | SYMBOL '.' SYMBOL {}
+    : SYMBOL { printf("symbol: %s\n", $1); }
+    | compound_name '.' SYMBOL { printf("symbol: %s\n", $3); }
     ;
 
 import_statement
@@ -214,7 +214,7 @@ data_definition
     ;
 
 func_definition_name
-    : type_name compound_name {}
+    : type_name compound_name { printf("function def\n"); }
     ;
 
 method_definition_name
@@ -230,8 +230,8 @@ dtor_definition_name
     ;
 
 func_definition
-    : func_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' {}
-    | func_definition_name '(' parameter_decl_list ')' '{' '}' {}
+    : func_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' { printf("here1\n"); }
+    | func_definition_name '(' parameter_decl_list ')' '{' '}' { printf("here2\n"); }
     | method_definition_name '(' parameter_decl_list ')' '{' '}' {}
     | method_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' {}
     | ctor_definition_name '(' parameter_decl_list ')' '{' '}' {}
