@@ -1,5 +1,5 @@
-#ifndef _HASH_H_
-#define _HASH_H_
+#ifndef _COMMON_HASH_H
+#define _COMMON_HASH_H
 
 #include <stdlib.h>
 
@@ -33,4 +33,4 @@ HashResult HashFind(Hash* tab, const char* key, void* data, size_t size);
 HashResult HashRemove(Hash* tab, const char* key);
 void HashDump(Hash* tab);
 
-#endif
+#endif /* _COMMON_HASH_H */

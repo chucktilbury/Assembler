@@ -22,17 +22,19 @@ void initNameContext() {
 
 int pushNameContext(const char* name) {
 printf("push name: %s\n", name);
-    return listPush(context, (void*)&name, sizeof(const char*));
+    return listPush(context, (void*)name, sizeof(const char*));
 }
 
-const char* popNameContext() {
+//const char* popNameContext() {
+int popNameContext() {
 
-    const char* name;
+    //const char* name;
 
-    if(LIST_OK == listPop(context, (void*)&name, sizeof(const char*)))
-        return name;
-    else
-        return NULL;
+    // if(LIST_OK == listPop(context)) //, (void*)name, sizeof(const char*)))
+    //     return name;
+    // else
+    //     return NULL;
+    return listPop(context);
 }
 
 const char* getNameContext() {
@@ -51,4 +53,14 @@ const char* getNameContext() {
     }
 
     return result;
+}
+
+const char* createName(const char* name) {
+
+    char* ctxt = (char*)getNameContext();
+    ctxt = _realloc((void*)ctxt, strlen(ctxt)+strlen(name)+3);
+    strcat(ctxt, ".");
+    strcat(ctxt, name);
+
+    return ctxt;
 }

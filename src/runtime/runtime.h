@@ -1,9 +1,9 @@
-#ifndef RUNTIME_H
-#define RUNTIME_H
+#ifndef _RUNTIME_RUNTIME_H
+#define _RUNTIME_RUNTIME_H
 
 #include <stdbool.h>
 #include <stdint.h>
 
 bool handleTrap(uint16_t tno);
 
-#endif
+#endif /* _RUNTIME_RUNTIME_H */

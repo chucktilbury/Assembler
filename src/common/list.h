@@ -1,6 +1,6 @@
 
-#ifndef _ARRAY_H_
-#define _ARRAY_H_
+#ifndef _COMMON_LIST_H
+#define _COMMON_LIST_H
 
 #include <stdlib.h>
 
@@ -30,10 +30,10 @@ ListErr listAdd(List* lst, void* val, size_t size);
 ListErr listGet(List* lst, int idx, void* val, size_t size);
 ListErr listSet(List* lst, int idx, void* val, size_t size);
 ListErr listPush(List* lst, void* val, size_t size);
-ListErr listPop(List* lst, void* val, size_t size);
+ListErr listPop(List* lst); //, void* val, size_t size);
 ListErr listPeek(List* lst, void* val, size_t size);
 int listGetSize(List* lst);
 ListItem** listGetRaw(List* lst);
 
 
-#endif
+#endif /* _COMMON_LIST_H */

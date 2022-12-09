@@ -1,9 +1,9 @@
-#ifndef _GOLDFISH_H_
-#define _GOLDFISH_H_
+#ifndef _COMPILER_GOLDFISH_H
+#define _COMPILER_GOLDFISH_H
 
 #include "system.h"
 
 #include "errors.h"
 #include "memory.h"
 
-#endif
+#endif /* _COMPILER_GOLDFISH_H */

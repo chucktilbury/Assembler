@@ -1,6 +1,6 @@
-#ifndef ABORT_TRAPS_H
-#define ABORT_TRAPS_H
+#ifndef _RUNTIME_ABORT_TRAPS_H
+#define _RUNTIME_ABORT_TRAPS_H
 
 bool abort_trap();
 
-#endif
+#endif /* _RUNTIME_ABORT_TRAPS_H */

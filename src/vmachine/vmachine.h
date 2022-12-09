@@ -1,5 +1,5 @@
-#ifndef VMACHINE_H
-#define VMACHINE_H
+#ifndef _VMACHINE_VMACHINE_H
+#define _VMACHINE_VMACHINE_H
 
 #include "common.h"
 
@@ -58,4 +58,4 @@ extern bool trace;
 #define LEFT_REG(r) (((r)&0x00F0) >> 4)
 #define RIGHT_REG(r) ONLY_REG(r)
 
-#endif
+#endif /* _VMACHINE_VMACHINE_H */

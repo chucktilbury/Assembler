@@ -2,8 +2,8 @@
  *  External interface to the parts of the scanner that get called from
  *  application code.
  */
-#ifndef _SCANNER_H_
-#define _SCANNER_H_
+#ifndef _ASSEMBLER_SCANNER_H
+#define _ASSEMBLER_SCANNER_H
 
 void set_line_no(int no);
 int get_line_no();
@@ -24,4 +24,4 @@ extern FILE* yyin;
 // void yyerror(char *s, ...);
 void yyerror(const char* s);
 
-#endif /* _SCANNER_H_ */
+#endif /* _ASSEMBLER_SCANNER_H */

@@ -1,5 +1,5 @@
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef _INCLUDE_MEMORY_H
+#define _INCLUDE_MEMORY_H
 
 #if 0
 
@@ -29,4 +29,4 @@
 #define _free(p)
 #endif
 
-#endif
+#endif /* _INCLUDE_MEMORY_H */

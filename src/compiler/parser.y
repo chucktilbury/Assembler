@@ -24,25 +24,20 @@ extern const char* file_name;
 
 %union {
     char* str;
-    uint64_t unum;
-    int64_t inum;
-    double fnum;
+    double num;
 };
 
 %token BREAK CASE CONTINUE CONST DEFAULT
 %token DO ELSE FOR IF RETURN SWITCH IMPORT
 %token NAMESPACE CLASS STRUCT WHILE
-%token INT
-%token UINT
-%token FLOAT NOTHING STRTYPE
+%token NUMBER
+%token NOTHING STRTYPE
 %token BOOLTYPE TRUE FALSE IN YIELD EXIT
 %token EQU NEQU LORE GORE OR AND
 %token TRY EXCEPT RAISE CTOR DTOR
 %token PUBLIC PRIVATE PROTECTED MARKER
 %token<str> SYMBOL
-%token<inum> INUM
-%token<unum> UNUM
-%token<fnum> FNUM
+%token<num> LNUM
 %token<str> STRG
 
 %type<str> namespace_name class_name
@@ -100,15 +95,15 @@ module_definition_list
     ;
 
 preproc_marker
-    : MARKER INUM STRG {
-            EMIT("#line %ld \"%s\"\n", $2, $3);
+    : MARKER LNUM STRG {
+            EMIT("#line %d \"%s\"\n", (int)$2, $3);
             file_name = _copy_str($3);
         }
     ;
 
 compound_name
-    : SYMBOL {}
-    | SYMBOL '.' SYMBOL {}
+    : SYMBOL { printf("symbol: %s\n", $1); }
+    | compound_name '.' SYMBOL { printf("symbol: %s\n", $3); }
     ;
 
 import_statement
@@ -129,6 +124,7 @@ namespace_definition
             popNameContext();
         }
     | namespace_name '{' '}' {
+            EMIT("// context: %s\n", getNameContext());
             popNameContext();
             EMIT("// context: %s\n", getNameContext());
         }
@@ -138,7 +134,7 @@ class_name
     : CLASS SYMBOL {
             EMIT_LINE();
             EMIT("// class: %s\n", $2);
-            addSymbol($2, CLASS, NULL);
+            addSymbol(createName($2), CLASS, NULL);
             $$ = $2;
         }
     ;
@@ -169,9 +165,7 @@ class_definition_item
     ;
 
 type_name
-    : INT {}
-    | UINT {}
-    | FLOAT {}
+    : NUMBER {}
     | STRTYPE { /* TODO: Make this a compound type, like a class */ }
     | BOOLTYPE {}
     | NOTHING {}
@@ -220,7 +214,7 @@ data_definition
     ;
 
 func_definition_name
-    : type_name compound_name {}
+    : type_name compound_name { printf("function def\n"); }
     ;
 
 method_definition_name
@@ -236,8 +230,8 @@ dtor_definition_name
     ;
 
 func_definition
-    : func_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' {}
-    | func_definition_name '(' parameter_decl_list ')' '{' '}' {}
+    : func_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' { printf("here1\n"); }
+    | func_definition_name '(' parameter_decl_list ')' '{' '}' { printf("here2\n"); }
     | method_definition_name '(' parameter_decl_list ')' '{' '}' {}
     | method_definition_name '(' parameter_decl_list ')' '{' func_body_statement_list '}' {}
     | ctor_definition_name '(' parameter_decl_list ')' '{' '}' {}
@@ -367,9 +361,7 @@ do_statement
     ;
 
 constant_expression
-    : UNUM {}
-    | INUM {}
-    | FNUM {}
+    : LNUM {}
     | TRUE {}
     | FALSE {}
     | STRG { /* string literals are formatted */ };

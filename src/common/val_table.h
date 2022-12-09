@@ -1,5 +1,5 @@
-#ifndef VAL_BUFFER_H
-#define VAL_BUFFER_H
+#ifndef _COMMON_VAL_TABLE_H
+#define _COMMON_VAL_TABLE_H
 
 typedef enum {
     ERROR,
@@ -41,4 +41,4 @@ const char* valTypeToStr(ValType type);
 void assignVal(ValIdx idx, Value* val);
 const char* valToStr(Value* val);
 
-#endif
+#endif /* _COMMON_VAL_TABLE_H */

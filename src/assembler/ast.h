@@ -1,5 +1,5 @@
-#ifndef AST_H
-#define AST_H
+#ifndef _ASSEMBLER_AST_H
+#define _ASSEMBLER_AST_H
 
 typedef enum {
     OT_LABEL,
@@ -183,4 +183,4 @@ DataDef* addDataDef(Module* mod, Value* val, const char* name);
 void assignDataDecl(DataDef* data, Value* val);
 const char* regToStr(uint8_t reg);
 
-#endif
+#endif /* _ASSEMBLER_AST_H */

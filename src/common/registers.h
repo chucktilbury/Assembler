@@ -1,5 +1,5 @@
-#ifndef REGISTERS_H
-#define REGISTERS_H
+#ifndef _COMMON_REGISTERS_H
+#define _COMMON_REGISTERS_H
 
 typedef enum {
     REG_0,
@@ -25,4 +25,4 @@ typedef uint8_t Reg;
 
 const char* regToStr(uint8_t reg);
 
-#endif
+#endif /* _COMMON_REGISTERS_H */

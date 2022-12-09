@@ -1,6 +1,6 @@
-#ifndef STRING_TRAPS_H
-#define STRING_TRAPS_H
+#ifndef _RUNTIME_STRING_TRAPS_H
+#define _RUNTIME_STRING_TRAPS_H
 
 bool format_str_trap();
 
-#endif
+#endif /* _RUNTIME_STRING_TRAPS_H */

@@ -1,5 +1,5 @@
-#ifndef _SYMBOL_TAB_H_
-#define _SYMBOL_TAB_H_
+#ifndef _COMPILER_SYMBOL_TAB_H
+#define _COMPILER_SYMBOL_TAB_H
 
 #include "hash.h"
 
@@ -21,4 +21,4 @@ int getSymbolType(const char* key);
 void* getSymbolData(const char* key);
 void dumpSymTab();
 
-#endif
+#endif /* _COMPILER_SYMBOL_TAB_H */
